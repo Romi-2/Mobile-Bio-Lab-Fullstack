@@ -1,0 +1,10 @@
+# Node modules
+frontend/Mobile-Bio-Lab/node_modules/
+backend/node_modules/
+
+# Env files
+frontend/Mobile-Bio-Lab/.env
+backend/.env
+
+# Vite / build files
+frontend/Mobile-Bio-Lab/dist/
