@@ -8,12 +8,6 @@ const Register: React.FC = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setShowSuccess(true);
-
-    // Show success message, then redirect to login after 2 seconds
-    setTimeout(() => {
-      setShowSuccess(false);
-      navigate("/");
-    }, 2000);
   };
 
   const handleChange = (
@@ -24,7 +18,7 @@ const Register: React.FC = () => {
 
   return (
     <div className="register-container">
-      {/* ✅ Success Dropdown (Separate from form) */}
+      {/* ✅ Success Dropdown with activation link */}
       {showSuccess && (
         <div
           style={{
@@ -32,12 +26,12 @@ const Register: React.FC = () => {
             top: "20px",
             left: "50%",
             transform: "translateX(-50%)",
-            minWidth: "350px", // Increased width
+            minWidth: "380px",
             maxWidth: "90vw",
             backgroundColor: "#e6ffed",
             color: "#1b5e20",
             border: "2px solid #1b5e20",
-            padding: "12px 20px",
+            padding: "16px 20px",
             borderRadius: "8px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
             zIndex: 1000,
@@ -45,7 +39,14 @@ const Register: React.FC = () => {
             textAlign: "center",
           }}
         >
-          ✅ Successfully Registered!
+          ✅ Successfully Registered! <br />
+          Please check your VU email for activation. <br />
+          <a
+            href="/activate/BC210428773"
+            style={{ color: "#1565c0", textDecoration: "underline" }}
+          >
+            Activate Now BC210428773
+          </a>
         </div>
       )}
 
