@@ -1,35 +1,21 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import nodemailer from "nodemailer";
+import transporter from "./emailConfig.js";  // ✅ import here
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Temporary database (in-memory for now)
 let users = [];
 
-// Registration endpoint
 app.post("/api/register", async (req, res) => {
   const { username, email, password, studentId } = req.body;
 
-  // Save user with status = pending
   const newUser = { username, email, password, studentId, status: "pending" };
   users.push(newUser);
 
-  // ✅ Send activation email
   try {
-    // Setup transporter (use your Gmail or SMTP settings)
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "your-email@gmail.com",   // 🔴 replace with your email
-        pass: "your-app-password"       // 🔴 use App Password (not normal password)
-      },
-    });
-
-    // Create activation link
     const activationLink = `http://localhost:5000/api/activate/${studentId}`;
 
     await transporter.sendMail({
@@ -48,13 +34,12 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// Activation endpoint
 app.get("/api/activate/:studentId", (req, res) => {
   const { studentId } = req.params;
 
   let user = users.find((u) => u.studentId === studentId);
   if (user) {
-    user.status = "active"; // Mark as verified
+    user.status = "active";
     return res.send(`<h2>Account Activated Successfully for ${studentId} 🎉</h2>`);
   }
 
@@ -64,4 +49,5 @@ app.get("/api/activate/:studentId", (req, res) => {
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
 });
+
 export default app;
