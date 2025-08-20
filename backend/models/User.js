@@ -1,19 +1,10 @@
-const db = require("../config/db");
+const mongoose = require("mongoose");
 
-const User = {
-  create: (data, callback) => {
-    const sql = "INSERT INTO users SET ?";
-    db.query(sql, data, callback);
-  },
-  findByEmail: (email, callback) => {
-    db.query("SELECT * FROM users WHERE email = ?", [email], callback);
-  },
-  getAll: (callback) => {
-    db.query("SELECT * FROM users", callback);
-  },
-  delete: (id, callback) => {
-    db.query("DELETE FROM users WHERE id = ?", [id], callback);
-  },
-};
+const UserSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  isActive: { type: Boolean, default: false }, // account is inactive until admin approves
+});
 
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);
