@@ -1,55 +1,59 @@
 const express = require("express");
-const router = express.Router();
-const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const User = require("../models/User"); // adjust path if your model is elsewhere
+const transporter = require("../config/emailConfig");
 
-// Register new user
+const router = express.Router();
+
+// ✅ Register Route
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password, role, city } = req.body;
 
-    // check if already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists
+    let existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists!" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    // hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    // save user with isActive = false
+    // Create new user
     const newUser = new User({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
-      isActive: false,
+      role,
+      city,
     });
 
     await newUser.save();
 
-    res.status(201).json({
-      message: "Registration successful! Please wait for Admin approval.",
+    // ✅ Send activation email
+    const mailOptions = {
+      from: "your-email@gmail.com",          // your Gmail
+      to: newUser.email,                     // send to user's email
+      subject: "Account Activation",
+      text: `Hi ${newUser.firstName},\n\nWelcome! Your account has been registered.\n\nActivation Code: BC210428773\n\nThank you.`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("❌ Error sending email:", error);
+      } else {
+        console.log("✅ Activation email sent:", info.response);
+      }
     });
+
+    res.status(201).json({ message: "User registered successfully. Activation email sent!" });
+
   } catch (error) {
-    res.status(500).json({ message: "Error registering user", error });
+    console.error("Error in /register:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
-// Activate account
-router.get("/activate/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) return res.status(404).json({ message: "Invalid link" });
-
-    user.isActive = true;
-    await user.save();
-
-    res.json({ message: "Account activated! You can now login." });
-  } catch (error) {
-    res.status(500).json({ message: "Activation failed", error });
-  }
-});
-
 
 module.exports = router;
