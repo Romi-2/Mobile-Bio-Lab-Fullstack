@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import "./App.css";
 import ActivatePage from "./pages/Activepage";
+import RegistrationSuccess from "./pages/RegistrationSuccess";
 
 function AppContent() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function AppContent() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+           <Route path="/registration-success" element={<RegistrationSuccess/>} />
           <Route path="/activate/:studentId" element={<ActivatePage />} />
         </Routes>
       </main>
