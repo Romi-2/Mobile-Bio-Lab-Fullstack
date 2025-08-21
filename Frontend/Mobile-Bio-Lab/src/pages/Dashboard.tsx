@@ -1,116 +1,164 @@
 import { useEffect, useState } from "react";
-import "../App.css";
 import axios from "axios";
 
 interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  role: string;
-  city: string;
-  isVerified: boolean;
-  email?: string;
+  _id: string;
+  name: string;
+  email: string;
+  city?: string;
+  profilePicture?: string;
+  isActive: boolean;
+  role: "user" | "admin";
 }
 
 function Dashboard() {
   const [users, setUsers] = useState<User[]>([]);
-  const [editUser, setEditUser] = useState<User | null>(null);
-  const [newEmail, setNewEmail] = useState("");
-  const [newCity, setNewCity] = useState("");
+
+  // Fetch all users
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get<User[]>("http://localhost:5000/api/admin/users");
+      setUsers(res.data);
+    } catch (error) {
+      console.error("Error fetching users", error);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const fetchUsers = async () => {
+  // Approve/Deactivate user
+  const toggleApprove = async (id: string, isActive: boolean) => {
     try {
-      const res = await axios.get<User[]>("http://localhost:5000/api/admin/users");
-      setUsers(res.data);
-    } catch (err) {
-      console.error("Error fetching users:", err);
+      await axios.put(`http://localhost:5000/api/admin/users/${id}/approve`, {
+        isActive: !isActive,
+      });
+      fetchUsers(); // refresh
+    } catch (error) {
+      console.error("Error updating status", error);
     }
   };
 
-  // ✅ Verify user
-  const verifyUser = async (id: number) => {
-    await axios.put(`http://localhost:5000/api/admin/users/${id}/verify`);
-    fetchUsers();
+  // Update user info
+  const updateUser = async (id: string, field: keyof User, value: string) => {
+    try {
+      await axios.put(`http://localhost:5000/api/admin/users/${id}`, {
+        [field]: value,
+      });
+      fetchUsers(); // refresh
+    } catch (error) {
+      console.error("Error updating user", error);
+    }
   };
 
-  // ❌ Delete user
-  const deleteUser = async (id: number) => {
-    await axios.delete(`http://localhost:5000/api/admin/users/${id}`);
-    fetchUsers();
-  };
+  // Upload profile picture
+  const uploadProfilePicture = async (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append("profilePicture", file);
 
-  // ✏️ Open edit form
-  const startEdit = (user: User) => {
-    setEditUser(user);
-    setNewEmail(user.email || "");
-    setNewCity(user.city);
-  };
-
-  // ✏️ Save edited user
-  const saveEdit = async () => {
-    if (!editUser) return;
-    await axios.put(`http://localhost:5000/api/admin/users/${editUser.id}`, {
-      email: newEmail,
-      city: newCity,
-      profile_picture: null, // handle later
-    });
-    setEditUser(null);
-    fetchUsers();
+    try {
+      await axios.put(
+        `http://localhost:5000/api/admin/users/${id}/profilePicture`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      fetchUsers(); // refresh
+    } catch (error) {
+      console.error("Error uploading profile picture", error);
+    }
   };
 
   return (
-    <div className="p-4">
+    <div className="dashboard">
       <h2>Admin Dashboard</h2>
-
-      {/* Edit Form Modal */}
-      {editUser && (
-        <div className="edit-modal">
-          <h3>Edit User: {editUser.firstName} {editUser.lastName}</h3>
-          <input
-            type="email"
-            placeholder="Email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="City"
-            value={newCity}
-            onChange={(e) => setNewCity(e.target.value)}
-          />
-          <button onClick={saveEdit}>Save</button>
-          <button onClick={() => setEditUser(null)}>Cancel</button>
-        </div>
-      )}
-
-      {/* User List */}
-      <table border={1} cellPadding={8} style={{ marginTop: "20px", width: "100%" }}>
+      <table border={1} cellPadding={8} style={{ width: "100%", textAlign: "center" }}>
         <thead>
           <tr>
+            <th>Profile</th>
             <th>Name</th>
-            <th>Role</th>
+            <th>Email</th>
             <th>City</th>
-            <th>Verified</th>
+            <th>Status</th>
+            <th>Role</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
-            <tr key={u.id}>
-              <td>{u.firstName} {u.lastName}</td>
-              <td>{u.role}</td>
-              <td>{u.city}</td>
-              <td>{u.isVerified ? "✅ Yes" : "❌ No"}</td>
+          {users.map((user) => (
+            <tr key={user._id}>
+              {/* Profile Picture */}
               <td>
-                {!u.isVerified && (
-                  <button onClick={() => verifyUser(u.id)}>Verify</button>
+                {user.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt={user.name}
+                    width="40"
+                    height="40"
+                    style={{ borderRadius: "50%" }}
+                  />
+                ) : (
+                  "No Image"
                 )}
-                <button onClick={() => startEdit(u)}>Edit</button>
-                <button onClick={() => deleteUser(u.id)}>Delete</button>
+                <br />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      uploadProfilePicture(user._id, e.target.files[0]);
+                    }
+                  }}
+                />
+              </td>
+
+              {/* Editable Name */}
+              <td>
+                <input
+                  type="text"
+                  defaultValue={user.name}
+                  onBlur={(e) => updateUser(user._id, "name", e.target.value)}
+                />
+              </td>
+
+              {/* Editable Email */}
+              <td>
+                <input
+                  type="email"
+                  defaultValue={user.email}
+                  onBlur={(e) => updateUser(user._id, "email", e.target.value)}
+                />
+              </td>
+
+              {/* Editable City */}
+              <td>
+                <input
+                  type="text"
+                  defaultValue={user.city || ""}
+                  onBlur={(e) => updateUser(user._id, "city", e.target.value)}
+                />
+              </td>
+
+              {/* Status Toggle */}
+              <td>
+                <button onClick={() => toggleApprove(user._id, user.isActive)}>
+                  {user.isActive ? "Deactivate ❌" : "Approve ✅"}
+                </button>
+              </td>
+
+              {/* Role Dropdown */}
+              <td>
+                <select
+                  defaultValue={user.role}
+                  onChange={(e) => updateUser(user._id, "role", e.target.value)}
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </td>
+
+              <td>
+                <strong>Updated</strong>
               </td>
             </tr>
           ))}

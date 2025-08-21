@@ -1,10 +1,3 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const User = require("../models/User"); // adjust path if your model is elsewhere
-const transporter = require("../config/emailConfig");
-
-const router = express.Router();
-
 // ✅ Register Route
 router.post("/register", async (req, res) => {
   try {
@@ -20,10 +13,9 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
+    // Create new user (merge first+last into "name")
     const newUser = new User({
-      firstName,
-      lastName,
+      name: `${firstName} ${lastName}`,  // ✅ fixed
       email,
       password: hashedPassword,
       role,
@@ -34,10 +26,10 @@ router.post("/register", async (req, res) => {
 
     // ✅ Send activation email
     const mailOptions = {
-      from: "your-email@gmail.com",          // your Gmail
-      to: newUser.email,                     // send to user's email
+      from: "your-email@gmail.com",
+      to: newUser.email,
       subject: "Account Activation",
-      text: `Hi ${newUser.firstName},\n\nWelcome! Your account has been registered.\n\nActivation Code: BC210428773\n\nThank you.`
+      text: `Hi ${newUser.name},\n\nWelcome! Your account has been registered.\n\nActivation Code: BC210428773\n\nThank you.`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -55,5 +47,3 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-module.exports = router;
