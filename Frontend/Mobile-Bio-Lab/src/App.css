@@ -1,5 +1,71 @@
 /* App.css */
 
+/* home page start */
+.home-container {
+  text-align: center;
+  padding: 2rem;
+  background: #f9f9ff;
+  min-height: 100vh;
+}
+
+.home-header {
+  margin-bottom: 2rem;
+}
+
+.home-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+}
+
+.home-header p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.home-content {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 280px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #007bff;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #444;
+}
+.card a {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.card a:hover {
+  background: #0056b3;
+}
+/* home page end */
+
 /* Global styles */
 body {
   margin: 0;
