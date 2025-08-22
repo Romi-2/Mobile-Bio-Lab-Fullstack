@@ -2,10 +2,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql2";
-import transporter from "./config/emailConfig.js";
+import transporter from "./emailConfig.js";
 import profileExportRoute from "./routes/profileExportRoute.js";
 import registerRoute from "./routes/registerRoute.js";
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes from "./routes/UserRoute.js";
 
 const app = express();
 
@@ -18,7 +18,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "mobile_bio_lab",
+  database: "mobile-bio-lab", // <-- use the correct name from SHOW DATABASES
 });
 
 db.connect((err) => {

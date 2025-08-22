@@ -1,7 +1,6 @@
 import express from "express";
 import multer from "multer";
-import mysql from "mysql2";
-import { generateUserProfilePDF } from "../utils/generateUserProfilePDF.js"; // ✅ make sure this file exists
+import mysql from "mysql2"; // ✅ make sure this file exists
 
 const router = express.Router();
 

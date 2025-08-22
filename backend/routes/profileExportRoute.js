@@ -1,21 +1,28 @@
 // backend/routes/profileExportRoute.js
 import express from "express";
-import User from "../models/User.js";
-import { generateUserProfilePDF } from "../Utils/pdfHelper.js";
+import { db } from "../server.js";              // Import MySQL connection
+import { generateUserProfilePDF } from "../utils/pdfHelper.js";
 
 const router = express.Router();
 
-// ✅ Export user profile to PDF
-router.get("/profile/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+// ✅ Export user profile to PDF by ID
+router.get("/profile/:id", (req, res) => {
+  const userId = req.params.id;
 
-    generateUserProfilePDF(user, res);
-  } catch (error) {
-    console.error("Error exporting profile:", error);
-    res.status(500).json({ message: "Server error" });
-  }
+  const query = "SELECT id, firstName, lastName, email, role, city, studentId FROM users WHERE id = ?";
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("❌ Error fetching user:", err);
+      return res.status(500).json({ message: "DB Error", error: err });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user = results[0];
+    generateUserProfilePDF(user, res);  // Generate and send PDF
+  });
 });
 
 export default router;
