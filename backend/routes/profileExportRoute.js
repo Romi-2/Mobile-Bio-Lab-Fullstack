@@ -1,7 +1,7 @@
 // backend/routes/profileExportRoute.js
 import express from "express";
 import User from "../models/User.js";
-import { generateUserProfilePDF } from "/utils/pdfHelper.js";
+import { generateUserProfilePDF } from "../Utils/pdfHelper.js";
 
 const router = express.Router();
 
