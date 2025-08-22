@@ -9,8 +9,8 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "your-email@gmail.com",     // Replace with your Gmail
-    pass: "your-app-password",        // Use Google App Password
+    user: "bc210428773rar@vu.edu.pk", // your Gmail
+    pass: "ddek cdsn arcy yhgd",       // App Password, not normal password
   },
 });
 
@@ -96,6 +96,79 @@ router.get("/profile/:id", async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error("Error fetching profile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+const PDFDocument = require("pdfkit");
+
+// ✅ Admin Export Users (filter by role or city)
+router.get("/export/users", async (req, res) => {
+  try {
+    const { role, city } = req.query;
+
+    // Build filter
+    const filter = {};
+    if (role) filter.role = role;
+    if (city) filter.city = city;
+
+    const users = await User.find(filter).select("-password");
+
+    // Create PDF
+    const doc = new PDFDocument();
+    let filename = `users-report.pdf`;
+    filename = encodeURIComponent(filename);
+
+    res.setHeader("Content-disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-type", "application/pdf");
+
+    doc.pipe(res);
+
+    doc.fontSize(20).text("User Report", { align: "center" });
+    doc.moveDown();
+
+    users.forEach((user, index) => {
+      doc.fontSize(12).text(
+        `${index + 1}. ${user.name} | ${user.email} | Role: ${user.role} | City: ${user.city}`
+      );
+      doc.moveDown(0.5);
+    });
+
+    doc.end();
+  } catch (error) {
+    console.error("Error exporting users:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ User Export Profile
+router.get("/export/profile/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Create PDF
+    const doc = new PDFDocument();
+    let filename = `${user.name.replace(" ", "_")}_profile.pdf`;
+    filename = encodeURIComponent(filename);
+
+    res.setHeader("Content-disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-type", "application/pdf");
+
+    doc.pipe(res);
+
+    doc.fontSize(20).text("User Profile", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(14).text(`Name: ${user.name}`);
+    doc.text(`Email: ${user.email}`);
+    doc.text(`Role: ${user.role}`);
+    doc.text(`City: ${user.city}`);
+    if (user.studentId) doc.text(`Student ID: ${user.studentId}`);
+
+    doc.end();
+  } catch (error) {
+    console.error("Error exporting profile:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
