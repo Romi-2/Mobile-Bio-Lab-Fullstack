@@ -24,7 +24,7 @@ const RegistrationSuccess: React.FC = () => {
           cursor: "pointer",
         }}
       >
-        Go to Login
+        Go to Home
       </button>
     </div>
   );
