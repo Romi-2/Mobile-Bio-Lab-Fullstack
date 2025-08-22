@@ -2,6 +2,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import transporter from "./emailConfig.js";  // ✅ import here
+import profileExportRoute from "./routes/profileExportRoute.js";
+
+app.use("/api/export", profileExportRoute);
+
 
 const app = express();
 app.use(cors());
