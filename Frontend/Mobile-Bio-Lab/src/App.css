@@ -352,6 +352,36 @@ select {
   gap: 10px;
   margin-top: 0; /* Remove top margin */
 }
+/* ==================== Role Select Field ==================== */
+.role-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* space between label and select */
+  margin-bottom: 0; /* optional spacing adjustment */
+}
+
+/* Style for the select dropdown inside role-group */
+.role-group select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+/* Focus state for role select */
+.role-group select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+}
+
 
 /* Title */
 .register-card h2 {
@@ -378,30 +408,31 @@ select {
   letter-spacing: 0.1px;
 }
 
-/* Inputs and selects */
+/* Add these styles to your existing CSS */
+
+/* Style for select dropdown */
 .register-card select {
-  width: 100%;
-  padding: 8px 10px; /* keep same padding */
-  border: 1.5px solid #90caf9;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: #f7fbff url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width='10'%20height='5'%20viewBox='0 0 10 5'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cpath%20d='M0 0l5 5 5-5z'%20fill='%231976d2'/%3E%3C/svg%3E") no-repeat right 10px center;
-  background-size: 10px 5px;
-  color: #333;
-  outline: none;
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
-  margin-bottom: 0;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 30px;
 }
 
+/* Style for select options */
+.register-card option {
+  padding: 8px;
+  background: #fff;
+}
 
-.register-card input:focus,
+/* Focus state for select */
 .register-card select:focus {
   border-color: #1976d2;
   box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
 }
-
 /* File input */
 .register-card input[type="file"] {
   background: #fafafa;

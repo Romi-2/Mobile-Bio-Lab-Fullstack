@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../services/userService";
+import { createUser } from "../service/userService";
 import "../App.css";
 
 const Register: React.FC = () => {
@@ -29,11 +29,15 @@ const Register: React.FC = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, files } = e.target as HTMLInputElement;
-    if (files) {
-      setFormData({ ...formData, [name]: files[0] });
+    const { name, value } = event.target;
+
+    if (event.target instanceof HTMLInputElement && event.target.type === "file") {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        setFormData({ ...formData, [name]: files[0] });
+      }
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -41,20 +45,21 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null) {
-        if (value instanceof File) data.append(key, value);
-        else data.append(key, value.toString());
-      }
-    });
 
     try {
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null) data.append(key, value as Blob | string);
+      });
+
+      // Use your service or axios directly
       await createUser(data);
+      // OR: await axios.post("http://localhost:5000/api/auth/register", data, { headers: { "Content-Type": "multipart/form-data" } });
+
       navigate("/registration-success");
-    } catch (err) {
-      console.error("❌ Error registering user:", err);
-      alert("Registration failed. Please try again.");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      alert("Failed to register. Please try again.");
     }
   };
 
@@ -63,7 +68,6 @@ const Register: React.FC = () => {
       <div className="register-card">
         <h2>User Registration</h2>
         <form onSubmit={handleSubmit}>
-
           {/* First Name + Last Name */}
           <div className="input-row">
             <div className="input-group">
@@ -128,20 +132,21 @@ const Register: React.FC = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="input-group">
-              <label>Role</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- Select Role --</option>
-                <option value="student">Student</option>
-                <option value="researcher">Researcher</option>
-                <option value="technician">Technician</option>
-              </select>
-            </div>
+            <div className="role-group">
+  <label>Role</label>
+  <select
+    name="role"
+    value={formData.role}
+    onChange={handleChange}
+    required
+  >
+    <option value="">-- Select Role --</option>
+    <option value="student">Student</option>
+    <option value="researcher">Researcher</option>
+    <option value="technician">Technician</option>
+  </select>
+</div>
+
           </div>
 
           {/* Mobile + City */}
@@ -185,7 +190,6 @@ const Register: React.FC = () => {
             </button>
             <button type="submit">Register</button>
           </div>
-
         </form>
       </div>
     </div>

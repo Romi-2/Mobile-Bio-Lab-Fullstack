@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../services/userService";
+import { createUser } from "../service/userService";
 import "../App.css";
 
 const Register: React.FC = () => {
