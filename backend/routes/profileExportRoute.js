@@ -9,7 +9,19 @@ const router = express.Router();
 router.get("/profile/:id", (req, res) => {
   const userId = req.params.id;
 
-  const query = "SELECT id, firstName, lastName, email, role, city, studentId FROM users WHERE id = ?";
+  const query = `
+    SELECT 
+      id, 
+      first_name AS firstName, 
+      last_name AS lastName, 
+      email, 
+      role, 
+      city, 
+      vu_id AS studentId 
+    FROM users 
+    WHERE id = ?
+  `;
+
   db.query(query, [userId], (err, results) => {
     if (err) {
       console.error("❌ Error fetching user:", err);

@@ -6,7 +6,16 @@ const router = express.Router();
 
 // ✅ Get all users
 router.get("/", (req, res) => {
-  const query = "SELECT id, firstName, lastName, email, role, city FROM users"; // adjust table/columns
+  const query = `
+    SELECT 
+      id, 
+      first_name AS firstName, 
+      last_name AS lastName, 
+      email, 
+      role, 
+      city 
+    FROM users
+  `;
   db.query(query, (err, results) => {
     if (err) {
       console.error("❌ Error fetching users:", err);
@@ -19,7 +28,17 @@ router.get("/", (req, res) => {
 // ✅ Get a single user by ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;
-  const query = "SELECT id, firstName, lastName, email, role, city FROM users WHERE id = ?";
+  const query = `
+    SELECT 
+      id, 
+      first_name AS firstName, 
+      last_name AS lastName, 
+      email, 
+      role, 
+      city 
+    FROM users 
+    WHERE id = ?
+  `;
   db.query(query, [id], (err, results) => {
     if (err) {
       console.error("❌ Error fetching user:", err);

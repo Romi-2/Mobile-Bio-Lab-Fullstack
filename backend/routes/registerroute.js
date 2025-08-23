@@ -1,49 +1,46 @@
 import express from "express";
 import multer from "multer";
-import mysql from "mysql2"; // ✅ make sure this file exists
+import { db } from "../server.js";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
-// multer for file upload
-const upload = multer({ dest: "uploads/" });
-
-// db connection
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "mobile_bio_lab",
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
+const upload = multer({ storage });
 
-// API route for MySQL registration
-router.post("/register", upload.single("profilePic"), (req, res) => {
-  const { firstName, lastName, vuId, email, password, mobile, city, role } = req.body;
-  const profilePic = req.file ? req.file.filename : null;
+// Register route
+router.post("/register", upload.single("profilePic"), async (req, res) => {
+  try {
+    const { firstName, lastName, vuId, email, password, mobile, city, role } = req.body;
+    const profilePic = req.file ? `/uploads/${req.file.filename}` : null;
 
-  const sql =
-    "INSERT INTO users (firstName, lastName, vuId, email, password, mobile, city, role, profilePic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    if (!firstName || !lastName || !email || !password)
+      return res.status(400).json({ error: "⚠️ Please fill all required fields" });
 
-  db.query(
-    sql,
-    [firstName, lastName, vuId, email, password, mobile, city, role, profilePic],
-    (err, result) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({ error: "Database error" });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const query = `
+      INSERT INTO users
+      (first_name, last_name, vu_id, email, password, mobile, role, city, profile_pic)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      query,
+      [firstName, lastName, vuId, email, hashedPassword, mobile, role, city, profilePic],
+      (err, result) => {
+        if (err) return res.status(500).json({ error: "Database error" });
+        res.status(201).json({ message: "✅ User registered successfully", userId: result.insertId, profilePic });
       }
-
-      // ✅ User registered successfully
-      const user = { firstName, lastName, email, role, city, studentId: vuId };
-
-      // If you want to send back PDF right away:
-      // generateUserProfilePDF(user, res);
-
-      res.status(201).json({
-        message: "User registered successfully",
-        userId: result.insertId,
-      });
-    }
-  );
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 export default router;
