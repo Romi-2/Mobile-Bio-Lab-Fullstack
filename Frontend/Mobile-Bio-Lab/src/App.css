@@ -379,19 +379,22 @@ select {
 }
 
 /* Inputs and selects */
-.register-card input,
 .register-card select {
   width: 100%;
-  padding: 8px 10px; /* Reduced padding */
+  padding: 8px 10px; /* keep same padding */
   border: 1.5px solid #90caf9;
   border-radius: 8px;
   font-size: 1rem;
-  background: #f7fbff;
+  background: #f7fbff url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width='10'%20height='5'%20viewBox='0 0 10 5'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cpath%20d='M0 0l5 5 5-5z'%20fill='%231976d2'/%3E%3C/svg%3E") no-repeat right 10px center;
+  background-size: 10px 5px;
   color: #333;
   outline: none;
-  transition: border 0.3s, box-shadow 0.3s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   margin-bottom: 0;
 }
+
 
 .register-card input:focus,
 .register-card select:focus {
