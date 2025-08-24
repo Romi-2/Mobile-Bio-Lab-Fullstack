@@ -322,12 +322,12 @@ select {
   color: #1976d2;
 }
 /* Dashboard.css end */
+/* ================== Register Page - WIDER & SHORTER ================== */
 
-/* Register.css */
-/* Center page */
+/* Center page container */
 .register-container {
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -336,133 +336,88 @@ select {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  position: relative;
 }
 
 /* Card box */
 .register-card {
   width: 100%;
-  max-width: 700px !important;
+  max-width: 650px; /* increased width */
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 6px 24px rgba(25, 118, 210, 0.12);
-  padding: 0 24px 24px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(25, 118, 210, 0.1);
+  padding: 16px 20px; /* reduced vertical padding */
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 0; /* Remove top margin */
+  gap: 8px; /* reduced gaps to shorten length */
+  box-sizing: border-box;
 }
-/* ==================== Role Select Field ==================== */
-.role-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px; /* space between label and select */
-  margin-bottom: 0; /* optional spacing adjustment */
-}
-
-/* Style for the select dropdown inside role-group */
-/* Role Select Field */
-.role-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px; /* add some spacing */
-}
-
-.role-group label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #1976d2;
-  margin-bottom: 2px;
-}
-
-.role-group select {
-  padding: 8px 12px; /* ensure enough padding for arrow */
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fff;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  height: 38px; /* force height so arrow shows */
-  font-size: 0.95rem;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-}
-
-.role-group select:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
-}
-
-
 
 /* Title */
 .register-card h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   color: #1976d2;
+  margin: 0 0 12px 0; /* reduced bottom margin */
 }
 
 /* Form */
 .register-card form {
   display: flex;
   flex-direction: column;
+  gap: 8px; /* reduced gap */
 }
 
 /* Labels */
 .register-card label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #1976d2;
-  margin-bottom: 2px;
-  margin-top: 0;
-  letter-spacing: 0.1px;
+  margin-bottom: 2px; /* smaller margin */
 }
 
-/* Add these styles to your existing CSS */
-
-/* Style for select dropdown */
-.register-card select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  padding-right: 30px;
+/* Input groups */
+.input-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* Style for select options */
-.register-card option {
-  padding: 8px;
-  background: #fff;
+.input-group,
+.role-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* reduce gap between label and input */
+  min-width: 0;
 }
 
-/* Focus state for select */
-.register-card select:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+/* Text inputs */
+.register-card input[type="text"],
+.register-card input[type="email"],
+.register-card input[type="password"] {
+  padding: 6px 10px; /* smaller padding */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 /* File input */
 .register-card input[type="file"] {
-  background: #fafafa;
   cursor: pointer;
-  padding: 6px;
+  padding: 2px 0;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .register-card input[type="file"]::-webkit-file-upload-button {
   background: #1976d2;
   color: #fff;
   border: none;
-  padding: 6px 12px;
+  padding: 2px 6px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
@@ -472,74 +427,85 @@ select {
   background: #1565c0;
 }
 
-/* Input row for two columns */
-.input-row {
-  display: flex;
-  gap: 10px; /* Less gap between columns */
-  margin-bottom: 0; /* Remove extra margin */
+/* Dropdown (Role) - FIXED */
+.role-group select {
+  display: block;          /* ensures it renders */
+  padding: 6px 10px;
+  border: 1px solid #1565c0;
+  border-radius: 6px;
+  background: #fff;        /* white background for visibility */
+  color: #000;             /* black text */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 34px;
+  font-size: 0.9rem;
+  width: 100%;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) center;
+  background-size: 16px;
+  padding-right: 32px;
+  z-index: 10;             /* ensures it appears above other elements */
 }
 
-.input-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px; /* Less gap between label and input */
+.role-group select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+  outline: none;
 }
 
-/* Button row */
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 10px;
-}
 
 /* Buttons */
+.button-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .register-card button,
-.register-card a.btn-link {
+.register-card .btn-link {
   flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 15px;
+  padding: 8px; /* smaller padding */
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 500;
-  text-align: center;
-  text-decoration: none;
   cursor: pointer;
-  transition: background 0.3s;
-  margin: 0 5px;
+  text-align: center;
+  margin: 0;
+  min-width: 100px;
 }
 
-.button-row .btn-link,
-.button-row button {
-  min-width: 90px;
-  padding: 8px 0;
-  font-size: 0.95rem;
-}
-
-/* Register button */
 .register-card button {
-  border: none;
   background: #1976d2;
   color: #fff;
+  border: none;
 }
 
 .register-card button:hover {
   background: #1565c0;
 }
 
-/* Go back link styled as button */
-.register-card a.btn-link {
+.register-card .btn-link {
   border: 1px solid #1976d2;
   background: #fff;
   color: #1976d2;
+  text-decoration: none;
 }
 
-.register-card a.btn-link:hover {
+.register-card .btn-link:hover {
   background: #e3f2fd;
 }
-.register-card a.btn-link:active {
-  background: #c5cae9;
-}
 
-/* Additional styles for role select */
-/* Register.css end  */
+/* Responsive adjustments */
+@media screen and (max-width: 480px) {
+  .input-row {
+    flex-direction: column;
+  }
+  
+  .button-row {
+    flex-direction: column;
+  }
+}

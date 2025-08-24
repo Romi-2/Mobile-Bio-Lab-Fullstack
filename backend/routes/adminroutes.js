@@ -1,91 +1,94 @@
-const express = require("express");
+import express from "express";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import { db } from "../server.js"; // MySQL connection
+import transporter from "../emailConfig.js"; // Email transporter
+
+
 const router = express.Router();
-const User = require("../models/User");
-const nodemailer = require("nodemailer");
 
 // ✅ Middleware to check if user is admin
-const isAdmin = async (req, res, next) => {
-  try {
-    // Assuming you store userId in req.user from JWT or session
-    const user = await User.findById(req.user.id);
+// You need some auth mechanism (JWT/session) to set req.user.id
+const isAdmin = (req, res, next) => {
+  const userId = req.user?.id; // Set this from your auth middleware
 
-    if (!user || user.role !== "admin") {
+  if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+  db.query("SELECT role FROM users WHERE id = ?", [userId], (err, results) => {
+    if (err) return res.status(500).json({ message: "DB error", error: err });
+
+    if (results.length === 0 || results[0].role !== "admin") {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
 
     next();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Admin check failed", error });
-  }
+  });
 };
 
 // ✅ Approve user and send activation email
-router.post("/approve/:id", isAdmin, async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
+router.post("/approve/:id", isAdmin, (req, res) => {
+  const userId = req.params.id;
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+  // Generate activation token
+  const token = crypto.randomBytes(20).toString("hex");
 
-    // Activate user
-    user.isActive = true;
-    await user.save();
+  // Update user with token
+  db.query(
+    "UPDATE users SET activationToken = ? WHERE id = ?",
+    [token, userId],
+    (err) => {
+      if (err) return res.status(500).json({ message: "DB error", error: err });
 
-    // Setup transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "yourvuemail@gmail.com",  // replace with your VU email
-        pass: "your-app-password",      // use Google App Password
-      },
-    });
+      // Fetch user email and vu_id
+      db.query("SELECT email, vu_id FROM users WHERE id = ?", [userId], (err2, results) => {
+        if (err2) return res.status(500).json({ message: "DB error", error: err2 });
+        if (results.length === 0) return res.status(404).json({ message: "User not found" });
 
-    const activationLink = `http://localhost:3000/activate/${user._id}`;
+        const user = results[0];
 
-    const mailOptions = {
-      from: "yourvuemail@gmail.com",
-      to: user.email,
-      subject: "Account Activation",
-      text: `Hello ${user.name},\n\nYour account has been approved.\nClick here to activate your account: ${activationLink}`,
-    };
+  
+        const activationLink = `http://localhost:3000/activate/${user.vu_id}?token=${token}`;
 
-    await transporter.sendMail(mailOptions);
+        const mailOptions = {
+          from: "yourvuemail@gmail.com",
+          to: user.email,
+          subject: "Account Activation",
+          html: `<p>Hello,</p>
+                 <p>Your account has been approved. Click the link below to activate:</p>
+                 <a href="${activationLink}">Activate Now</a>`,
+        };
 
-    res.json({ message: "✅ User approved and activation email sent." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error approving user", error });
-  }
+        transporter.sendMail(mailOptions, (error) => {
+          if (error) return res.status(500).json({ message: "Failed to send email", error });
+
+          res.json({ message: "✅ User approved and activation email sent." });
+        });
+      });
+    }
+  );
 });
 
 // ✅ Admin updates limited user profile details
-router.put("/update/:id", isAdmin, async (req, res) => {
-  try {
-    const { email, city, profilePicture } = req.body;
+router.put("/update/:id", isAdmin, (req, res) => {
+  const { email, city, profilePicture } = req.body;
+  const userId = req.params.id;
 
-    // Only update allowed fields
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        ...(email && { email }),
-        ...(city && { city }),
-        ...(profilePicture && { profilePicture }),
-      },
-      { new: true } // return updated user
-    );
+  const fields = [];
+  const values = [];
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  if (email) { fields.push("email = ?"); values.push(email); }
+  if (city) { fields.push("city = ?"); values.push(city); }
+  if (profilePicture) { fields.push("profilePicture = ?"); values.push(profilePicture); }
 
-    res.json({
-      message: "✅ User profile updated successfully",
-      user: updatedUser,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error updating user profile", error });
-  }
+  if (fields.length === 0) return res.status(400).json({ message: "No fields to update" });
+
+  const query = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+  values.push(userId);
+
+  db.query(query, values, (err) => {
+    if (err) return res.status(500).json({ message: "DB error", error: err });
+    res.json({ message: "✅ User profile updated successfully" });
+  });
 });
 
-module.exports = router;
+export default router;

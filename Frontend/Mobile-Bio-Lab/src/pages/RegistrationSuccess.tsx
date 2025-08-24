@@ -1,193 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../service/userService";
 import "../App.css";
 
-const Register: React.FC = () => {
+const RegistrationSuccess: React.FC = () => {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState<{
-    firstName: string;
-    lastName: string;
-    vuId: string;
-    email: string;
-    password: string;
-    mobile: string;
-    city: string;
-    role: string;
-    profilePic: File | null;
-  }>({
-    firstName: "",
-    lastName: "",
-    vuId: "",
-    email: "",
-    password: "",
-    mobile: "",
-    city: "",
-    role: "",
-    profilePic: null,
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value, files } = e.target as HTMLInputElement;
-    if (files) {
-      setFormData({ ...formData, [name]: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null) {
-        if (value instanceof File) data.append(key, value);
-        else data.append(key, value.toString());
-      }
-    });
-
-    try {
-      await createUser(data);
-      navigate("/registration-success");
-    } catch (err) {
-      console.error("❌ Error registering user:", err);
-      alert("Registration failed. Please try again.");
-    }
-  };
 
   return (
     <div className="register-container">
-      <div className="register-card">
-        <h2>User Registration</h2>
-        <form onSubmit={handleSubmit}>
-          {/* First Name + Last Name */}
-          <div className="input-row">
-            <div className="input-group">
-              <label>First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="input-group">
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Email + Password */}
-          <div className="input-row">
-            <div className="input-group">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="input-group">
-              <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          {/* VU ID + Role */}
-          <div className="input-row">
-            <div className="input-group">
-              <label>VU ID</label>
-              <input
-                type="text"
-                name="vuId"
-                placeholder="VU ID"
-                value={formData.vuId}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="input-group">
-              <label>Role</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- Select Role --</option>
-                <option value="student">Student</option>
-                <option value="researcher">Researcher</option>
-                <option value="technician">Technician</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Mobile + City */}
-          <div className="input-row">
-            <div className="input-group">
-              <label>Mobile</label>
-              <input
-                type="text"
-                name="mobile"
-                placeholder="Mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="input-group">
-              <label>City</label>
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* Profile Picture */}
-          <div className="input-group">
-            <label>Profile Picture</label>
-            <input type="file" name="profilePic" onChange={handleChange} />
-          </div>
-
-          {/* Buttons */}
-          <div className="button-row">
-            <button
-              type="button"
-              className="btn-link"
-              onClick={() => navigate("/login")}
-            >
-              Go Back
-            </button>
-            <button type="submit">Register</button>
-          </div>
-        </form>
+      <div className="register-card" style={{ textAlign: "center" }}>
+        <h2 style={{ color: "#1976d2" }}>✅ Registration Successful!</h2>
+        <p>Your account has been created successfully.</p>
+        <p>Please wait for an activation email from the admin to access your account.</p>
+        <button
+          style={{
+            marginTop: "20px",
+            padding: "10px 20px",
+            borderRadius: "6px",
+            background: "#1976d2",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/login")}
+        >
+          Go to Login
+        </button>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default RegistrationSuccess;

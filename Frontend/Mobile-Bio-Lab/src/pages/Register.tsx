@@ -52,14 +52,14 @@ const Register: React.FC = () => {
         if (value !== null) data.append(key, value as Blob | string);
       });
 
-      // Use your service or axios directly
       await createUser(data);
-      // OR: await axios.post("http://localhost:5000/api/auth/register", data, { headers: { "Content-Type": "multipart/form-data" } });
-
       navigate("/registration-success");
-    } catch (error) {
-      console.error("Registration failed:", error);
-      alert("Failed to register. Please try again.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Failed to register. Please try again.");
+      }
     }
   };
 
@@ -133,20 +133,19 @@ const Register: React.FC = () => {
               />
             </div>
             <div className="role-group">
-  <label>Role</label>
-  <select
-    name="role"
-    value={formData.role}
-    onChange={handleChange}
-    required
-  >
-    <option value="">-- Select Role --</option>
-    <option value="student">Student</option>
-    <option value="researcher">Researcher</option>
-    <option value="technician">Technician</option>
-  </select>
-</div>
-
+              <label>Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- Select Role --</option>
+                <option value="student">Student</option>
+                <option value="researcher">Researcher</option>
+                <option value="technician">Technician</option>
+              </select>
+            </div>
           </div>
 
           {/* Mobile + City */}
