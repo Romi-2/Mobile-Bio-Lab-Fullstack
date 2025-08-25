@@ -3,25 +3,43 @@ import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 const Navbar: React.FC = () => {
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+  let loggedInUser = null;
+
+  try {
+    const storedUser = localStorage.getItem("loggedInUser");
+    if (storedUser && storedUser !== "undefined") {
+      loggedInUser = JSON.parse(storedUser);
+    }
+  } catch (err) {
+    console.error("Error parsing loggedInUser from localStorage:", err);
+    loggedInUser = null;
+  }
 
   return (
     <nav className="navbar">
       <div className="navbar-logo">
         <Link to="/">Mobile Bio Lab</Link>
       </div>
+
       <ul className="navbar-links">
         <li>
           <Link to="/">Home</Link>
         </li>
 
-        {/* ✅ Only show Dashboard if user is admin */}
+        {/* Show Dashboard links depending on role */}
         {loggedInUser?.role === "admin" && (
           <li>
-            <Link to="/dashboard">Admin Dashboard</Link>
+            <Link to="/admin-dashboard">Admin Dashboard</Link>
           </li>
         )}
 
+        {loggedInUser?.role === "user" && (
+          <li>
+            <Link to="/user-dashboard">User Dashboard</Link>
+          </li>
+        )}
+
+        {/* Auth buttons */}
         {loggedInUser ? (
           <li>
             <button
@@ -35,7 +53,7 @@ const Navbar: React.FC = () => {
           </li>
         ) : (
           <li>
-            <Link to="/login">Login</Link> {/* ✅ fixed here */}
+            <Link to="/login">Login</Link>
           </li>
         )}
       </ul>

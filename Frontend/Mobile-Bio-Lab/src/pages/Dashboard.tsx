@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { getPendingUsers, approveUser, rejectUser } from "../service/adminservice";
 
 interface User {
-  _id: string;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
   city: string;
   role: string;
-  profilePicture?: string;
-  isActive: boolean;
+  status?: string;
 }
 
 const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "null");
-    if (!loggedInUser || loggedInUser.role !== "admin") {
+    const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+    setLoggedInUser(user);
+
+    if (!user) {
       window.location.href = "/home";
     }
   }, []);
@@ -25,44 +27,87 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get<User[]>("http://localhost:5000/api/admin/users");
-        setUsers(res.data);
+        const fetchedUsers = await getPendingUsers(); // ✅ use fetchedUsers consistently
+        setUsers(fetchedUsers);
       } catch (err) {
         console.error("Error fetching users:", err);
       }
     };
+
     fetchUsers();
   }, []);
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (id: number) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/users/${id}/approve`);
-      setUsers(prev => prev.map(u => (u._id === id ? { ...u, isActive: true } : u)));
+      await approveUser(id);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status: "approved" } : u))
+      );
     } catch (err) {
       console.error("Error approving user:", err);
     }
   };
 
+  const handleReject = async (id: number) => {
+    try {
+      await rejectUser(id);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status: "rejected" } : u))
+      );
+    } catch (err) {
+      console.error("Error rejecting user:", err);
+    }
+  };
+
   return (
     <div className="dashboard-container">
-      <h2>Admin Dashboard</h2>
+      <h2>Dashboard</h2>
       <ul className="user-list">
-        {users.map(u => (
-          <li key={u._id}>
+        {loggedInUser?.role === "admin" ? (
+          users.map((u) => (
+            <li key={u.id}>
+              <div className="user-info">
+                <strong>
+                  {u.firstName} {u.lastName}
+                </strong>
+                <br />
+                Email: {u.email}
+                <br />
+                City: {u.city}
+                <br />
+                Status: {u.status || "pending ❌"}
+              </div>
+              <div>
+                <span className="user-role">{u.role.toUpperCase()}</span>
+                {u.status === "pending" && (
+                  <>
+                    <button onClick={() => handleApprove(u.id)}>Approve</button>
+                    <button onClick={() => handleReject(u.id)}>Reject</button>
+                  </>
+                )}
+              </div>
+            </li>
+          ))
+        ) : (
+          // ✅ Normal user: only see own status
+          <li>
             <div className="user-info">
-              <strong>{u.firstName} {u.lastName}</strong><br />
-              Email: {u.email}<br />
-              City: {u.city}<br />
-              Status: {u.isActive ? "Approved ✅" : "Pending ❌"}
-            </div>
-            <div>
-              <span className="user-role">{u.role.toUpperCase()}</span>
-              {!u.isActive && (
-                <button onClick={() => handleApprove(u._id)}>Approve</button>
-              )}
+              <strong>
+                {loggedInUser?.firstName} {loggedInUser?.lastName}
+              </strong>
+              <br />
+              Email: {loggedInUser?.email}
+              <br />
+              City: {loggedInUser?.city}
+              <br />
+              Status:{" "}
+              {
+                users.find((u) => u.id === loggedInUser?.id)?.status ||
+                "pending ❌"
+              }
             </div>
           </li>
-        ))}
+        )}
       </ul>
     </div>
   );
