@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Updated User type to match backend response
+// Updated User type to match backend
 type User = {
   id: number;
   firstName: string;
@@ -31,19 +31,25 @@ const Login: React.FC = () => {
 
       const data: { token?: string; user?: User; message?: string } = await response.json();
 
+      console.log("Login response:", data);
+
       if (response.ok && data.user) {
-        // ✅ Check user approval status
-        if (data.user.status === "pending") {
+        const role = (data.user.role || "").trim().toLowerCase();
+        const status = (data.user.status || "").trim().toLowerCase();
+
+        console.log("Role:", role, "Status:", status);
+
+        if (status === "pending") {
           setError("⏳ Please wait for approval from admin.");
           return;
         }
 
-        // Save token and user object
+        // Save token and user
         localStorage.setItem("token", data.token || "");
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
 
         // Redirect based on role
-        if (data.user.role === "admin") {
+        if (role === "admin") {
           navigate("/dashboard");
         } else {
           navigate("/home");
@@ -52,7 +58,7 @@ const Login: React.FC = () => {
         setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
       setError("Something went wrong. Try again later.");
     }
   };
