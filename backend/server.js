@@ -5,8 +5,8 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 
 // Routes
-import authRoute from "./routes/authRoute.js";   // Registration & Login
-import adminRoute from "./routes/adminRoute.js"; // Admin CRUD
+import authRoute from "./routes/authroutes.js";// Registration & Login
+import adminRoute from "./routes/adminroute.js"; // Admin CRUD
 import userRoute from "./routes/userRoute.js";   // User CRUD
 
 dotenv.config();
