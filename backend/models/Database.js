@@ -1,10 +1,11 @@
-const mysql = require("mysql2/promise");
+import mysql from "mysql2/promise";
 
-const db = mysql.createPool({
+export const db = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "",       // your MySQL password
-  database: "mobile_bio_lab"
+  database: "mobile_bio_lab",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
-
-module.exports = db;

@@ -1,93 +1,57 @@
+// backend/routes/adminRoutes.js
 import express from "express";
-import crypto from "crypto";
-import nodemailer from "nodemailer";
-import { db } from "../server.js"; // MySQL connection
-import transporter from "../emailConfig.js"; // Email transporter
-
+import { db } from "../server.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// ✅ Middleware to check if user is admin
-// You need some auth mechanism (JWT/session) to set req.user.id
-const isAdmin = (req, res, next) => {
-  const userId = req.user?.id; // Set this from your auth middleware
+// Middleware: verify admin token
+function verifyAdmin(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "No token provided" });
 
-  if (!userId) return res.status(401).json({ message: "Unauthorized" });
+  jwt.verify(token, "secretkey", (err, decoded) => {
+    if (err) return res.status(403).json({ error: "Invalid token" });
+    if (decoded.role !== "admin")
+      return res.status(403).json({ error: "Not authorized" });
 
-  db.query("SELECT role FROM users WHERE id = ?", [userId], (err, results) => {
-    if (err) return res.status(500).json({ message: "DB error", error: err });
-
-    if (results.length === 0 || results[0].role !== "admin") {
-      return res.status(403).json({ message: "Access denied. Admins only." });
-    }
-
+    req.admin = decoded;
     next();
   });
-};
+}
 
-// ✅ Approve user and send activation email
-router.post("/approve/:id", isAdmin, (req, res) => {
-  const userId = req.params.id;
-
-  // Generate activation token
-  const token = crypto.randomBytes(20).toString("hex");
-
-  // Update user with token
-  db.query(
-    "UPDATE users SET activationToken = ? WHERE id = ?",
-    [token, userId],
-    (err) => {
-      if (err) return res.status(500).json({ message: "DB error", error: err });
-
-      // Fetch user email and vu_id
-      db.query("SELECT email, vu_id FROM users WHERE id = ?", [userId], (err2, results) => {
-        if (err2) return res.status(500).json({ message: "DB error", error: err2 });
-        if (results.length === 0) return res.status(404).json({ message: "User not found" });
-
-        const user = results[0];
-
-  
-        const activationLink = `http://localhost:3000/activate/${user.vu_id}?token=${token}`;
-
-        const mailOptions = {
-          from: "yourvuemail@gmail.com",
-          to: user.email,
-          subject: "Account Activation",
-          html: `<p>Hello,</p>
-                 <p>Your account has been approved. Click the link below to activate:</p>
-                 <a href="${activationLink}">Activate Now</a>`,
-        };
-
-        transporter.sendMail(mailOptions, (error) => {
-          if (error) return res.status(500).json({ message: "Failed to send email", error });
-
-          res.json({ message: "✅ User approved and activation email sent." });
-        });
-      });
-    }
-  );
+// ✅ GET pending users
+router.get("/pending-users", verifyAdmin, (req, res) => {
+  const query = `
+    SELECT id, first_name AS firstName, last_name AS lastName, email, city, role, status
+    FROM users
+    WHERE status = 'pending'
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    res.json({ users: results });
+  });
 });
 
-// ✅ Admin updates limited user profile details
-router.put("/update/:id", isAdmin, (req, res) => {
-  const { email, city, profilePicture } = req.body;
-  const userId = req.params.id;
+// ✅ POST approve user
+router.post("/approve/:id", verifyAdmin, (req, res) => {
+  const query = `UPDATE users SET status = 'approved' WHERE id = ?`;
+  db.query(query, [req.params.id], (err, result) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
 
-  const fields = [];
-  const values = [];
+    res.json({ message: "User approved" });
+  });
+});
 
-  if (email) { fields.push("email = ?"); values.push(email); }
-  if (city) { fields.push("city = ?"); values.push(city); }
-  if (profilePicture) { fields.push("profilePicture = ?"); values.push(profilePicture); }
+// ✅ POST reject user
+router.post("/reject/:id", verifyAdmin, (req, res) => {
+  const query = `UPDATE users SET status = 'rejected' WHERE id = ?`;
+  db.query(query, [req.params.id], (err, result) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
 
-  if (fields.length === 0) return res.status(400).json({ message: "No fields to update" });
-
-  const query = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
-  values.push(userId);
-
-  db.query(query, values, (err) => {
-    if (err) return res.status(500).json({ message: "DB error", error: err });
-    res.json({ message: "✅ User profile updated successfully" });
+    res.json({ message: "User rejected" });
   });
 });
 
