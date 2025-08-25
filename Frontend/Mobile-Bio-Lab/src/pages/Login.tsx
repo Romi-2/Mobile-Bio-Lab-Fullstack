@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Updated User type to match backend
 type User = {
   id: number;
   firstName: string;
@@ -9,7 +8,6 @@ type User = {
   email: string;
   role: "admin" | "user";
   status: "pending" | "approved" | "rejected";
-  city?: string;
 };
 
 const Login: React.FC = () => {
@@ -29,15 +27,12 @@ const Login: React.FC = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data: { token?: string; user?: User; message?: string } = await response.json();
-
-      console.log("Login response:", data);
+      const data: { token?: string; user?: User; message?: string } =
+        await response.json();
 
       if (response.ok && data.user) {
-        const role = (data.user.role || "").trim().toLowerCase();
-        const status = (data.user.status || "").trim().toLowerCase();
-
-        console.log("Role:", role, "Status:", status);
+        const role = data.user.role.trim().toLowerCase();
+        const status = data.user.status.trim().toLowerCase();
 
         if (status === "pending") {
           setError("⏳ Please wait for approval from admin.");
@@ -49,11 +44,12 @@ const Login: React.FC = () => {
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
 
         // Redirect based on role
-        if (role === "admin") {
-          navigate("/dashboard");
-        } else {
-          navigate("/home");
-        }
+        if (role === "admin") navigate("/admin-dashboard");
+        else if (role === "user") navigate("/dashboard");
+        else navigate("/");
+
+        // Force Navbar to re-render by reloading
+        window.location.reload();
       } else {
         setError(data.message || "Login failed. Please try again.");
       }

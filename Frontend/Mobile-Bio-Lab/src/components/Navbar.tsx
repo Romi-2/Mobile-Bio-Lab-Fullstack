@@ -1,24 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
+type User = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: "admin" | "user";
+  status: "pending" | "approved" | "rejected";
+  city?: string;
+};
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
 
-  // Get logged-in user from localStorage
-  let loggedInUser = null;
-  try {
+  useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
     if (storedUser && storedUser !== "undefined") {
-      loggedInUser = JSON.parse(storedUser);
+      setLoggedInUser(JSON.parse(storedUser) as User);
     }
-  } catch (err) {
-    console.error("Error parsing loggedInUser from localStorage:", err);
-  }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
-    navigate("/login"); // redirect to login after logout
+    localStorage.removeItem("token");
+    setLoggedInUser(null);
+    navigate("/login");
   };
 
   return (
@@ -28,37 +37,32 @@ const Navbar: React.FC = () => {
       </div>
 
       <ul className="navbar-links">
-        {/* Always show Home if logged in */}
-        {loggedInUser && (
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-        )}
-
-        {/* Role-based dashboard links */}
-        {loggedInUser?.role === "admin" && (
-          <li>
-            <Link to="/admin-dashboard">Admin Dashboard</Link>
-          </li>
-        )}
-        {loggedInUser?.role === "user" && (
-          <li>
-            <Link to="/dashboard">Dashboard</Link>
-          </li>
-        )}
-
-        {/* Auth buttons */}
-        {loggedInUser ? (
-          <li>
-            <button onClick={handleLogout}>Logout</button>
-          </li>
-        ) : (
+        {!loggedInUser ? (
           <>
             <li>
               <Link to="/login">Login</Link>
             </li>
             <li>
               <Link to="/register">Register</Link>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            {loggedInUser.role === "admin" && (
+              <li>
+                <Link to="/admin-dashboard">Admin Dashboard</Link>
+              </li>
+            )}
+            {loggedInUser.role === "user" && (
+              <li>
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
+            )}
+            <li>
+              <button onClick={handleLogout}>Logout</button>
             </li>
           </>
         )}
