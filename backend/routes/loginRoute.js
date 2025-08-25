@@ -1,6 +1,6 @@
 // backend/routes/loginRoute.js
 import express from "express";
-import { db } from "../server.js"; // Your MySQL connection
+import { db } from "../server.js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -32,7 +32,6 @@ router.post("/", (req, res) => {
 
     const user = results[0];
 
-    // Password check (plain text for now)
     if (password !== user.password) {
       return res.status(401).json({ message: "Incorrect password" });
     }
@@ -44,7 +43,7 @@ router.post("/", (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Return user object including status
+    // ✅ Return user object including status
     res.json({
       token,
       user: {
@@ -53,7 +52,7 @@ router.post("/", (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
-        status: user.status, // ✅ include status
+        status: user.status, // important for frontend approval check
       },
     });
   });
