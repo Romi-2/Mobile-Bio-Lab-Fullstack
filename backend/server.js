@@ -8,6 +8,8 @@ import dotenv from "dotenv";
 import authRoute from "./routes/authroutes.js";// Registration & Login
 import adminRoute from "./routes/adminroutes.js"; // Admin CRUD
 import userRoute from "./routes/userRoute.js";   // User CRUD
+import registerRoute from "./routes/registerRoute.js";
+app.use("/api/auth/register", registerRoute);
 
 dotenv.config();
 const app = express();

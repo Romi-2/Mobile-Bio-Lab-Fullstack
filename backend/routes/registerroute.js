@@ -12,8 +12,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Register route
-router.post("/register", upload.single("profilePic"), async (req, res) => {
+// Single POST route
+router.post("/", upload.single("profilePic"), async (req, res) => {
   try {
     const { firstName, lastName, vuId, email, password, mobile, city, role } = req.body;
     const profilePic = req.file ? `/uploads/${req.file.filename}` : null;

@@ -1,15 +1,12 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+// backend/middleware/authMiddleware.js
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-dotenv.config();
-
-export const protect = (req, res, next) => {
+const protect = (req, res, next) => {
   let token = null;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
+  // Check for Bearer token in Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
 
@@ -19,17 +16,19 @@ export const protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // now user info is available in routes
+    req.user = decoded; // attach user info to req
     next();
   } catch (error) {
-    res.status(401).json({ message: "Unauthorized, invalid token" });
+    return res.status(401).json({ message: "Unauthorized, invalid token" });
   }
 };
 
-export const adminOnly = (req, res, next) => {
+const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
   } else {
-    res.status(403).json({ message: "Forbidden, Admins only" });
+    return res.status(403).json({ message: "Forbidden, Admins only" });
   }
 };
+
+module.exports = { protect, adminOnly };
