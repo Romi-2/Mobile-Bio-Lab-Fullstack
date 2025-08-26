@@ -31,7 +31,6 @@ const Login: React.FC = () => {
         await response.json();
 
       if (response.ok && data.user) {
-        const role = data.user.role.trim().toLowerCase();
         const status = data.user.status.trim().toLowerCase();
 
         if (status === "pending") {
@@ -39,17 +38,12 @@ const Login: React.FC = () => {
           return;
         }
 
-        // Save token and user
+        // Save token & user
         localStorage.setItem("token", data.token || "");
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
 
-        // Redirect based on role
-        if (role === "admin") navigate("/admin-dashboard");
-        else if (role === "user") navigate("/dashboard");
-        else navigate("/");
-
-        // Force Navbar to re-render by reloading
-        window.location.reload();
+        // Navigate to Home page
+        navigate("/");
       } else {
         setError(data.message || "Login failed. Please try again.");
       }
