@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../service/userService";
+// import { createUser } from "../service/userService";
+import { registerUser } from "../service/userService";
+
 import "../App.css";
 
 const Register: React.FC = () => {
@@ -52,8 +54,9 @@ const Register: React.FC = () => {
         if (value !== null) data.append(key, value as Blob | string);
       });
 
-      await createUser(data);
-      navigate("/registration-success");
+      await registerUser(data); // ✅ Call the public registration function
+navigate("/registration-success");
+
     } catch (error: unknown) {
       if (error instanceof Error) {
         alert(error.message);

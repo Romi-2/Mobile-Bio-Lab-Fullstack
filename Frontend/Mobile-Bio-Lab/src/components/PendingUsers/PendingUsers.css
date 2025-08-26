@@ -1,0 +1,17 @@
+.pending-users ul {
+  list-style: none;
+  padding: 0;
+}
+
+.pending-users li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.pending-users button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}

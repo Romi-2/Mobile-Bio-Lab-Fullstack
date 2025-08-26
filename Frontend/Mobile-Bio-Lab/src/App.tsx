@@ -2,7 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import ActivatePage from "./pages/Activepage";
 import RegistrationSuccess from "./pages/RegistrationSuccess";
 import Home from "./pages/Home";
@@ -27,7 +27,7 @@ function AppContent() {
               <Dashboard />
             </ProtectedRoute>
           } />
-          <Route path="/admin-dashboard" element={
+          <Route path="/adminDashboard" element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AdminDashboard />
             </ProtectedRoute>

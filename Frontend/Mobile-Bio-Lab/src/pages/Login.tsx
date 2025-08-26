@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 type User = {
   id: number;
@@ -38,12 +38,13 @@ const Login: React.FC = () => {
           return;
         }
 
-        // Save token & user
+        // Save token & user info
         localStorage.setItem("token", data.token || "");
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+        localStorage.setItem("role", data.user.role);
 
-        // Navigate to Home page
-        navigate("/");
+        // ✅ Redirect to home instead of dashboard
+        navigate("/home");
       } else {
         setError(data.message || "Login failed. Please try again.");
       }
@@ -84,6 +85,16 @@ const Login: React.FC = () => {
         </form>
 
         {error && <div className="error-message">{error}</div>}
+
+        {/* ✅ Links for forgot password & register */}
+        <div className="login-links">
+          <p>
+            <Link to="/forgotPassword">Forgot Password?</Link>
+          </p>
+          <p>
+            New user? <Link to="/register">Register here</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

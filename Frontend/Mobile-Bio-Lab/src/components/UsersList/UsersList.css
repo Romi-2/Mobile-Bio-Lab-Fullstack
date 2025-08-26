@@ -1,0 +1,22 @@
+.users-list input {
+  margin-bottom: 15px;
+  padding: 8px;
+  width: 100%;
+}
+
+.users-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.users-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+.users-list button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}

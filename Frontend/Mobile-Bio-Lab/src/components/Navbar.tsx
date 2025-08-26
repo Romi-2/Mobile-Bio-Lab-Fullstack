@@ -51,16 +51,20 @@ const Navbar: React.FC = () => {
             <li>
               <Link to="/">Home</Link>
             </li>
+
+            {/* ✅ Admin route fixed */}
             {loggedInUser.role === "admin" && (
               <li>
-                <Link to="/admin-dashboard">Admin Dashboard</Link>
+                <Link to="/adminDashboard">Admin Dashboard</Link>
               </li>
             )}
+
             {loggedInUser.role === "user" && (
               <li>
                 <Link to="/dashboard">Dashboard</Link>
               </li>
             )}
+
             <li>
               <button onClick={handleLogout}>Logout</button>
             </li>

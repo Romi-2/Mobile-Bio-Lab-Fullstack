@@ -1,12 +1,16 @@
-// src/types/User.ts
-export type UserRole = "admin" | "student" | "teacher" | "technician"; 
+// // UserRole union type
+// export type UserRole = "Student" | "Researcher" | "Technician" | "admin";
 
-export interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  city?: string;
-  role: UserRole;  // updated to allow all backend roles
-  status: "pending" | "approved" | "rejected";
-}
+// // User type
+// export interface User {
+//   id: number;
+//   firstName: string;
+//   lastName: string;
+//   vuId: string;
+//   email: string;
+//   mobile: string;
+//   role: UserRole;
+//   city: string;
+//   profilePic?: string;
+//   status: "pending" | "approved" | "rejected";
+// }
