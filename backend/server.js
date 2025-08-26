@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 // Routes
 import authRoute from "./routes/authroutes.js";// Registration & Login
-import adminRoute from "./routes/adminroute.js"; // Admin CRUD
+import adminRoute from "./routes/adminroutes.js"; // Admin CRUD
 import userRoute from "./routes/userRoute.js";   // User CRUD
 
 dotenv.config();
