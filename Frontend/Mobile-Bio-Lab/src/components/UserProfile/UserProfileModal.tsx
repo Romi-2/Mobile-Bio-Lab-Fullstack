@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { updateUser, type User } from "../../service/adminservice";
+import React, { useState, useEffect } from "react";
+import { updateUser, type User } from "../../services/adminservice";
 import "./UserProfileModal.css";
 
 interface Props {
@@ -9,16 +9,43 @@ interface Props {
 }
 
 const UserProfileModal: React.FC<Props> = ({ user, onClose, onUpdated }) => {
-  const [email, setEmail] = useState(user?.email || "");
-  const [city, setCity] = useState(user?.city || "");
-  const [profilePicture, setProfilePicture] = useState(user?.profilePicture || "");
+  const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email);
+      setCity(user.city);
+      setPreviewUrl(user.profilePicture || "");
+    }
+  }, [user]);
 
   if (!user) return null;
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleSave = async () => {
-    await updateUser(user.id, { email, city, profilePicture });
-    onUpdated();
-    onClose();
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("city", city);
+      if (profileFile) formData.append("profilePic", profileFile);
+
+      await updateUser(user.id, formData); // Make sure your backend accepts FormData
+      onUpdated();
+      onClose();
+    } catch (err) {
+      console.error("Update failed", err);
+      alert("Failed to update user.");
+    }
   };
 
   return (
@@ -32,11 +59,9 @@ const UserProfileModal: React.FC<Props> = ({ user, onClose, onUpdated }) => {
         <label>City:</label>
         <input value={city} onChange={(e) => setCity(e.target.value)} />
 
-        <label>Profile Picture URL:</label>
-        <input
-          value={profilePicture}
-          onChange={(e) => setProfilePicture(e.target.value)}
-        />
+        <label>Profile Picture:</label>
+        <input type="file" onChange={handleFileChange} />
+        {previewUrl && <img src={previewUrl} alt="Preview" className="preview-img" />}
 
         <div className="actions">
           <button onClick={handleSave}>Save</button>

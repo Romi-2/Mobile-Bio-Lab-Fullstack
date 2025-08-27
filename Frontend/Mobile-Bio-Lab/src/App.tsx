@@ -2,36 +2,53 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+import AdminDashboard from "./pages/Dashboard/AdminDashboard"; // ✅ correct path
 import ActivatePage from "./pages/Activepage";
 import RegistrationSuccess from "./pages/RegistrationSuccess";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PendingUsers from "./components/PendingUsers/PendingUsers"; // ✅ correct path
+import UsersList from "./components/UsersList/UsersList"; // ✅ correct path
 import "./App.css";
 
 function AppContent() {
   const location = useLocation();
-  const showHeader = location.pathname !== "/login" && location.pathname !== "/register";
+  const showHeader =
+    location.pathname !== "/login" && location.pathname !== "/register";
 
   return (
     <>
       {showHeader && <Navbar />}
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute allowedRoles={["user", "admin"]}>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/adminDashboard" element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
+
+          {/* User dashboard */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["user", "admin"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin dashboard with nested routes */}
+          <Route
+            path="/adminDashboard/*"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="pending" element={<PendingUsers />} />
+         <Route path="users" element={<UsersList/>} />   {/* ✅ add user list route */}
+          </Route>
+
           <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/activate/:studentId" element={<ActivatePage />} />
         </Routes>

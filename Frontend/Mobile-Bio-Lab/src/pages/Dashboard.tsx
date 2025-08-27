@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPendingUsers, approveUser, rejectUser } from "../service/adminservice";
+import { getPendingUsers, approveUser, rejectUser } from "../services/adminservice";
 
 interface User {
   id: number;

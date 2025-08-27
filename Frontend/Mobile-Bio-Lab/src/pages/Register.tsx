@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { createUser } from "../service/userService";
-import { registerUser } from "../service/userService";
+import { registerUser } from "../services/userService";
 
 import "../App.css";
 

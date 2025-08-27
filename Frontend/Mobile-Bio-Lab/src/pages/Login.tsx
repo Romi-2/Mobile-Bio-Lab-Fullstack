@@ -8,6 +8,7 @@ type User = {
   email: string;
   role: "admin" | "user";
   status: "pending" | "approved" | "rejected";
+  city?: string;
 };
 
 const Login: React.FC = () => {
@@ -30,7 +31,7 @@ const Login: React.FC = () => {
       const data: { token?: string; user?: User; message?: string } =
         await response.json();
 
-      if (response.ok && data.user) {
+      if (response.ok && data.user && data.token) {
         const status = data.user.status.trim().toLowerCase();
 
         if (status === "pending") {
@@ -38,12 +39,14 @@ const Login: React.FC = () => {
           return;
         }
 
-        // Save token & user info
-        localStorage.setItem("token", data.token || "");
+        // ✅ Store JWT token in localStorage for PendingUsers page
+        localStorage.setItem("token", data.token);
+
+        // ✅ Save user info for app use
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
         localStorage.setItem("role", data.user.role);
 
-        // ✅ Redirect to home instead of dashboard
+        // ✅ Redirect ALL users to home page
         navigate("/home");
       } else {
         setError(data.message || "Login failed. Please try again.");
@@ -86,7 +89,6 @@ const Login: React.FC = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* ✅ Links for forgot password & register */}
         <div className="login-links">
           <p>
             <Link to="/forgotPassword">Forgot Password?</Link>

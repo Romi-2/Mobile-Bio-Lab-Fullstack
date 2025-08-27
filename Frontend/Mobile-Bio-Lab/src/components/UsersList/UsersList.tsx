@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { getAllUsers, deleteUser, type User } from "../../service/adminservice";  // ✅ import User
+import React, { useEffect , useState } from "react";
+import { getAllUsers, deleteUser } from "../../services/userslistservice";
+import type { User } from "../../services/adminservice";
 import "./UsersList.css";
 
 const UsersList: React.FC = () => {
@@ -9,11 +10,11 @@ const UsersList: React.FC = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  const fetchUsers = async () => {
-    const res = await getAllUsers();
-    setUsers(res);
-  };
+const fetchUsers = async () => {
+  const res = await getAllUsers();
+  console.log("Fetched Users:", res);   // 👈 check what comes here
+  setUsers(res);
+};
 
   const handleDelete = async (id: number) => {
     await deleteUser(id);

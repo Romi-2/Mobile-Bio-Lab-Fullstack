@@ -1,31 +1,27 @@
-// src/pages/ActivatePage.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { activateUser } from "../services/activeservice";
 
 function ActivatePage() {
-  const { studentId } = useParams();
+  const { userId } = useParams(); // now using userId from URL
   const navigate = useNavigate();
   const [message, setMessage] = useState("Activating your account...");
 
   useEffect(() => {
-    const activateUser = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/activate/${studentId}`);
-        const data = await res.json(); // backend should return JSON {success: true/false, message: "..."}
-        
-        if (res.ok && data.success) {
-          setMessage("✅ " + data.message);
-          setTimeout(() => navigate("/login"), 3000); // redirect to login
-        } else {
-          setMessage("❌ " + (data.message || "Activation failed."));
-        }
-      } catch {
-        setMessage("⚠️ Server error. Please try again later.");
+    const activate = async () => {
+      if (!userId) return setMessage("❌ Invalid user ID");
+
+      const data = await activateUser(Number(userId));
+      if (data.success) {
+        setMessage("✅ " + data.message);
+        setTimeout(() => navigate("/login"), 3000);
+      } else {
+        setMessage("❌ " + (data.message || "Activation failed."));
       }
     };
 
-    activateUser();
-  }, [studentId, navigate]);
+    activate();
+  }, [userId, navigate]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
