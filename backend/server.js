@@ -5,14 +5,14 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 
 // Routes
-import authRoute from "./routes/authroutes.js";// Registration & Login
+import authRoute from "./routes/authRoute.js"; // Registration & Login
 import adminRoute from "./routes/adminroutes.js"; // Admin CRUD
 import userRoute from "./routes/userRoute.js";   // User CRUD
 import registerRoute from "./routes/registerRoute.js";
-app.use("/api/auth/register", registerRoute);
 
 dotenv.config();
-const app = express();
+
+const app = express(); // ✅ declare app first
 const PORT = process.env.PORT || 5000;
 
 // Middleware
@@ -35,17 +35,19 @@ db.connect((err) => {
     process.exit(1);
   }
   console.log("✅ Connected to MySQL database");
-
-  // Routes
-  app.use("/api/auth", authRoute);   // Handles register & login
-  app.use("/api/admin", adminRoute); // Admin actions
-  app.use("/api/users", userRoute);  // User CRUD
-
-  // Test route
-  app.get("/", (req, res) => res.send("🚀 API is running..."));
-
-  // Start server
-  app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
 });
+
+// ------------------------
+// Routes
+app.use("/api/auth/register", registerRoute); // Register
+app.use("/api/auth", authRoute);             // Login & auth
+app.use("/api/admin", adminRoute);           // Admin
+app.use("/api/users", userRoute);            // User CRUD
+
+// Test route
+app.get("/", (req, res) => res.send("🚀 API is running..."));
+
+// Start server
+app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
 
 export default app;

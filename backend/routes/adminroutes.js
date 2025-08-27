@@ -1,8 +1,8 @@
-// backend/routes/adminRoutes.js
 import express from "express";
-import { db } from "../server.js"; // or your Database.js
+import { db } from "../server.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
-import transporter from "../emailConfig.js"; // your nodemailer config
+import transporter from "../emailConfig.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -19,31 +19,45 @@ router.get("/pending-users", protect, adminOnly, (req, res) => {
   });
 });
 
-// ✅ Approve user + send activation email
+// ✅ Approve user + store ActivationToken + send email
 router.post("/approve/:id", protect, adminOnly, (req, res) => {
   const userId = req.params.id;
 
-  const query = `UPDATE users SET status = 'approved' WHERE id = ?`;
-  db.query(query, [userId], (err, result) => {
+  // Generate activation token
+  const activationToken = jwt.sign(
+    { id: userId },
+    process.env.JWT_SECRET || "secretkey",
+    { expiresIn: "1d" }
+  );
+
+  // Update user status and store activation token
+  const updateQuery = `
+    UPDATE users 
+    SET status = 'approved', ActivationToken = ? 
+    WHERE id = ?
+  `;
+  db.query(updateQuery, [activationToken, userId], (err, result) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
 
-    // Get user email for sending activation link
-    db.query(`SELECT email FROM users WHERE id = ?`, [userId], (err, rows) => {
+    // Fetch user email for sending activation
+    db.query("SELECT email, first_name FROM users WHERE id = ?", [userId], (err, rows) => {
       if (err) return res.status(500).json({ error: "Database error" });
 
-      const userEmail = rows[0]?.email;
-      const activationLink = `http://localhost:3000/activate/${userId}`;
+      const userEmail = rows[0].email;
+      const firstName = rows[0].first_name;
+
+      const activationLink = `http://localhost:3000/activate/${activationToken}`;
 
       const mailOptions = {
         from: "yourapp@gmail.com",
         to: userEmail,
-        subject: "Account Activation",
-        text: `Active Now BC220XXXXXX\nClick here to activate: ${activationLink}`,
+        subject: "Activate Your Account",
+        text: `Hello ${firstName},\n\nClick here to activate your account: ${activationLink}\n\nThanks!`
       };
 
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) return res.status(500).json({ error: "Email failed", details: err });
+      transporter.sendMail(mailOptions, (err) => {
+        if (err) return res.status(500).json({ error: "Email sending failed", details: err });
         res.json({ message: "User approved and activation email sent" });
       });
     });
@@ -56,7 +70,6 @@ router.post("/reject/:id", protect, adminOnly, (req, res) => {
   db.query(query, [req.params.id], (err, result) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
-
     res.json({ message: "User rejected" });
   });
 });
@@ -67,7 +80,6 @@ router.delete("/delete/:id", protect, adminOnly, (req, res) => {
   db.query(query, [req.params.id], (err, result) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
-
     res.json({ message: "User deleted successfully" });
   });
 });

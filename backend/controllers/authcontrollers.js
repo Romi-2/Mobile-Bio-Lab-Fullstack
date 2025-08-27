@@ -26,11 +26,25 @@ exports.loginUser = (req, res) => {
     if (users.length === 0) return res.status(404).json({ msg: "User not found" });
 
     const user = users[0];
+
     bcrypt.compare(password, user.password, (err, match) => {
       if (!match) return res.status(401).json({ msg: "Invalid password" });
 
-      const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      // ✅ Store token in ActivationToken column (optional)
+      const query = "UPDATE users SET ActivationToken = ? WHERE id = ?";
+      User.updateToken(user.id, token, (err, result) => {
+        if (err) console.error("Failed to store token:", err);
+      });
+
       res.json({ token, user });
     });
   });
 };
+
