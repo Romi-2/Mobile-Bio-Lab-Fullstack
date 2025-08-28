@@ -11,11 +11,15 @@ const UsersList: React.FC = () => {
     fetchUsers();
   }, []);
 const fetchUsers = async () => {
-  const res = await getAllUsers();
-  console.log("Fetched Users:", res);   // 👈 check what comes here
-  setUsers(res);
+  try {
+    const res = await getAllUsers();
+    console.log("Fetched Users:", res);
+    setUsers(res);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    setUsers([]); // Prevents component crash
+  }
 };
-
   const handleDelete = async (id: number) => {
     await deleteUser(id);
     fetchUsers();

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { updateUser, type User } from "../../services/adminservice";
+import { updateUserProfile, type UserProfile } from "../../services/userprofileservice";
 import "./UserProfileModal.css";
 
 interface Props {
-  user: User | null;
+  user: UserProfile | null;
   onClose: () => void;
   onUpdated: () => void;
 }
@@ -39,7 +39,7 @@ const UserProfileModal: React.FC<Props> = ({ user, onClose, onUpdated }) => {
       formData.append("city", city);
       if (profileFile) formData.append("profilePic", profileFile);
 
-      await updateUser(user.id, formData); // Make sure your backend accepts FormData
+      await updateUserProfile(user.id, formData);
       onUpdated();
       onClose();
     } catch (err) {

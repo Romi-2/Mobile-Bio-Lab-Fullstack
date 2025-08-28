@@ -7,9 +7,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const role = localStorage.getItem("role"); // set after login
+  const storedUser = localStorage.getItem("loggedInUser");
+  const user = storedUser ? JSON.parse(storedUser) : null;
 
-  if (!role || !allowedRoles.includes(role)) {
+  if (!user || !allowedRoles.includes(user.role)) {
+    // Not logged in or role not allowed → redirect to login
     return <Navigate to="/login" replace />;
   }
 

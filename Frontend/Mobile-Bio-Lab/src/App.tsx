@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PendingUsers from "./components/PendingUsers/PendingUsers"; // ✅ correct path
 import UsersList from "./components/UsersList/UsersList"; // ✅ correct path
 import "./App.css";
+import Profile from "./pages/Profile";
 
 function AppContent() {
   const location = useLocation();
@@ -25,7 +26,7 @@ function AppContent() {
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
+          <Route path="/profile" element={<Profile/>} />
           {/* User dashboard */}
           <Route
             path="/dashboard"
@@ -46,7 +47,7 @@ function AppContent() {
             }
           >
             <Route path="pending" element={<PendingUsers />} />
-         <Route path="users" element={<UsersList/>} />   {/* ✅ add user list route */}
+         <Route path="users" element={<UsersList/>} /> 
           </Route>
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />

@@ -16,6 +16,9 @@ const AdminDashboard: React.FC = () => {
             <li>
               <Link to="users">Users List</Link>
             </li>
+            <li>
+              <Link to="profile">Update Profile</Link>
+            </li>
           </ul>
         </nav>
       </aside>

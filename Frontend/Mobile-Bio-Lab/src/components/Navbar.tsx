@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 import "./Navbar.css";
 
 type User = {
@@ -32,6 +33,12 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar">
+      <div className="navbar-right">
+        {/* Profile Icon */}
+        <Link to="/profile" className="profile-icon">
+          <FaUserCircle size={24} />
+        </Link>
+      </div>
       <div className="navbar-logo">
         <Link to="/">Mobile Bio Lab</Link>
       </div>
@@ -49,7 +56,7 @@ const Navbar: React.FC = () => {
         ) : (
           <>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/home">Home</Link>
             </li>
 
             {/* ✅ Admin route fixed */}

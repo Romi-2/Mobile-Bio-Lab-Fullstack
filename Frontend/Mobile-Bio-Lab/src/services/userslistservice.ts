@@ -1,24 +1,57 @@
-import axios from "axios";
-import type { User } from "./adminservice"; // your shared type
-
-const API = "http://localhost:5000/api/users";
-const getToken = () => localStorage.getItem("token");
-
-interface UsersResponse {
-  users: User[];
-}
-
-export const getAllUsers = async (): Promise<User[]> => {
-  const token = getToken();
-  const res = await axios.get<UsersResponse>(API, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data.users; // TypeScript now knows this is User[]
+// src/services/userslistservice.ts
+export type User = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  city: string;
+  profilePicture?: string;
+  role: "admin" | "user";
+  status?: "pending" | "approved" | "rejected";
 };
 
-export const deleteUser = async (id: number): Promise<void> => {
-  const token = getToken();
-  await axios.delete(`${API}/${id}`, {
+// Fetch all users (for admin dashboard)
+export const getAllUsers = async (): Promise<User[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No authentication token found. Please login.");
+  }
+
+  const res = await fetch("http://localhost:5000/api/users", {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+  if (res.status === 401) {
+    throw new Error("Unauthorized. Please login again.");
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch users");
+  }
+
+  const data = await res.json();
+  return Array.isArray(data) ? data : data.users || [];
+};
+
+// Delete a user by ID
+export const deleteUser = async (id: number) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No authentication token found. Please login.");
+  }
+
+  const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (res.status === 401) {
+    throw new Error("Unauthorized. Please login again.");
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to delete user");
+  }
+
+  return res.json();
 };
