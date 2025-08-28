@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
+// Middleware to verify JWT token
 export const protect = (req, res, next) => {
   let token = null;
 
@@ -16,13 +17,14 @@ export const protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    req.user = decoded; // attach decoded user to request
     next();
-  } catch (error) {
-    return res.status(401).json({ message: "Unauthorized, invalid token" });
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid token" });
   }
 };
 
+// Middleware to allow only admins
 export const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
