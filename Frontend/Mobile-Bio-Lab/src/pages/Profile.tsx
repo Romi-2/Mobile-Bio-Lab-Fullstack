@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
 import type { UserProfile } from "../services/userprofileservice";
-import { getCurrentUser } from "../services/userprofileservice"; // <-- import UserProfile type
+import { getCurrentUser } from "../services/userprofileservice";
+
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<UserProfile | null>(null); // ✅ typed state
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -15,12 +16,8 @@ const Profile: React.FC = () => {
       const userData = await getCurrentUser();
       setUser(userData);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-        console.error("Profile fetch error:", err);
-      } else {
-        setError("Unknown error occurred");
-      }
+      if (err instanceof Error) setError(err.message);
+      else setError("Unknown error occurred");
     } finally {
       setLoading(false);
     }
@@ -31,55 +28,84 @@ const Profile: React.FC = () => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}. Please <a href="/login">login again</a></div>;
+  if (error)
+    return (
+      <div>
+        Error: {error}. Please <a href="/login">login again</a>
+      </div>
+    );
 
-  // Download profile as PDF
   const handleDownloadPDF = () => {
-    if (!user) return;
-    window.open(`http://localhost:5000/api/profile/export/${user.id}`, "_blank");
-  };
+  if (!user) return;
+  // Match the route in profileExportRoute.js
+  window.open(`http://localhost:5000/api/export/profile/${user.id}`, "_blank");
+};
 
   return (
     <div className="profile-container">
       <div className="profile-card">
         <div className="profile-header">
-          <img
-            src={user?.profilePicture || "/default-avatar.png"}
-            alt="Profile"
-            className="profile-avatar"
-          />
-          <h1>{user?.firstName} {user?.lastName}</h1>
+            <img
+                src={
+                  user?.profilePicture
+                    ? `http://localhost:5000/uploads/${user.profilePicture}`
+                    : "/default-avatar.png"
+                }
+                alt="Profile"
+                className="profile-avatar"
+              />
+
           <p>{user?.role}</p>
         </div>
 
         <div className="profile-details">
           <h2>Personal Information</h2>
 
-          <div className="detail-row">
-            {user?.firstName && (
-              <div className="detail-item"><span>First Name:</span> {user.firstName}</div>
-            )}
-            {user?.lastName && (
-              <div className="detail-item"><span>Last Name:</span> {user.lastName}</div>
-            )}
-          </div>
+          {user?.firstName && (
+  <div className="detail-item">
+    <span className="detail-label">First Name:</span>
+    <span className="detail-value">{user.firstName}</span>
+  </div>
+)}
+{user?.lastName && (
+  <div className="detail-item">
+    <span className="detail-label">Last Name:</span>
+    <span className="detail-value">{user.lastName}</span>
+  </div>
+)}
+{user?.vu_id && (
+  <div className="detail-item">
+    <span className="detail-label">VU ID:</span>
+    <span className="detail-value">{user.vu_id}</span>
+  </div>
+)}
+{user?.mobile && (
+  <div className="detail-item">
+    <span className="detail-label">Mobile:</span>
+    <span className="detail-value">{user.mobile}</span>
+  </div>
+)}
+{user?.email && (
+  <div className="detail-item">
+    <span className="detail-label">Email:</span>
+    <span className="detail-value">{user.email}</span>
+  </div>
+)}
+{user?.role && (
+  <div className="detail-item">
+    <span className="detail-label">Role:</span>
+    <span className="detail-value">{user.role}</span>
+  </div>
+)}
+{user?.city && (
+  <div className="detail-item">
+    <span className="detail-label">City:</span>
+    <span className="detail-value">{user.city}</span>
+  </div>
 
-          {user?.studentVUId && (
-            <div className="detail-item"><span>VU ID:</span> {user.studentVUId}</div>
-          )}
-          {user?.mobileNumber && (
-            <div className="detail-item"><span>Mobile:</span> {user.mobileNumber}</div>
-          )}
-
-          <div className="detail-item"><span>Email:</span> {user?.vuEmailAddress || user?.email}</div>
-
-          <div className="detail-row">
-            <div className="detail-item"><span>Role:</span> {user?.role}</div>
-            <div className="detail-item"><span>City:</span> {user?.city}</div>
-          </div>
+)}
 
           <div className="profile-actions">
-            <button className="edit-button">Edit Profile</button>
             <button className="pdf-button" onClick={handleDownloadPDF}>
               Download PDF
             </button>

@@ -114,9 +114,14 @@
   margin: 0;
 }
 
-.profile-details {
+.profile-details{
   padding: 30px;
-  font-size: large;
+}
+.profile-details h2{
+  font-size:xx-large;
+  font-weight:bolder;
+  text-align: center;
+  color: #1976d2;
 }
 
 .section-title {
@@ -138,6 +143,8 @@
   display: flex;
   flex-direction: column;
   color: #1976d2;
+  gap: 8px; /* space between label and value */
+  margin-bottom: 6px;
 }
 
 .detail-item.full-width {
@@ -148,6 +155,7 @@
   font-size: 12px; /* smaller labels */
   color: #7f8c8d;
   margin-bottom: 4px;
+  min-width: 120px; /* makes labels align nicely */
   font-weight: 500;
 }
 

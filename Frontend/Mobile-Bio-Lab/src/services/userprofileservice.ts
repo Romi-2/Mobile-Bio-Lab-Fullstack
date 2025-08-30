@@ -7,9 +7,9 @@ export type UserProfile = {
   role: string;
   city: string;
   status: string;
-  studentVUId: string;
+  vu_id: string;
   vuEmailAddress: string;
-  mobileNumber: string;
+  mobile: string;
   profilePicture: string | null; // ✅ match DB column
 };
 
