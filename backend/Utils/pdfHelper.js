@@ -1,5 +1,7 @@
 // backend/utils/pdfHelper.js
 import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path"; // ✅ needed for absolute path
 
 export const generateUserProfilePDF = (user, res) => {
   const doc = new PDFDocument();
@@ -9,6 +11,22 @@ export const generateUserProfilePDF = (user, res) => {
   res.setHeader("Content-type", "application/pdf");
 
   doc.pipe(res);
+
+  // Add profile picture if available
+  if (user.profilePicture) {
+    // Use absolute path
+    const imagePath = path.join(process.cwd(), "uploads", user.profilePicture);
+
+    if (fs.existsSync(imagePath)) {
+      doc.image(imagePath, {
+        fit: [100, 100],
+        align: "center",
+      });
+      doc.moveDown();
+    } else {
+      console.warn("Profile picture not found:", imagePath);
+    }
+  }
 
   doc.fontSize(20).text("User Profile", { align: "center" });
   doc.moveDown();

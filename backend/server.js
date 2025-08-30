@@ -6,10 +6,12 @@ import dotenv from "dotenv";
 
 // Routes
 import authRoute from "./routes/authRoute.js"; // Registration & Login
+import refreshTokenRoute from "./routes/refreshTokenRoute.js"; // Token refresh
 import adminRoute from "./routes/adminroutes.js"; // Admin CRUD
 import userRoute from "./routes/UserRoute.js";   // User CRUD
 import registerRoute from "./routes/registerRoute.js";
 import profileRoute from "./routes/profileRoute.js";
+import profileExportRoute from "./routes/profileExportRoute.js";
 dotenv.config();
 
 const app = express(); // ✅ declare app first
@@ -41,6 +43,8 @@ app.use("/api/auth", authRoute);             // Login & auth
 app.use("/api/admin", adminRoute);           // Admin
 app.use("/api/users", userRoute);            // User CRUD
 app.use("/api/profile", profileRoute);       // ✅ corrected
+app.use("/api/token", refreshTokenRoute);
+app.use("/api/export", profileExportRoute);
 // Test route
 app.get("/", (req, res) => res.send("🚀 API is running..."));
 
