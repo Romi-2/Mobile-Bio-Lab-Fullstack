@@ -1,6 +1,7 @@
 // backend/middleware/authMiddleware.js
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 // Middleware to verify JWT token
@@ -20,6 +21,7 @@ export const protect = (req, res, next) => {
     req.user = decoded; // attach decoded user to request
     next();
   } catch (err) {
+    console.error("Token verification error:", err.message);
     return res.status(403).json({ message: "Invalid token" });
   }
 };

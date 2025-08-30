@@ -1,12 +1,11 @@
-// backend/routes/userRoutes.js
 import express from "express";
 import { db } from "../server.js";
-import { protect, adminOnly } from "../middleware/authMiddleware.js"; // use your middleware
+import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // --------------------
-// ACTIVATE user account (public, no token required)
+// ACTIVATE user account
 // --------------------
 router.get("/activate/:studentId", (req, res) => {
   const { studentId } = req.params;
@@ -43,7 +42,7 @@ router.get("/", protect, adminOnly, (req, res) => {
   `;
   db.query(query, (err, results) => {
     if (err) return res.status(500).json({ message: "Database error", error: err });
-    res.json({ users: results }); // ✅ wrap inside object
+    res.json({ users: results });
   });
 });
 
@@ -113,27 +112,6 @@ router.delete("/:id", protect, adminOnly, (req, res) => {
     if (result.affectedRows === 0) return res.status(404).json({ message: "User not found" });
     res.json({ message: "User deleted successfully" });
   });
-});
-
-// GET /api/users/me
-
-router.get("/me", protect, (req, res) => {
-  const userId = req.user.id; // this should come from the JWT token
-
-  db.query(
-    "SELECT id, email, city, profilePicture, role FROM users WHERE id = ?",
-    [userId],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({ message: "Database error", error: err });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      res.json(results[0]); // return the user data
-    }
-  );
 });
 
 export default router;

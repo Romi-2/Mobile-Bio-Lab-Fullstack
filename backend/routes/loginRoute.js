@@ -1,72 +1,43 @@
-// // backend/routes/loginRoute.js
-// import express from "express";
-// import { db } from "../server.js";
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { db } from "../server.js";
 
-// const router = express.Router();
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" } // short expiry for access token
+  );
+};
 
-// // POST /api/auth/login
-// router.post("/", (req, res) => {
-//   const { email, password } = req.body;
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user.id },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" } // refresh token lasts longer
+  );
+};
 
-//   if (!email || !password) {
-//     return res.status(400).json({ message: "Email and password are required" });
-//   }
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
 
-//   const query = `
-//     SELECT 
-//       id,
-//       first_name AS firstName,
-//       last_name AS lastName,
-//       email,
-//       password,
-//       role,
-//       status
-//     FROM users
-//     WHERE email = ?
-//   `;
+  db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
+    if (err || results.length === 0) return res.status(401).json({ message: "Invalid credentials" });
 
-//   db.query(query, [email], (err, results) => {
-//     if (err) return res.status(500).json({ message: "Database error" });
-//     if (results.length === 0) return res.status(404).json({ message: "User not found" });
+    const user = results[0];
+    // TODO: check password with bcrypt if hashed
 
-//     const user = results[0];
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
-//     // Check password (plain text, replace with hash in production)
-//     if (password !== user.password) {
-//       return res.status(401).json({ message: "Incorrect password" });
-//     }
+    // Save refresh token in DB
+    db.query(
+      "INSERT INTO refresh_tokens (userId, token, expiry) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))",
+      [user.id, refreshToken],
+      (err2) => {
+        if (err2) return res.status(500).json({ message: "Error saving refresh token" });
 
-//     // Generate JWT token
-//     const token = jwt.sign(
-//       { id: user.id, role: user.role },
-//       process.env.JWT_SECRET || "secretkey",
-//       { expiresIn: "1h" }
-//     );
-
-//     // Ensure status is always returned
-//     const userResponse = {
-//       id: user.id,
-//       firstName: user.firstName,
-//       lastName: user.lastName,
-//       email: user.email,
-//       role: user.role,
-//       status: user.status || "pending", // fallback in case null
-//     };
-
-//    res.json({
-//   token,
-//   user: {
-//     id: user.id,
-//     firstName: user.firstName,
-//     lastName: user.lastName,
-//     email: user.email,
-//     role: user.role,
-//     status: user.status, // this is what your frontend reads
-//   },
-// });
-
-//   });
-// });
-
-// export default router;
+        res.json({ accessToken, refreshToken, user });
+      }
+    );
+  });
+});
