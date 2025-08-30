@@ -4,14 +4,15 @@ export type UserProfile = {
   firstName: string;
   lastName: string;
   email: string;
-  role: string; // allow "student", "admin", "user", etc.
-  status: string;
+  role: string;
   city: string;
-  studentVUId?: string;
-  vuEmailAddress?: string;
-  mobileNumber?: string;
-  profilePicture?: string;
+  status: string;
+  studentVUId: string;
+  vuEmailAddress: string;
+  mobileNumber: string;
+  profilePicture: string | null; // ✅ match DB column
 };
+
 // Fetch profile by ID
 export const getUserProfile = async (id: number): Promise<UserProfile> => {
   const res = await fetch(`http://localhost:5000/api/users/${id}`);
@@ -21,9 +22,12 @@ export const getUserProfile = async (id: number): Promise<UserProfile> => {
 
 // Fetch currently logged-in user
 export const getCurrentUser = async (): Promise<UserProfile> => {
-  const token = localStorage.getItem("token"); 
-  const res = await fetch(`http://localhost:5000/api/users/me`, {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found in localStorage");
+
+  const res = await fetch("http://localhost:5000/api/profile/me", {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
@@ -35,7 +39,7 @@ export const getCurrentUser = async (): Promise<UserProfile> => {
   }
 
   const data = await res.json();
-  return data.user; // <-- return the nested user object
+  return data; // backend already returns the user object
 };
 
 // Update profile
@@ -48,3 +52,4 @@ export const updateUserProfile = async (id: number, formData: FormData) => {
   if (!res.ok) throw new Error("Failed to update user profile");
   return res.json();
 };
+

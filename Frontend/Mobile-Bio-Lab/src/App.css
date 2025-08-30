@@ -87,11 +87,10 @@
 .profile-avatar {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
+  border-radius: 50%; /* fully round */
   object-fit: cover;
   border: 4px solid rgba(255, 255, 255, 0.3);
 }
-
 .online-indicator {
   position: absolute;
   bottom: 10px;
@@ -117,17 +116,17 @@
 
 .profile-details {
   padding: 30px;
+  font-size: large;
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: 18px; /* smaller than before */
   font-weight: 600;
-  margin: 0 0 24px 0;
+  margin: 0 0 16px 0;
   color: #2c3e50;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #eaeaea;
 }
-
 .detail-row {
   display: flex;
   gap: 20px;
@@ -138,6 +137,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  color: #1976d2;
 }
 
 .detail-item.full-width {
@@ -145,17 +145,18 @@
 }
 
 .detail-label {
-  font-size: 14px;
+  font-size: 12px; /* smaller labels */
   color: #7f8c8d;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: 500;
 }
 
 .detail-value {
-  font-size: 16px;
+  font-size: 14px; /* smaller values */
   color: #2c3e50;
   font-weight: 500;
 }
+
 
 .role-badge {
   background-color: #e1f0ff;
@@ -166,26 +167,30 @@
   width: fit-content;
   font-size: 14px;
 }
-
 .profile-actions {
   padding: 20px 30px;
   border-top: 1px solid #eaeaea;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 16px; /* adds distance between buttons */
 }
 
-.edit-button {
-  background-color: #3498db;
-  color: white;
-  border: none;
+.edit-button,
+.pdf-button {
   padding: 12px 24px;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 10px;
   font-weight: 600;
-  transition: background-color 0.2s;
+  cursor: pointer;
+}
+.pdf-button {
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  color: #333;
 }
 
-.edit-button:hover {
-  background-color: #2980b9;
+.pdf-button:hover {
+  background-color: #e0e0e0;
 }
 
 /* Responsive design */

@@ -17,6 +17,29 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // ✅ fetchProfile function
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch("http://localhost:5000/api/profile/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const profileData = await response.json();
+
+      if (response.ok) {
+        console.log("✅ User Profile:", profileData);
+        localStorage.setItem("profile", JSON.stringify(profileData)); // optional
+      } else {
+        console.error("❌ Failed to fetch profile:", profileData.message);
+      }
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -39,14 +62,14 @@ const Login: React.FC = () => {
           return;
         }
 
-        // ✅ Store JWT token in localStorage for PendingUsers page
+        // ✅ Store token + user
         localStorage.setItem("token", data.token);
-
-        // ✅ Save user info for app use
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
         localStorage.setItem("role", data.user.role);
 
-        // ✅ Redirect ALL users to home page
+        // ✅ Fetch user profile after login
+        await fetchProfile();
+
         navigate("/home");
       } else {
         setError(data.message || "Login failed. Please try again.");
@@ -56,6 +79,8 @@ const Login: React.FC = () => {
       setError("Something went wrong. Try again later.");
     }
   };
+
+  
 
   return (
     <div className="login-container">

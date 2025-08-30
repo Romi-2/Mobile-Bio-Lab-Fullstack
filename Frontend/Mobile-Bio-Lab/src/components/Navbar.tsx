@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-right">
         {/* Profile Icon */}
-        <Link to="/profile" className="profile-icon">
+        <Link to="/Profile" className="profile-icon">
           <FaUserCircle size={24} />
         </Link>
       </div>
