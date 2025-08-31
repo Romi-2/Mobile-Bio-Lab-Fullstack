@@ -34,7 +34,8 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar-container">
+       <div className="navbar-inner">
       <div className="navbar-right">
         {/* Profile Icon */}
         <Link to="/Profile" className="profile-icon">
@@ -83,6 +84,7 @@ const Navbar: React.FC = () => {
           </>
         )}
       </ul>
+      </div>
     </nav>
   );
 };

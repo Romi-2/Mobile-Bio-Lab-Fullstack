@@ -320,13 +320,14 @@ html, body, #root {
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column; /* stack header + content vertically */
+  justify-content: flex-start; /* keep header at the top */
+  align-items: center; /* center horizontally */
   position: relative;
-  z-index: 1; /* keep content above overlay */
+  padding: 2rem 1rem;
+  z-index: 1;
 }
 
-/* Overlay to add transparency effect */
 .home-container::before {
   content: "";
   position: absolute;
@@ -334,41 +335,43 @@ html, body, #root {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.5); /* white overlay at 50% */
-  z-index: -1; /* stay behind text and cards */
+  background: rgba(159, 181, 194, 0.393); /* transparency */
+  z-index: -1;
 }
 
 .home-header {
-  margin-bottom: 2rem;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
 .home-header h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
+  font-size: 2.8rem;
+  color: #0c0c0c;
 }
 
 .home-header p {
   font-size: 1.2rem;
-  color: #555;
+  color: #0a0a0a;
 }
 
 .home-content {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
 }
-
 .card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative; /* already set */
+  z-index: 1;         /* already set */
+  background: white;  /* lighter background to see rounding */
+  border: 2px solid #ccc;
+  border-radius: 25px;
+  padding: 2.5rem;
   width: 280px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   transition: transform 0.2s ease-in-out;
+  overflow: hidden;
 }
-
 .card:hover {
   transform: translateY(-5px);
 }
@@ -377,11 +380,13 @@ html, body, #root {
   font-size: 1.4rem;
   margin-bottom: 0.5rem;
   color: #007bff;
+  text-align: center;
 }
 
 .card p {
   font-size: 1rem;
   color: #444;
+  text-align: center;
 }
 
 .card a {
