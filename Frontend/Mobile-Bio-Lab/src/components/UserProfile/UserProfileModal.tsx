@@ -1,30 +1,26 @@
+// src/components/UserProfile/UserProfileForm.tsx
 import React, { useState, useEffect } from "react";
 import { updateUserProfile, type UserProfile } from "../../services/userprofileservice";
 import "./UserProfileModal.css";
 
 interface Props {
-  user: UserProfile | null;
-  onClose: () => void;
+  user: UserProfile;
   onUpdated: () => void;
 }
 
-const UserProfileModal: React.FC<Props> = ({ user, onClose, onUpdated }) => {
-  const [email, setEmail] = useState("");
-  const [city, setCity] = useState("");
+const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
+  const [email, setEmail] = useState(user.email || "");
+  const [city, setCity] = useState(user.city || "");
   const [profileFile, setProfileFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState(user.profilePicture || "");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setEmail(user.email || user.email || "");
-      setCity(user.city || "");
-      setPreviewUrl(user.profilePicture || "");
-      setProfileFile(null); // reset file on user change
-    }
+    setEmail(user.email || "");
+    setCity(user.city || "");
+    setPreviewUrl(user.profilePicture || "");
+    setProfileFile(null);
   }, [user]);
-
-  if (!user) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,78 +30,48 @@ const UserProfileModal: React.FC<Props> = ({ user, onClose, onUpdated }) => {
     }
   };
 
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
   const handleSave = async () => {
     if (!email || !city) {
-      alert("Email and City are required!");
+      alert("VU Email and City are required!");
       return;
     }
-    if (!validateEmail(email)) {
-      alert("Please enter a valid email address!");
-      return;
-    }
+
+    const formData = new FormData();
+    formData.append("vuEmail", email);
+    formData.append("city", city);
+    if (profileFile) formData.append("profilePicture", profileFile);
 
     setLoading(true);
-
     try {
-      const formData = new FormData();
-      formData.append("vuEmail", email);
-      formData.append("city", city);
-      if (profileFile) formData.append("profilePicture", profileFile);
-
       await updateUserProfile(user.id, formData);
-
-      onUpdated(); // notify parent
-      onClose();   // close modal
+      alert("User profile updated!");
+      onUpdated();
     } catch (error) {
-      console.error("Update failed", error);
-      alert("Failed to update user.");
+      console.error(error);
+      alert("Failed to update user profile.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="profile-container">
+      <div className="profile-card">
         <h3>Edit User Profile</h3>
 
         <label>VU Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter VU email"
-        />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 
         <label>City:</label>
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Enter City"
-        />
+        <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
 
         <label>Profile Picture:</label>
         <input type="file" accept="image/*" onChange={handleFileChange} />
-        {previewUrl && (
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="preview-img"
-          />
-        )}
+        {previewUrl && <img src={previewUrl} alt="Preview" className="preview-img" />}
 
         <div className="actions">
           <button onClick={handleSave} disabled={loading}>
             {loading ? "Saving..." : "Save"}
-          </button>
-          <button onClick={onClose} className="cancel">
-            Cancel
           </button>
         </div>
       </div>
@@ -113,4 +79,4 @@ const UserProfileModal: React.FC<Props> = ({ user, onClose, onUpdated }) => {
   );
 };
 
-export default UserProfileModal;
+export default UserProfileForm;

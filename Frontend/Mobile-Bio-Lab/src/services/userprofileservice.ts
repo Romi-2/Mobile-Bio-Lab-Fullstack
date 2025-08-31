@@ -14,8 +14,22 @@ export type UserProfile = {
 
 // Fetch profile by ID
 export const getUserProfile = async (id: number): Promise<UserProfile> => {
-  const res = await fetch(`http://localhost:5000/api/users/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch user profile");
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found in localStorage");
+
+  const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // <-- send token
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("getUserProfile failed:", res.status, text);
+    throw new Error("Failed to fetch user profile");
+  }
+
   return res.json();
 };
 
@@ -40,7 +54,6 @@ export const getCurrentUser = async (): Promise<UserProfile> => {
   const data = await res.json();
   return data; // backend already returns the user object
 };
-
 // src/components/UserProfile/UserProfileModal.tsx
 // Update profile
 export const updateUserProfile = async (id: number, formData: FormData) => {

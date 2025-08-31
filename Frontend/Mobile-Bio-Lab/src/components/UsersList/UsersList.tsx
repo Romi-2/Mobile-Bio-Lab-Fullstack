@@ -1,28 +1,35 @@
-import React, { useEffect , useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllUsers, deleteUser } from "../../services/userslistservice";
 import type { User } from "../../services/adminservice";
+import { useNavigate } from "react-router-dom"; // ✅ useNavigate for button navigation
 import "./UsersList.css";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
   }, []);
-const fetchUsers = async () => {
-  try {
-    const res = await getAllUsers();
-    console.log("Fetched Users:", res);
-    setUsers(res);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    setUsers([]); // Prevents component crash
-  }
-};
+
+  const fetchUsers = async () => {
+    try {
+      const res = await getAllUsers();
+      setUsers(res);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setUsers([]);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     await deleteUser(id);
     fetchUsers();
+  };
+
+  const handleEdit = (id: number) => {
+    navigate(`/adminDashboard/profile/${id}`); // navigate to admin update profile page
   };
 
   const filtered = users.filter(
@@ -48,6 +55,7 @@ const fetchUsers = async () => {
               {u.firstName} {u.lastName} ({u.city})
             </span>
             <button onClick={() => handleDelete(u.id)}>Delete</button>
+            <button onClick={() => handleEdit(u.id)}>Edit</button> {/* ✅ Edit as button */}
           </li>
         ))}
       </ul>

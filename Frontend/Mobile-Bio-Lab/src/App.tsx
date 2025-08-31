@@ -10,6 +10,8 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PendingUsers from "./components/PendingUsers/PendingUsers"; // ✅ correct path
 import UsersList from "./components/UsersList/UsersList"; // ✅ correct path
+import AdminUpdateProfilePage from "./pages/AdminUpdateProfilePage"; // ✅ correct path
+import UpdateProfilePage from "./pages/UpdateProfilePage"; // ✅ correct path
 import "./App.css";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/Landingpage";
@@ -50,7 +52,9 @@ function AppContent() {
             }
           >
             <Route path="pending" element={<PendingUsers />} />
-         <Route path="users" element={<UsersList/>} /> 
+         <Route path="users" element={<UsersList/>} />
+          <Route path="profile" element={<UpdateProfilePage />} /> 
+       <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
           </Route>
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
