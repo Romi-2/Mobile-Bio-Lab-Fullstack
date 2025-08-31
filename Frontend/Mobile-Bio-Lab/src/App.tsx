@@ -12,6 +12,7 @@ import PendingUsers from "./components/PendingUsers/PendingUsers"; // ✅ correc
 import UsersList from "./components/UsersList/UsersList"; // ✅ correct path
 import "./App.css";
 import Profile from "./pages/Profile";
+import LandingPage from "./pages/Landingpage";
 
 function AppContent() {
   const location = useLocation();
@@ -23,6 +24,8 @@ function AppContent() {
       {showHeader && <Navbar />}
       <main>
         <Routes>
+          {/* Landing Page */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { createUser } from "../service/userService";
 import { registerUser } from "../services/userService";
 
 import "../App.css";
@@ -17,7 +16,7 @@ const Register: React.FC = () => {
     mobile: string;
     city: string;
     role: string;
-    profilePic: File | null;
+    profilePicture: File | null;
   }>({
     firstName: "",
     lastName: "",
@@ -27,15 +26,20 @@ const Register: React.FC = () => {
     mobile: "",
     city: "",
     role: "",
-    profilePic: null,
+    profilePicture: null,
   });
+
+  const [showPassword, setShowPassword] = useState(false); // 👁️ toggle
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = event.target;
 
-    if (event.target instanceof HTMLInputElement && event.target.type === "file") {
+    if (
+      event.target instanceof HTMLInputElement &&
+      event.target.type === "file"
+    ) {
       const files = event.target.files;
       if (files && files.length > 0) {
         setFormData({ ...formData, [name]: files[0] });
@@ -48,15 +52,22 @@ const Register: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Extra validation (JS-level, beyond HTML5 "required")
+    for (const [key, value] of Object.entries(formData)) {
+      if (!value) {
+        alert(`⚠️ Please fill the ${key} field.`);
+        return;
+      }
+    }
+
     try {
       const data = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== null) data.append(key, value as Blob | string);
       });
 
-      await registerUser(data); // ✅ Call the public registration function
-navigate("/registration-success");
-
+      await registerUser(data);
+      navigate("/registration-success");
     } catch (error: unknown) {
       if (error instanceof Error) {
         alert(error.message);
@@ -110,16 +121,32 @@ navigate("/registration-success");
                 required
               />
             </div>
-            <div className="input-group">
+            <div className="input-group password-group">
               <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    marginLeft: "5px",
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                    fontSize: "16px",
+                  }}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -133,6 +160,7 @@ navigate("/registration-success");
                 placeholder="VU ID"
                 value={formData.vuId}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="role-group">
@@ -161,6 +189,7 @@ navigate("/registration-success");
                 placeholder="Mobile"
                 value={formData.mobile}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="input-group">
@@ -171,6 +200,7 @@ navigate("/registration-success");
                 placeholder="City"
                 value={formData.city}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -178,7 +208,12 @@ navigate("/registration-success");
           {/* Profile Picture */}
           <div className="input-group">
             <label>Profile Picture</label>
-            <input type="file" name="profilePic" onChange={handleChange} />
+            <input
+              type="file"
+              name="profilePicture"
+              onChange={handleChange}
+              required
+            />
           </div>
 
           {/* Buttons */}

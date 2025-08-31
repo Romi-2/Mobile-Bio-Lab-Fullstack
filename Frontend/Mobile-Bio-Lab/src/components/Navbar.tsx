@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import logo from "../assets/biology-graphic-clipart-design-free-png.webp";
+
 import "./Navbar.css";
 
 type User = {
@@ -36,12 +38,15 @@ const Navbar: React.FC = () => {
       <div className="navbar-right">
         {/* Profile Icon */}
         <Link to="/Profile" className="profile-icon">
-          <FaUserCircle size={24} />
+          <FaUserCircle  />
         </Link>
       </div>
       <div className="navbar-logo">
-        <Link to="/">Mobile Bio Lab</Link>
-      </div>
+  <Link to="/">
+    <img src={logo} alt="Mobile Bio Lab Logo" className="logo-img" />
+    <span>Mobile Bio Lab</span>
+  </Link>
+</div>
 
       <ul className="navbar-links">
         {!loggedInUser ? (

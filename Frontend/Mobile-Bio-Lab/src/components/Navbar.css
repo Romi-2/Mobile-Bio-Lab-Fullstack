@@ -6,13 +6,33 @@
   padding: 10px 20px;
   color: white;
 }
+.profile-icon{
+  padding-top: 30px;
+  color: white;
+  font-size: 32px;
+}
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
 
 .navbar-logo a {
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* adds consistent spacing between logo and text */
   text-decoration: none;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 28px; /* slightly smaller, cleaner */
+  font-weight: 700;
+  color: #f4f1f1; /* light text */
+  transition: color 0.3s ease; /* smooth hover effect */
 }
+.navbar-logo img {
+  width: 50px;   /* slightly larger logo */
+  height: 50px;  /* keeps logo square */
+  object-fit: contain; /* keeps proportions */
+    background: transparent !important;
+}
+
 
 .navbar-links {
   list-style: none;

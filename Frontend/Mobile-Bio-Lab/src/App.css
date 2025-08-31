@@ -1,5 +1,45 @@
 /* App.css */
 
+/* landing page start  */
+
+/* Prevent scrollbars everywhere */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* 🚫 disables scroll */
+}
+
+/* Landing Page styles */
+.landing-container {
+  height: 100vh;
+  width: 100vw;
+  background-image: url("./assets/landingpageimage.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+/* Dark overlay for readability */
+.overlay {
+  background: rgba(52, 152, 219, 0.6); /* last value = opacity (0 → transparent, 1 → solid) */
+  padding: 70px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+}
+.landing-container h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+/* landing page end */
+
 /* profile page start */
 
 /* src/pages/Profile.css */
@@ -270,16 +310,37 @@
 
 
 /* admin dashboard end */
+
 /* home page start */
 .home-container {
-  text-align: center;
-  padding: 2rem;
-  background: #f9f9ff;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  background-image: url("./assets/landingpageimage.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1; /* keep content above overlay */
+}
+
+/* Overlay to add transparency effect */
+.home-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5); /* white overlay at 50% */
+  z-index: -1; /* stay behind text and cards */
 }
 
 .home-header {
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .home-header h1 {
@@ -322,6 +383,7 @@
   font-size: 1rem;
   color: #444;
 }
+
 .card a {
   display: inline-block;
   margin-top: 1rem;
@@ -331,10 +393,12 @@
   border-radius: 8px;
   text-decoration: none;
 }
+
 .card a:hover {
   background: #0056b3;
 }
 /* home page end */
+
 
 /* Global styles */
 body {

@@ -18,7 +18,7 @@ export interface User {
   mobile?: string;
   role: string;
   city?: string;
-  profilePic?: string;
+  profilePicture?: string;
 }
 
 // ------------------------
