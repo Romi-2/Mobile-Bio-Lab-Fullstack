@@ -8,7 +8,6 @@ export type UserProfile = {
   city: string;
   status: string;
   vu_id: string;
-  vuEmailAddress: string;
   mobile: string;
   profilePicture: string | null; // ✅ match DB column
 };
@@ -42,14 +41,26 @@ export const getCurrentUser = async (): Promise<UserProfile> => {
   return data; // backend already returns the user object
 };
 
+// src/components/UserProfile/UserProfileModal.tsx
 // Update profile
 export const updateUserProfile = async (id: number, formData: FormData) => {
+  const token = localStorage.getItem("token");
   const res = await fetch(`http://localhost:5000/api/users/${id}`, {
     method: "PUT",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+      // Do NOT set Content-Type for FormData; browser handles it
+    },
     body: formData,
   });
 
-  if (!res.ok) throw new Error("Failed to update user profile");
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("updateUserProfile failed:", res.status, text);
+    throw new Error("Failed to update user profile");
+  }
+
   return res.json();
 };
+
 
