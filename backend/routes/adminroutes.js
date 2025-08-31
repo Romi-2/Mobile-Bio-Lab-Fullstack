@@ -84,4 +84,5 @@ router.delete("/delete/:id", protect, adminOnly, (req, res) => {
   });
 });
 
+
 export default router;

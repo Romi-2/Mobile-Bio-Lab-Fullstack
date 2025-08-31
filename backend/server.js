@@ -12,6 +12,8 @@ import userRoute from "./routes/UserRoute.js";   // User CRUD
 import registerRoute from "./routes/registerRoute.js";
 import profileRoute from "./routes/profileRoute.js";
 import profileExportRoute from "./routes/profileExportRoute.js";
+import updateProfileRoute from "./routes/updateprofileRoute.js";
+
 dotenv.config();
 
 const app = express(); // ✅ declare app first
@@ -45,6 +47,7 @@ app.use("/api/users", userRoute);            // User CRUD
 app.use("/api/profile", profileRoute);       // ✅ corrected
 app.use("/api/token", refreshTokenRoute);
 app.use("/api/export", profileExportRoute);
+app.use("/api/admin/update-profile", updateProfileRoute);
 // Test route
 app.get("/", (req, res) => res.send("🚀 API is running..."));
 
