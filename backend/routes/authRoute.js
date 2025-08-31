@@ -74,6 +74,63 @@ router.post("/activate", (req, res) => {
   });
 });
 
+// ✅ Register Route
+router.post("/register", async (req, res) => {
+  const { firstName, lastName, email, password, role, city } = req.body;
+
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    // check if email already exists
+    db.query("SELECT id FROM users WHERE email = ?", [email], async (err, results) => {
+      if (err) {
+        console.error("SQL Error:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (results.length > 0) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+
+      // hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // insert new user
+      db.query(
+        "INSERT INTO users (first_name, last_name, email, password, role, city, status, isActivated) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [firstName, lastName, email, hashedPassword, role || "user", city || null, "pending", "Inactive"],
+        (err, result) => {
+          if (err) {
+            console.error("Insert Error:", err);
+            return res.status(500).json({ message: "Database insert error" });
+          }
+
+          const token = generateToken(result.insertId, role || "user");
+
+          res.status(201).json({
+            token,
+            user: {
+              id: result.insertId,
+              firstName,
+              lastName,
+              email,
+              role: role || "user",
+              status: "pending",
+              city: city || null,
+              isActivated: "Inactive"
+            }
+          });
+        }
+      );
+    });
+  } catch (err) {
+    console.error("Catch Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 
 export default router;

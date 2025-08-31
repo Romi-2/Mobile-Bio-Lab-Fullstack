@@ -13,10 +13,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Single POST route
-router.post("/", upload.single("profilePic"), async (req, res) => {
+router.post("/", upload.single("profilePicture"), async (req, res) => {
   try {
     const { firstName, lastName, vuId, email, password, mobile, city, role } = req.body;
-    const profilePic = req.file ? `/uploads/${req.file.filename}` : null;
+    const profilePicture = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (!firstName || !lastName || !email || !password)
       return res.status(400).json({ error: "⚠️ Please fill all required fields" });
@@ -25,16 +25,19 @@ router.post("/", upload.single("profilePic"), async (req, res) => {
 
     const query = `
       INSERT INTO users
-      (first_name, last_name, vu_id, email, password, mobile, role, city, profile_pic)
+      (first_name, last_name, vu_id, email, password, mobile, role, city, profilePicture)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
       query,
-      [firstName, lastName, vuId, email, hashedPassword, mobile, role, city, profilePic],
+      [firstName, lastName, vuId, email, hashedPassword, mobile, role, city, profilePicture],
       (err, result) => {
-        if (err) return res.status(500).json({ error: "Database error" });
-        res.status(201).json({ message: "✅ User registered successfully", userId: result.insertId, profilePic });
+        if (err) {
+  console.error("❌ DB Error:", err);
+  return res.status(500).json({ error: "Database error", details: err.message });
+}
+        res.status(201).json({ message: "✅ User registered successfully", userId: result.insertId, profilePicture });
       }
     );
   } catch (err) {
