@@ -22,9 +22,40 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
     setProfileFile(null);
   }, [user]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validatePassportPhoto = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return resolve(false);
+      }
+
+      if (file.size > 200 * 1024) {
+        alert("File size must be less than 200KB.");
+        return resolve(false);
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        // Standard passport photo ~ 300x400px (can allow a little tolerance)
+        if (img.width < 250 || img.height < 350 || img.width > 350 || img.height > 450) {
+          alert("Passport photo must be approx 300x400px.");
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const isValid = await validatePassportPhoto(file);
+      if (!isValid) {
+        e.target.value = ""; // reset input
+        return;
+      }
       setProfileFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -65,7 +96,7 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
         <label>City:</label>
         <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
 
-        <label>Profile Picture:</label>
+        <label>Profile Picture (Passport Size):</label>
         <input type="file" accept="image/*" onChange={handleFileChange} />
         {previewUrl && <img src={previewUrl} alt="Preview" className="preview-img" />}
 

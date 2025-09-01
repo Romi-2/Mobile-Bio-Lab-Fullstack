@@ -1,31 +1,52 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
-import "../../App.css";
+import { NavLink, Outlet } from "react-router-dom";
+import "../../App.css"; // new (or keep using App.css if you prefer)
 
 const AdminDashboard: React.FC = () => {
   return (
     <div className="admin-dashboard">
-      {/* Sidebar (30%) */}
+      {/* Sidebar */}
       <aside className="sidebar">
         <h2>Admin Panel</h2>
-        <nav>
+        <nav className="menu">
           <ul>
             <li>
-              <Link to="pending">Pending Users</Link>
+              <NavLink
+                to="pending"
+                className={({ isActive }) =>
+                  `menu-link ${isActive ? "active" : ""}`
+                }
+              >
+                Pending Users
+              </NavLink>
             </li>
             <li>
-              <Link to="users">Users List</Link>
+              <NavLink
+                to="users"
+                className={({ isActive }) =>
+                  `menu-link ${isActive ? "active" : ""}`
+                }
+              >
+                Users List
+              </NavLink>
             </li>
             <li>
-              <Link to="profile">Update Profile</Link>
+              <NavLink
+                to="profile"
+                className={({ isActive }) =>
+                  `menu-link ${isActive ? "active" : ""}`
+                }
+              >
+                Update Profile
+              </NavLink>
             </li>
           </ul>
         </nav>
       </aside>
 
-      {/* Main content (70%) */}
+      {/* Main content */}
       <main className="main-content">
-        <Outlet /> {/* Where child routes render */}
+        <Outlet />
       </main>
     </div>
   );

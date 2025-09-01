@@ -1,41 +1,98 @@
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+/* src/components/UserProfile/UserProfileForm.css */
+
+/* Container centers the card */
+.profile-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-.modal {
-  background: white;
-  padding: 20px;
-  width: 400px;
-  border-radius: 8px;
-}
-
-.modal h3 {
-  margin-bottom: 15px;
-}
-
-.modal input {
+/* Card with shadow and rounded edges */
+.profile-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
+  max-width: 600px;
+  padding: 30px;
 }
 
+/* Title */
+.profile-card h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #1976d2;
+}
+
+/* Labels + inputs */
+.profile-card label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #7f8c8d;
+}
+
+.profile-card input[type="text"],
+.profile-card input[type="email"],
+.profile-card input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Profile preview image */
+.preview-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  border: 3px solid #e1f0ff;
+  display: block;
+}
+
+/* Action buttons */
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  gap: 16px;
 }
 
-.actions .cancel {
-  margin-left: 10px;
-}
 .actions button {
-  padding: 8px 12px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  border: none;
+}
+
+/* Save button */
+.actions button:not(.cancel) {
+  background-color: #3498db;
+  color: white;
+}
+
+.actions button:not(.cancel):hover {
+  background-color: #2980b9;
+}
+
+/* Cancel button */
+.actions .cancel {
+  background-color: #f4f4f4;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.actions .cancel:hover {
+  background-color: #e0e0e0;
 }

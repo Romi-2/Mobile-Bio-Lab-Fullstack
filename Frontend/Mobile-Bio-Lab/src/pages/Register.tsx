@@ -32,22 +32,42 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false); // 👁️ toggle
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = event.target;
+  event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+) => {
+  const { name, value } = event.target;
 
-    if (
-      event.target instanceof HTMLInputElement &&
-      event.target.type === "file"
-    ) {
-      const files = event.target.files;
-      if (files && files.length > 0) {
-        setFormData({ ...formData, [name]: files[0] });
+  if (
+    event.target instanceof HTMLInputElement &&
+    event.target.type === "file"
+  ) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+
+      // ✅ Restrict file size (e.g. max 200 KB)
+      if (file.size > 200 * 1024) {
+        alert("⚠️ Please upload a smaller image (max 200 KB).");
+        event.target.value = ""; // reset input
+        return;
       }
-    } else {
-      setFormData({ ...formData, [name]: value });
+
+      // ✅ Restrict dimensions (e.g. 300x300 px)
+      const img = new Image();
+      img.onload = () => {
+        if (img.width !== 300 || img.height !== 300) {
+          alert("⚠️ Please upload a passport-size image (300x300 pixels).");
+          event.target.value = ""; // reset input
+        } else {
+          setFormData({ ...formData, [name]: file });
+        }
+      };
+      img.src = URL.createObjectURL(file);
     }
-  };
+  } else {
+    setFormData({ ...formData, [name]: value });
+  }
+};
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

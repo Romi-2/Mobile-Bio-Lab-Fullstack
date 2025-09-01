@@ -6,12 +6,28 @@
 .pending-users li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
 
+.pending-users .actions {
+  display: flex;
+  gap: 6px; /* space between buttons */
+}
+
 .pending-users button {
-  margin-left: 10px;
-  padding: 5px 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  font-weight: 500;
+}
+ .approve-btn {
+  background-color: #28a745 !important;  /* green */
+  color: white;
+}
+ .reject-btn {
+  background-color: #dc3545 !important; /* red */
+  color: white;
 }

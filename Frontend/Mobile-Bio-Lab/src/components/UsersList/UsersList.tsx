@@ -54,9 +54,16 @@ const UsersList: React.FC = () => {
             <span>
               {u.firstName} {u.lastName} ({u.city})
             </span>
-            <button onClick={() => handleDelete(u.id)}>Delete</button>
-            <button onClick={() => handleEdit(u.id)}>Edit</button> {/* ✅ Edit as button */}
+            <div className="actions">
+              <button className="delete-btn" onClick={() => handleDelete(u.id)}>
+                Delete
+              </button>
+              <button className="edit-btn" onClick={() => handleEdit(u.id)}>
+                Edit
+              </button>
+            </div>
           </li>
+
         ))}
       </ul>
     </div>

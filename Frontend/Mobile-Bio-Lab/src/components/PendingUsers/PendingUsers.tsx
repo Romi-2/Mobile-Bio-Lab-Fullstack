@@ -93,19 +93,24 @@ const PendingUsers: React.FC = () => {
           {users.map((u) => (
             <li key={u.id}>
               <span>{u.firstName} {u.lastName} - {u.city}</span>
-              <button
-                onClick={() => handleAction(u.id, "approve")}
-                disabled={updatingId === u.id}
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => handleAction(u.id, "reject")}
-                disabled={updatingId === u.id}
-              >
-                Reject
-              </button>
+              <div className="actions">
+                <button
+                  className="approve-btn"
+                  onClick={() => handleAction(u.id, "approve")}
+                  disabled={updatingId === u.id}
+                >
+                  Approve
+                </button>
+                <button
+                  className="reject-btn"
+                  onClick={() => handleAction(u.id, "reject")}
+                  disabled={updatingId === u.id}
+                >
+                  Reject
+                </button>
+              </div>
             </li>
+
           ))}
         </ul>
       )}

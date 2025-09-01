@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllUsersForAdmin, deleteUserByAdmin } from "../services/updateprofileservice";
-import type { User } from "../services/adminservice";
-import "./UpdateProfilePage.css";
-
+import type { User } from "../services/updateprofileservice";
+import "../App.css";
 const UpdateProfilePage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();
@@ -37,6 +36,7 @@ const UpdateProfilePage: React.FC = () => {
       <table>
         <thead>
           <tr>
+            <th>Profile Picture</th>
             <th>Name</th>
             <th>Email</th>
             <th>City</th>
@@ -46,6 +46,17 @@ const UpdateProfilePage: React.FC = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
+              <td>
+                {user.profilePicture ? (
+                  <img
+                    src={`http://localhost:5000${user.profilePicture}`}
+                    alt={`${user.firstName} ${user.lastName}`}
+                    style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                  />
+                ) : (
+                  <span>No Image</span>
+                )}
+              </td>
               <td>{user.firstName} {user.lastName}</td>
               <td>{user.email}</td>
               <td>{user.city}</td>

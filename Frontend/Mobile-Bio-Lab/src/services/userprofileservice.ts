@@ -55,14 +55,13 @@ export const getCurrentUser = async (): Promise<UserProfile> => {
   return data; // backend already returns the user object
 };
 // src/components/UserProfile/UserProfileModal.tsx
-// Update profile
+// src/services/userprofileservice.ts
 export const updateUserProfile = async (id: number, formData: FormData) => {
   const token = localStorage.getItem("token");
   const res = await fetch(`http://localhost:5000/api/users/${id}`, {
     method: "PUT",
     headers: {
       Authorization: token ? `Bearer ${token}` : "",
-      // Do NOT set Content-Type for FormData; browser handles it
     },
     body: formData,
   });
