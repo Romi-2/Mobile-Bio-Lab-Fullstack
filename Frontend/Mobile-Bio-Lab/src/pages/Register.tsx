@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/userService";
 
-import "../App.css";
+import "../style/Register.css";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();

@@ -15,6 +15,7 @@ import UpdateProfilePage from "./pages/UpdateProfilePage"; // ✅ correct path
 import "./App.css";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/Landingpage";
+import AdminHome from "./components/Adminhome/Adminhome"; // ✅ correct path
 
 function AppContent() {
   const location = useLocation();
@@ -44,18 +45,20 @@ function AppContent() {
 
           {/* Admin dashboard with nested routes */}
           <Route
-            path="/adminDashboard/*"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="pending" element={<PendingUsers />} />
-         <Route path="users" element={<UsersList/>} />
-          <Route path="profile" element={<UpdateProfilePage />} /> 
-       <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
-          </Route>
+  path="/adminDashboard/*"
+  element={
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<AdminHome />} /> {/* default content */}
+  <Route path="pending" element={<PendingUsers />} />
+  <Route path="users" element={<UsersList />} />
+  <Route path="profile" element={<UpdateProfilePage />} />
+  <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
+</Route>
+
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/activate/:studentId" element={<ActivatePage />} />
