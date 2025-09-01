@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import "../../App.css"; // new (or keep using App.css if you prefer)
+import "../../App.css"; 
 
 const AdminDashboard: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="admin-dashboard">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <h2>Admin Panel</h2>
         <nav className="menu">
           <ul>
@@ -16,6 +18,7 @@ const AdminDashboard: React.FC = () => {
                 className={({ isActive }) =>
                   `menu-link ${isActive ? "active" : ""}`
                 }
+                onClick={() => setIsSidebarOpen(false)} // auto-close on link click
               >
                 Pending Users
               </NavLink>
@@ -26,6 +29,7 @@ const AdminDashboard: React.FC = () => {
                 className={({ isActive }) =>
                   `menu-link ${isActive ? "active" : ""}`
                 }
+                onClick={() => setIsSidebarOpen(false)}
               >
                 Users List
               </NavLink>
@@ -36,6 +40,7 @@ const AdminDashboard: React.FC = () => {
                 className={({ isActive }) =>
                   `menu-link ${isActive ? "active" : ""}`
                 }
+                onClick={() => setIsSidebarOpen(false)}
               >
                 Update Profile
               </NavLink>
@@ -46,8 +51,19 @@ const AdminDashboard: React.FC = () => {
 
       {/* Main content */}
       <main className="main-content">
+        {/* Hamburger button visible on mobile */}
+        <button
+          className="hamburger"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          &#9776;
+        </button>
+
         <Outlet />
       </main>
+
+      {/* Optional overlay for mobile */}
+      {isSidebarOpen && <div className="overlay" onClick={() => setIsSidebarOpen(false)} />}
     </div>
   );
 };

@@ -36,3 +36,59 @@
 .users-list .edit-btn:hover {
   background-color: #1e8449; /* darker green */
 }
+/* ================= Users List Responsive ================= */
+
+/* Desktop: default layout already set */
+
+/* Tablet: <1024px */
+@media (max-width: 1024px) {
+  .users-list li {
+    padding: 6px;
+    gap: 8px;
+  }
+
+  .users-list button {
+    padding: 4px 10px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile: <768px */
+@media (max-width: 768px) {
+  .users-list li {
+    flex-direction: column; /* stack content vertically */
+    align-items: flex-start;
+    padding: 8px 6px;
+    gap: 8px;
+  }
+
+  .users-list .actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .users-list button {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+/* Extra small: <480px */
+@media (max-width: 480px) {
+  .users-list li {
+    padding: 6px 4px;
+    gap: 6px;
+  }
+
+  .users-list .actions {
+    flex-direction: column; /* stack buttons vertically */
+    width: 100%;
+  }
+
+  .users-list button {
+    width: 100%;
+    padding: 6px;
+    font-size: 12px;
+  }
+}

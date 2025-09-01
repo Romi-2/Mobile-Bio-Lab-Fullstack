@@ -99,6 +99,7 @@ const Register: React.FC = () => {
 
   return (
     <div className="register-container">
+      <div className="register-wrapper">
       <div className="register-card">
         <h2>User Registration</h2>
         <form onSubmit={handleSubmit}>
@@ -248,6 +249,7 @@ const Register: React.FC = () => {
             <button type="submit">Register</button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

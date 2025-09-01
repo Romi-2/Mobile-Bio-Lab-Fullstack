@@ -18,6 +18,7 @@ type User = {
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false); // mobile menu toggle
 
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
@@ -36,55 +37,68 @@ const Navbar: React.FC = () => {
   return (
     <nav className="navbar-container">
        <div className="navbar-inner">
-      <div className="navbar-right">
-        {/* Profile Icon */}
-        <Link to="/Profile" className="profile-icon">
-          <FaUserCircle  />
-        </Link>
-      </div>
-      <div className="navbar-logo">
-  <Link to="/">
-    <img src={logo} alt="Mobile Bio Lab Logo" className="logo-img" />
-    <span>Mobile Bio Lab</span>
-  </Link>
-</div>
-
-      <ul className="navbar-links">
-        {!loggedInUser ? (
-          <>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/register">Register</Link>
-            </li>
-          </>
-        ) : (
-          <>
-            <li>
-              <Link to="/home">Home</Link>
-            </li>
-
-            {/* ✅ Admin route fixed */}
-            {loggedInUser.role === "admin" && (
-              <li>
-                <Link to="/adminDashboard">Admin Dashboard</Link>
-              </li>
+            {/* Profile Icon on left */}
+            {loggedInUser && (
+              <div className="navbar-left">
+                <Link to="/Profile" className="profile-icon">
+                  <FaUserCircle />
+                </Link>
+              </div>
             )}
 
-            {loggedInUser.role === "user" && (
-              <li>
-                <Link to="/dashboard">Dashboard</Link>
-              </li>
-            )}
+            {/* Logo in center */}
+            <div className="navbar-logo">
+              <Link to="/">
+                <img src={logo} alt="Mobile Bio Lab Logo" className="logo-img" />
+                <span>Mobile Bio Lab</span>
+              </Link>
+            </div>
 
-            <li>
-              <button onClick={handleLogout}>Logout</button>
-            </li>
-          </>
-        )}
-      </ul>
-      </div>
+            {/* Hamburger for mobile */}
+            <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            {/* Navbar Links */}
+            <ul className={`navbar-links ${menuOpen ? "active" : ""}`}>
+              {!loggedInUser ? (
+                <>
+                  <li>
+                    <Link to="/login">Login</Link>
+                  </li>
+                  <li>
+                    <Link to="/register">Register</Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link to="/home">Home</Link>
+                  </li>
+
+                  {loggedInUser.role === "admin" && (
+                    <li>
+                      <Link to="/adminDashboard">Admin Dashboard</Link>
+                    </li>
+                  )}
+
+                  {loggedInUser.role === "user" && (
+                    <li>
+                      <Link to="/dashboard">Dashboard</Link>
+                    </li>
+                  )}
+
+                  <li>
+                    <button onClick={handleLogout}>Logout</button>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+
+
     </nav>
   );
 };
