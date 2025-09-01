@@ -24,6 +24,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // UPDATE user profile (Admin only)
+
+// GET all users for admin
+router.get("/all", protect, adminOnly, (req, res) => {
+  const query = `
+    SELECT 
+      id, 
+      first_name AS firstName, 
+      last_name AS lastName, 
+      email, 
+      city, 
+      role, 
+      status, 
+      profilePicture
+    FROM users
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    res.json(results);
+  });
+});
+
 router.put(
   "/:id",
   protect,
@@ -40,7 +61,7 @@ router.put(
 
     if (vuEmail) { updates.push("vu_email_address = ?"); values.push(vuEmail); }
     if (city) { updates.push("city = ?"); values.push(city); }
-    if (profilePicturePath) { updates.push("profile_picture = ?"); values.push(profilePicturePath); }
+    if (profilePicturePath) { updates.push("profilePicture = ?"); values.push(profilePicturePath); }
 
     if (updates.length === 0) return res.status(400).json({ message: "No fields to update" });
 
