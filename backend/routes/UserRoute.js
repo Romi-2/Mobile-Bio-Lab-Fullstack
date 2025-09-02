@@ -114,4 +114,18 @@ router.delete("/:id", protect, adminOnly, (req, res) => {
   });
 });
 
+// ✅ Approve user
+// ✅ Reject user
+router.get("/status", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ status: user.status });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 export default router;

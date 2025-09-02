@@ -13,6 +13,8 @@ import registerRoute from "./routes/registerRoute.js";
 import profileRoute from "./routes/profileRoute.js";
 import profileExportRoute from "./routes/profileExportRoute.js";
 import updateProfileRoute from "./routes/updateprofileRoute.js";
+import userStatusRoute from "./routes/userstatusRoute.js";
+
 
 dotenv.config();
 
@@ -48,6 +50,8 @@ app.use("/api/profile", profileRoute);       // ✅ corrected
 app.use("/api/token", refreshTokenRoute);
 app.use("/api/export", profileExportRoute);
 app.use("/api/admin/update-profile", updateProfileRoute);
+app.use("/api/users", userStatusRoute);       // User status
+
 // Test route
 app.get("/", (req, res) => res.send("🚀 API is running..."));
 
