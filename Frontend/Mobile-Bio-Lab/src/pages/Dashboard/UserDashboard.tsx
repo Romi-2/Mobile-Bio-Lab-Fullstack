@@ -1,52 +1,82 @@
-import "../../style/AdminDashboard.css";
+import React, { useState, useEffect } from "react";
+import { getUserStatus } from "../../services/userstatusservice"; // adjust path
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import "../../style/UserDashboard.css";
 
-const UserDashboard = () => {
+const UserDashboard: React.FC = () => {
+  const [accountStatus, setAccountStatus] = useState<"Pending" | "Approved" | "Rejected">("Pending");
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const data = await getUserStatus();
+        setAccountStatus(data.status); // 👈 backend decides
+      } catch (error) {
+        console.error("Failed to fetch user status:", error);
+      }
+    };
+
+    fetchStatus();
+  }, []);
+
+  const chartData = [
+    { name: "Pending", value: accountStatus === "Pending" ? 1 : 0 },
+    { name: "Approved", value: accountStatus === "Approved" ? 1 : 0 },
+    { name: "Rejected", value: accountStatus === "Rejected" ? 1 : 0 },
+  ];
+
+  const COLORS = ["#facc15", "#22c55e", "#ef4444"];
+
+  const handleDeleteAccount = () => {
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      alert("Your account has been deleted!");
+      // TODO: Call backend API for account deletion
+    }
+  };
+
   return (
-    <div className="dashboard-container">
-      <h1>Welcome, User!</h1>
+    <div className="user-dashboard">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2>User Dashboard</h2>
+        <ul>
+          <li>
+            <div className="sidebar-item">
+              <span className={`status ${accountStatus.toLowerCase()}`}>{accountStatus}</span>
+            </div>
+          </li>
 
-      {/* Stats / Cards */}
-      <div className="dashboard-cards-row">
-        <div className="card">Total Orders: 12</div>
-        <div className="card">Pending Orders: 3</div>
-        <div className="card">Profile Completeness: 80%</div>
-      </div>
+          <li>
+            <div className="sidebar-item">
+              <button className="delete-btn" onClick={handleDeleteAccount}>Delete Account</button>
+            </div>
+          </li>
+        </ul>
+      </aside>
 
-      {/* Recent Activity Table */}
-      <div className="dashboard-recent-activity">
-        <h2>Recent Orders</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#12345</td>
-              <td>2025-08-30</td>
-              <td>Completed</td>
-              <td>$120</td>
-            </tr>
-            <tr>
-              <td>#12346</td>
-              <td>2025-08-28</td>
-              <td>Pending</td>
-              <td>$80</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="dashboard-actions">
-        <button>Update Profile</button>
-        <button>New Order</button>
-        <button>View History</button>
-      </div>
+      {/* Main Content */}
+      <main className="main-content">
+        <h3>Account Status Overview</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              label
+            >
+              {chartData.map((_, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </main>
     </div>
   );
 };

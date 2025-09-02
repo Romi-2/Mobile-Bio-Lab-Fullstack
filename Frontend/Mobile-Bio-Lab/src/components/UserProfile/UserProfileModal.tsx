@@ -85,29 +85,42 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
     }
   };
 
-  return (
-    <div className="profile-container">
-      <div className="profile-card">
-        <h3>Edit User Profile</h3>
+ return (
+  <div className="profile-container">
+    <div className="profile-card">
+      <h3>Edit User Profile</h3>
 
-        <label>VU Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-        <label>City:</label>
-        <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
-
-        <label>Profile Picture (Passport Size):</label>
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        {previewUrl && <img src={previewUrl} alt="Preview" className="preview-img" />}
-
-        <div className="actions">
-          <button onClick={handleSave} disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </button>
+      {/* Passport Photo Preview at top */}
+      {previewUrl && (
+        <div className="passport-photo">
+          <img src={previewUrl} alt="Preview" className="preview-img" />
         </div>
+      )}
+
+      <label>VU Email:</label>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <label>City:</label>
+      <input
+        type="text"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+      />
+
+      <label>Profile Picture (Passport Size):</label>
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+
+      <div className="actions">
+        <button onClick={handleSave} disabled={loading}>
+          {loading ? "Saving..." : "Save"}
+        </button>
       </div>
     </div>
-  );
+  </div>
+);
 };
-
 export default UserProfileForm;

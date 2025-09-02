@@ -92,6 +92,23 @@
   cursor: not-allowed;
 }
 
+.passport-photo {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.passport-photo img {
+  width: 120px;   /* adjust size */
+  height: 160px;  /* passport ratio */
+  object-fit: cover;
+  border: 2px solid #3b82f6; /* Tailwind blue */
+  border-radius: 8px;
+  padding: 4px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
 /* ================= UserProfileForm Responsive ================= */
 
 /* Tablet: < 1024px */
