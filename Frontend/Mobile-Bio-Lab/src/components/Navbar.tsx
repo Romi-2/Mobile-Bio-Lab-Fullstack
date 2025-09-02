@@ -20,6 +20,7 @@ const Navbar: React.FC = () => {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false); // mobile menu toggle
 
+  // Check if user is already logged in
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
     if (storedUser && storedUser !== "undefined") {
@@ -36,69 +37,70 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar-container">
-       <div className="navbar-inner">
-            {/* Profile Icon on left */}
-            {loggedInUser && (
-              <div className="navbar-left">
-                <Link to="/Profile" className="profile-icon">
-                  <FaUserCircle />
-                </Link>
-              </div>
-            )}
-
-            {/* Logo in center */}
-            <div className="navbar-logo">
-              <Link to="/">
-                <img src={logo} alt="Mobile Bio Lab Logo" className="logo-img" />
-                <span>Mobile Bio Lab</span>
-              </Link>
-            </div>
-
-            {/* Hamburger for mobile */}
-            <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-
-            {/* Navbar Links */}
-            <ul className={`navbar-links ${menuOpen ? "active" : ""}`}>
-              {!loggedInUser ? (
-                <>
-                  <li>
-                    <Link to="/login">Login</Link>
-                  </li>
-                  <li>
-                    <Link to="/register">Register</Link>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li>
-                    <Link to="/home">Home</Link>
-                  </li>
-
-                  {loggedInUser.role === "admin" && (
-                    <li>
-                      <Link to="/adminDashboard">Admin Dashboard</Link>
-                    </li>
-                  )}
-
-                  {loggedInUser.role === "user" && (
-                    <li>
-                      <Link to="/dashboard">Dashboard</Link>
-                    </li>
-                  )}
-
-                  <li>
-                    <button onClick={handleLogout}>Logout</button>
-                  </li>
-                </>
-              )}
-            </ul>
+      <div className="navbar-inner">
+        {/* Profile Icon on left */}
+        {loggedInUser && (
+          <div className="navbar-left">
+            <Link to="/profile" className="profile-icon">
+              <FaUserCircle />
+            </Link>
           </div>
+        )}
 
+        {/* Logo in center */}
+        <div className="navbar-logo">
+          <Link to="/">
+            <img src={logo} alt="Mobile Bio Lab Logo" className="logo-img" />
+            <span>Mobile Bio Lab</span>
+          </Link>
+        </div>
 
+        {/* Hamburger for mobile */}
+        <div
+          className="hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        {/* Navbar Links */}
+        <ul className={`navbar-links ${menuOpen ? "active" : ""}`}>
+          {!loggedInUser ? (
+            <>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+              <li>
+                <Link to="/register">Register</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/home">Home</Link>
+              </li>
+
+              {loggedInUser.role === "admin" && (
+                <li>
+                  <Link to="/adminDashboard">Admin Dashboard</Link>
+                </li>
+              )}
+
+              {loggedInUser.role === "user" && (
+                <li>
+                  <Link to="/dashboard">Dashboard</Link>
+                </li>
+              )}
+
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
     </nav>
   );
 };

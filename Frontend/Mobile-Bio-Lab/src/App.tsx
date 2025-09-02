@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import UserDashboard from "./pages/Dashboard/UserDashboard";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard"; // ✅ correct path
 import ActivatePage from "./pages/Activepage";
 import RegistrationSuccess from "./pages/RegistrationSuccess";
@@ -35,10 +35,10 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
           {/* User dashboard */}
           <Route
-            path="/dashboard"
+            path="/Userdashboard"
             element={
               <ProtectedRoute allowedRoles={["user", "admin"]}>
-                <Dashboard />
+                <UserDashboard />
               </ProtectedRoute>
             }
           />
