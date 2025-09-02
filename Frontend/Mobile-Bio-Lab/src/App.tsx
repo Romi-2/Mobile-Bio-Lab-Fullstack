@@ -34,14 +34,16 @@ function AppContent() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           {/* User dashboard */}
-          <Route
-            path="/Userdashboard"
-            element={
-              <ProtectedRoute allowedRoles={["user", "admin"]}>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+         <Route
+  path="/userdashboard"
+  element={
+    <ProtectedRoute allowedRoles={["student", "researcher", "technician"]}>
+      <UserDashboard />
+    </ProtectedRoute>
+  }
+/>
+
+
 
           {/* Admin dashboard with nested routes */}
           <Route

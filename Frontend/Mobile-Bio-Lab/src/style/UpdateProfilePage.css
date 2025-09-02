@@ -1,0 +1,151 @@
+
+/* src/pages/UpdateProfilePage.css */
+
+.update-profile-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.update-profile-page h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.update-profile-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.update-profile-page th,
+.update-profile-page td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.update-profile-page th {
+  background-color: #f4f4f4;
+}
+
+.update-profile-page tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.update-profile-page button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.update-profile-page button:hover {
+  background-color: #239f84;
+}
+
+.update-profile-page button:last-child {
+  background-color: #dc3545;
+}
+
+.update-profile-page button:last-child:hover {
+  background-color: #a71d2a;
+}
+/* UpdateProfilePage.css end */
+
+
+/* update profile page start */
+
+/* Container */
+.update-profile-page {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Heading */
+.update-profile-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #2c3e50;
+}
+
+/* Table */
+.update-profile-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+/* Table header */
+.update-profile-page th {
+  background-color: #007bff;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  font-size: 0.95rem;
+}
+
+/* Table rows */
+.update-profile-page td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+/* Profile image */
+.update-profile-page img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff;
+}
+
+/* Buttons */
+.update-profile-page button {
+  margin: 0 5px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+/* Edit button */
+.update-profile-page button:first-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.update-profile-page button:first-child:hover {
+  background-color: #218838;
+}
+
+/* Delete button */
+.update-profile-page button:last-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+.update-profile-page button:last-child:hover {
+  background-color: #c82333;
+}
+
+/* Row hover effect */
+.update-profile-page tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+
+/* update profile page send */

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllUsersForAdmin, deleteUserByAdmin } from "../services/updateprofileservice";
 import type { User } from "../services/updateprofileservice";
-import "../App.css";
+import "../style/UpdateProfilePage.css";
 const UpdateProfilePage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();

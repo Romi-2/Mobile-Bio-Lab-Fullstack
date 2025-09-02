@@ -1,6 +1,6 @@
 // src/pages/Profile.tsx
 import React, { useEffect, useState } from "react";
-import "../App.css";
+import "../style/Profile.css";
 import type { UserProfile } from "../services/userprofileservice";
 import { getCurrentUser } from "../services/userprofileservice";
 

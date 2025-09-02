@@ -82,17 +82,20 @@ const Navbar: React.FC = () => {
                 <Link to="/home">Home</Link>
               </li>
 
-              {loggedInUser.role === "admin" && (
+                            {loggedInUser && (
                 <li>
-                  <Link to="/adminDashboard">Admin Dashboard</Link>
+                  <Link
+                    to={
+                      loggedInUser.role === "admin"
+                        ? "/adminDashboard"
+                        : "/userdashboard"
+                    }
+                  >
+                    Dashboard
+                  </Link>
                 </li>
               )}
 
-              {loggedInUser.role === "user" && (
-                <li>
-                  <Link to="/dashboard">Dashboard</Link>
-                </li>
-              )}
 
               <li>
                 <button onClick={handleLogout}>Logout</button>
