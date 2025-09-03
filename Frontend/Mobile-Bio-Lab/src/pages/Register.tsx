@@ -54,7 +54,7 @@ const Register: React.FC = () => {
       // ✅ Restrict dimensions (e.g. 300x300 px)
       const img = new Image();
       img.onload = () => {
-        if (img.width !== 300 || img.height !== 300) {
+        if (img.width !== 300 || img.height !== 400) {
           alert("⚠️ Please upload a passport-size image (300x300 pixels).");
           event.target.value = ""; // reset input
         } else {

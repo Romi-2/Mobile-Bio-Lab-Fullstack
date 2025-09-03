@@ -26,9 +26,18 @@ const UpdateProfilePage: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    await deleteUserByAdmin(id);
-    fetchUsers();
-  };
+  if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+  try {
+    const res = await deleteUserByAdmin(id);
+    alert(res.message); // "User deleted successfully"
+    fetchUsers(); // refresh table
+  } catch (err) {
+    console.error("Delete failed:", err);
+    alert("Error deleting user");
+  }
+};
+
 
   return (
     <div className="update-profile-page">

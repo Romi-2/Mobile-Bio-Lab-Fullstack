@@ -1,24 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { getUserStatus } from "../../services/userstatusservice"; // adjust path
+import React, { useState  } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import "../../style/UserDashboard.css";
 
 const UserDashboard: React.FC = () => {
-  const [accountStatus, setAccountStatus] = useState<"Pending" | "Approved" | "Rejected">("Pending");
+  // Always Approved
+  const [accountStatus] = useState<"Pending" | "Approved" | "Rejected">("Approved");
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const data = await getUserStatus();
-        setAccountStatus(data.status); // 👈 backend decides
-      } catch (error) {
-        console.error("Failed to fetch user status:", error);
-      }
-    };
-
-    fetchStatus();
-  }, []);
-
+  // Chart data
   const chartData = [
     { name: "Pending", value: accountStatus === "Pending" ? 1 : 0 },
     { name: "Approved", value: accountStatus === "Approved" ? 1 : 0 },

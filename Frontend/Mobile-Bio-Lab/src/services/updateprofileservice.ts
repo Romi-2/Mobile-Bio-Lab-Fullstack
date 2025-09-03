@@ -30,14 +30,15 @@ export const getAllUsersForAdmin = async (): Promise<User[]> => {
   // Ensure we always return an array
   return Array.isArray(data) ? data : data.users ?? [];
 };
-
 // Delete user by admin
-export const deleteUserByAdmin = async (id: number) => {
+export const deleteUserByAdmin = async (id: number): Promise<{ message: string }> => {
   const token = localStorage.getItem("token");
-  const res = await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+  if (!token) throw new Error("No token found, please login");
+
+  const res = await fetch(`http://localhost:5000/api/users/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: token ? `Bearer ${token}` : "",
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
   });
@@ -45,7 +46,7 @@ export const deleteUserByAdmin = async (id: number) => {
   if (!res.ok) {
     const text = await res.text();
     console.error("deleteUserByAdmin failed:", res.status, text);
-    throw new Error("Failed to delete user");
+    throw new Error(`Failed to delete user: ${text}`);
   }
 
   return res.json();
