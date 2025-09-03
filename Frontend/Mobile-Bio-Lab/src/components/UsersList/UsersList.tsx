@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getAllUsers, deleteUser } from "../../services/userslistservice";
 import type { User } from "../../services/adminservice";
-import { useNavigate } from "react-router-dom"; // ✅ useNavigate for button navigation
+import { useNavigate } from "react-router-dom";
 import "./UsersList.css";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
+  const [message, setMessage] = useState<string | null>(null); // ✅ for dropdown message
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,12 +25,25 @@ const UsersList: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    await deleteUser(id);
-    fetchUsers();
+    const confirm = window.confirm("Are you sure you want to delete this user?");
+    if (!confirm) return;
+
+    try {
+      const res = await deleteUser(id);
+      setMessage(res.message || "User deleted successfully ✅");
+      fetchUsers();
+
+      // Auto-hide message after 3s
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error) {
+      console.error("Delete failed:", error);
+      setMessage("❌ Failed to delete user");
+      setTimeout(() => setMessage(null), 3000);
+    }
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/adminDashboard/profile/${id}`); // navigate to admin update profile page
+    navigate(`/adminDashboard/profile/${id}`);
   };
 
   const filtered = users.filter(
@@ -41,6 +55,10 @@ const UsersList: React.FC = () => {
   return (
     <div className="users-list">
       <h2>Users List</h2>
+
+      {/* ✅ Dropdown notification */}
+      {message && <div className="dropdown-message">{message}</div>}
+
       <input
         type="text"
         placeholder="Search by name or city..."
@@ -63,7 +81,6 @@ const UsersList: React.FC = () => {
               </button>
             </div>
           </li>
-
         ))}
       </ul>
     </div>

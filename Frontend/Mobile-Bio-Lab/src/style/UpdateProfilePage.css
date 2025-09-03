@@ -54,6 +54,34 @@
 .update-profile-page button:last-child:hover {
   background-color: #a71d2a;
 }
+
+/* Dropdown (toast style) */
+.dropdown-message {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  color: white;
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+}
+
+.dropdown-message.success {
+  background-color: #4caf50; /* green */
+}
+
+.dropdown-message.error {
+  background-color: #f44336; /* red */
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
 /* UpdateProfilePage.css end */
 
 

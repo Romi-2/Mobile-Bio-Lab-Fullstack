@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { getAllUsersForAdmin, deleteUserByAdmin } from "../services/updateprofileservice";
 import type { User } from "../services/updateprofileservice";
 import "../style/UpdateProfilePage.css";
+
 const UpdateProfilePage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error">("success");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,22 +29,38 @@ const UpdateProfilePage: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-  if (!window.confirm("Are you sure you want to delete this user?")) return;
+    // Custom confirmation instead of window.confirm
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return;
 
-  try {
-    const res = await deleteUserByAdmin(id);
-    alert(res.message); // "User deleted successfully"
-    fetchUsers(); // refresh table
-  } catch (err) {
-    console.error("Delete failed:", err);
-    alert("Error deleting user");
-  }
-};
+    try {
+      const res = await deleteUserByAdmin(id);
+      setMessage(res.message || "User deleted successfully");
+      setMessageType("success");
+      fetchUsers(); // refresh table
+    } catch (err) {
+      console.error("Delete failed:", err);
+      setMessage("Error deleting user");
+      setMessageType("error");
+    }
 
+    // Hide message automatically after 3 seconds
+    setTimeout(() => {
+      setMessage(null);
+    }, 3000);
+  };
 
   return (
     <div className="update-profile-page">
       <h2>Update User Profiles</h2>
+
+      {/* Dropdown message */}
+      {message && (
+        <div className={`dropdown-message ${messageType}`}>
+          {message}
+        </div>
+      )}
+
       <table>
         <thead>
           <tr>

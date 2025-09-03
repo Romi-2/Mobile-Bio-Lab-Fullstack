@@ -36,6 +36,36 @@
 .users-list .edit-btn:hover {
   background-color: #1e8449; /* darker green */
 }
+
+/* ✅ Dropdown message */
+.dropdown-message {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  animation: slideDown 0.3s ease;
+  z-index: 9999;
+}
+
+.dropdown-message.error {
+  background: #f44336; /* red for errors */
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* ================= Users List Responsive ================= */
 
 /* Desktop: default layout already set */
