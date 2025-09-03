@@ -21,7 +21,7 @@ router.get("/pending-users", protect, adminOnly, (req, res) => {
   });
 });
 
-// ✅ Approve user + store ActivationToken + send email
+// ✅ Approve user + store activation token + send email
 router.post("/approve/:id", protect, adminOnly, (req, res) => {
   const userId = req.params.id;
 
@@ -32,21 +32,21 @@ router.post("/approve/:id", protect, adminOnly, (req, res) => {
     { expiresIn: "1d" }
   );
 
-  // Fetch user email + vuid
-  const selectQuery = "SELECT email, first_name, vuid FROM users WHERE id = ?";
+  // Fetch user email + vu_id
+  const selectQuery = "SELECT email, first_name, vu_id FROM users WHERE id = ?";
   db.query(selectQuery, [userId], (err, rows) => {
     if (err) {
-      console.error("❌ Database error on SELECT:", err.message);
+      console.error("❌ Database SELECT error:", err.message);
       return res.status(500).json({ message: "Database error", error: err.message });
     }
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const userEmail = rows[0].email;
-    const firstName = rows[0].first_name;
-    const vuid = rows[0].vuid;
-    const activationLink = `http://localhost:3000/activate/${userId}?token=${activationToken}`;
+    const { email: userEmail, first_name: firstName, vu_id } = rows[0];
+
+    // Use vu_id in activation link
+    const activationLink = `http://localhost:3000/activate/${vu_id}?token=${activationToken}`;
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -55,7 +55,7 @@ router.post("/approve/:id", protect, adminOnly, (req, res) => {
       html: `
         <p>Hello ${firstName},</p>
         <p>Your account has been approved! Click below to activate your account:</p>
-        <a href="${activationLink}">Activate Now ${vuid}</a>
+        <a href="${activationLink}">Activate Now</a>
         <p>This link will expire in 24 hours.</p>
       `,
     };
@@ -67,19 +67,20 @@ router.post("/approve/:id", protect, adminOnly, (req, res) => {
         return res.status(500).json({ message: "Email sending failed", error: err2.message });
       }
 
-      // Email sent successfully → update user status
-      const updateQuery =
-        "UPDATE users SET status = 'approved', activationToken = ? WHERE id = ?";
+      // Update user status & save activation token
+      const updateQuery = "UPDATE users SET status = 'approved', activationToken = ? WHERE id = ?";
       db.query(updateQuery, [activationToken, userId], (err3) => {
         if (err3) {
-          console.error("❌ Database update failed:", err3.message);
+          console.error("❌ Database UPDATE error:", err3.message);
           return res.status(500).json({ message: "Database update failed", error: err3.message });
         }
+
         res.json({ message: "✅ User approved and activation email sent!" });
       });
     });
   });
 });
+
 
 // ✅ Delete user
 router.delete("/delete/:id", protect, adminOnly, (req, res) => {
