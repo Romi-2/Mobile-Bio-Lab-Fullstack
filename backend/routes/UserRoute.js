@@ -101,31 +101,16 @@ router.put("/:id", protect, adminOnly, (req, res) => {
   });
 });
 
-// --------------------
-// DELETE user
-// --------------------
+
+// Delete user by admin
 router.delete("/:id", protect, adminOnly, (req, res) => {
   const { id } = req.params;
   const query = "DELETE FROM users WHERE id = ?";
   db.query(query, [id], (err, result) => {
-    if (err) return res.status(500).json({ message: "Database error", error: err });
+    if (err) return res.status(500).json({ message: "Database error" });
     if (result.affectedRows === 0) return res.status(404).json({ message: "User not found" });
     res.json({ message: "User deleted successfully" });
   });
 });
-
-// ✅ Approve user
-// ✅ Reject user
-router.get("/status", verifyToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.json({ status: user.status });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 
 export default router;

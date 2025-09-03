@@ -2,6 +2,7 @@ import express from "express";
 import { db } from "../server.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import transporter from "../emailConfig.js";
+import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.get("/pending-users", protect, adminOnly, (req, res) => {
 });
 
 // ✅ Approve user + store ActivationToken + send email
+// ✅ Approve user + store ActivationToken + send email
 router.post("/approve/:id", protect, adminOnly, (req, res) => {
   const userId = req.params.id;
 
@@ -30,39 +32,40 @@ router.post("/approve/:id", protect, adminOnly, (req, res) => {
     { expiresIn: "1d" }
   );
 
-  // Update user status and store activation token
-  const updateQuery = `
-    UPDATE users 
-    SET status = 'approved', ActivationToken = ? 
-    WHERE id = ?
-  `;
-  db.query(updateQuery, [activationToken, userId], (err, result) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
+  // Fetch user email first
+  const selectQuery = "SELECT email, first_name FROM users WHERE id = ?";
+  db.query(selectQuery, [userId], (err, rows) => {
+    if (err || rows.length === 0) return res.status(500).json({ message: "Cannot fetch user" });
 
-    // Fetch user email for sending activation
-    db.query("SELECT email, first_name FROM users WHERE id = ?", [userId], (err, rows) => {
-      if (err) return res.status(500).json({ error: "Database error" });
+    const userEmail = rows[0].email;
+    const firstName = rows[0].first_name;
+    const activationLink = `http://localhost:3000/activate/${userId}?token=${activationToken}`;
 
-      const userEmail = rows[0].email;
-      const firstName = rows[0].first_name;
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: userEmail,
+      subject: "Activate Your Account",
+      html: `
+        <p>Hello ${firstName},</p>
+        <p>Your account has been approved! Click below to activate your account:</p>
+        <a href="${activationLink}">Activate Now</a>
+        <p>This link will expire in 24 hours.</p>
+      `,
+    };
 
-      const activationLink = `http://localhost:3000/activate/${activationToken}`;
+    transporter.sendMail(mailOptions, (err2) => {
+      if (err2) return res.status(500).json({ message: "Email sending failed", error: err2 });
 
-      const mailOptions = {
-        from: "yourapp@gmail.com",
-        to: userEmail,
-        subject: "Activate Your Account",
-        text: `Hello ${firstName},\n\nClick here to activate your account: ${activationLink}\n\nThanks!`
-      };
-
-      transporter.sendMail(mailOptions, (err) => {
-        if (err) return res.status(500).json({ error: "Email sending failed", details: err });
-        res.json({ message: "User approved and activation email sent" });
+      // Email sent successfully → update user status
+      const updateQuery = "UPDATE users SET status = 'approved', activationToken = ? WHERE id = ?";
+      db.query(updateQuery, [activationToken, userId], (err3) => {
+        if (err3) return res.status(500).json({ message: "Database update failed", error: err3 });
+        res.json({ message: "User approved and activation email sent!" });
       });
     });
   });
 });
+
 
 // ✅ Reject user
 router.post("/reject/:id", protect, adminOnly, (req, res) => {
