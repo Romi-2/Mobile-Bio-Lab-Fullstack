@@ -35,7 +35,7 @@ export const deleteUserByAdmin = async (id: number): Promise<{ message: string }
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found, please login");
 
-  const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+  const res = await fetch(`http://localhost:5000/api/admin/delete/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

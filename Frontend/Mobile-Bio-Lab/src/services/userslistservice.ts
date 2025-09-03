@@ -33,16 +33,20 @@ export const getAllUsers = async (): Promise<User[]> => {
   return Array.isArray(data) ? data : data.users || [];
 };
 
-// Delete a user by ID
-export const deleteUser = async (id: number) => {
+
+// Delete a user by ID (Admin only)
+export const deleteUser = async (id: number): Promise<{ message: string }> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("No authentication token found. Please login.");
   }
 
-  const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+  const res = await fetch(`http://localhost:5000/api/admin/delete/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
   });
 
   if (res.status === 401) {
@@ -50,7 +54,9 @@ export const deleteUser = async (id: number) => {
   }
 
   if (!res.ok) {
-    throw new Error("Failed to delete user");
+    const text = await res.text();
+    console.error("deleteUser failed:", res.status, text);
+    throw new Error(`Failed to delete user: ${text}`);
   }
 
   return res.json();
