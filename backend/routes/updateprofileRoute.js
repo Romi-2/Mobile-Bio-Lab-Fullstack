@@ -59,7 +59,7 @@ router.put(
     const updates = [];
     const values = [];
 
-    if (vuEmail) { updates.push("vu_email_address = ?"); values.push(vuEmail); }
+    if (vuEmail) { updates.push("email = ?"); values.push(vuEmail); }
     if (city) { updates.push("city = ?"); values.push(city); }
     if (profilePicturePath) { updates.push("profilePicture = ?"); values.push(profilePicturePath); }
 
