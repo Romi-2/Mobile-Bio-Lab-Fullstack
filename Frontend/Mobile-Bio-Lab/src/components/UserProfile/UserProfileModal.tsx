@@ -1,4 +1,4 @@
-// src/components/UserProfile/UserProfileForm.tsx
+// src/components/UserProfile/UserProfileModa.tsx
 import React, { useState, useEffect } from "react";
 import { updateUserProfile, type UserProfile } from "../../services/userprofileservice";
 import "./UserProfileModal.css";
@@ -62,28 +62,28 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
   };
 
   const handleSave = async () => {
-    if (!email || !city) {
-      alert("VU Email and City are required!");
-      return;
-    }
+  if (!user?.id) {
+    console.error("❌ User ID is missing, cannot update");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("vuEmail", email);
-    formData.append("city", city);
-    if (profileFile) formData.append("profilePicture", profileFile);
+  const formData = new FormData();
+  formData.append("email", email);
+  formData.append("city", city);
+  if (profileFile) formData.append("profilePicture", profileFile);
 
-    setLoading(true);
-    try {
-      await updateUserProfile(user.id, formData);
-      alert("User profile updated!");
-      onUpdated();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update user profile.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    await updateUserProfile(user.id, formData);
+    console.log("✅ Updated user:", user.id);
+    onUpdated();
+  } catch (error) {
+    console.error("Update failed:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
  return (
   <div className="profile-container">

@@ -15,7 +15,8 @@ interface User {
 interface AxiosErrorResponse {
   response?: {
     data?: {
-      error: string;
+      error?: string | object;
+      message?: string;
     };
   };
   message?: string;
@@ -29,6 +30,7 @@ const PendingUsers: React.FC = () => {
 
   const getToken = () => localStorage.getItem("token");
 
+  // 🔹 Fetch pending users
   const fetchPending = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -48,12 +50,19 @@ const PendingUsers: React.FC = () => {
       setUsers(res.data.users);
     } catch (err: unknown) {
       const error = err as AxiosErrorResponse;
-      setError(error?.response?.data?.error || error?.message || "An unknown error occurred");
+      let errorMsg = error?.response?.data?.error || error?.message || "An unknown error occurred";
+
+      if (typeof errorMsg !== "string") {
+        errorMsg = JSON.stringify(errorMsg); // convert objects → string
+      }
+
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
-  }, []); // getToken is stable, so no dependencies needed
+  }, []);
 
+  // 🔹 Approve or Reject user
   const handleAction = async (id: number, action: "approve" | "reject") => {
     try {
       setUpdatingId(id);
@@ -69,16 +78,24 @@ const PendingUsers: React.FC = () => {
       fetchPending();
     } catch (err: unknown) {
       const error = err as AxiosErrorResponse;
-      console.error(`${action} failed`, error);
-      alert(error?.response?.data?.error || error?.message || "An error occurred");
+      let errorMsg =
+        error?.response?.data?.error || error?.message || "An error occurred";
+
+      if (typeof errorMsg !== "string") {
+        errorMsg = JSON.stringify(errorMsg);
+      }
+
+      console.error(`${action} failed:`, errorMsg);
+      alert(errorMsg);
     } finally {
       setUpdatingId(null);
     }
   };
 
+  // 🔹 Load pending users on mount
   useEffect(() => {
     fetchPending();
-  }, [fetchPending]); // Now fetchPending is stable and can be included
+  }, [fetchPending]);
 
   if (loading) return <p>Loading pending users...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -92,7 +109,9 @@ const PendingUsers: React.FC = () => {
         <ul>
           {users.map((u) => (
             <li key={u.id}>
-              <span>{u.firstName} {u.lastName} - {u.city}</span>
+              <span>
+                {u.firstName} {u.lastName} - {u.city}
+              </span>
               <div className="actions">
                 <button
                   className="approve-btn"
@@ -110,7 +129,6 @@ const PendingUsers: React.FC = () => {
                 </button>
               </div>
             </li>
-
           ))}
         </ul>
       )}
