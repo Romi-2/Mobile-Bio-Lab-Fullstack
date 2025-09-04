@@ -1,10 +1,25 @@
 
 /* profile page start */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;         /* let it expand */
+  min-height: 100%;     /* just ensures not collapsed */
+  overflow-y: auto;     /* allow page scrolling */
+}
 
-/* src/pages/Profile.css */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100%;     /* grow with body */
+}
+
+
 .profile-loading,
 .profile-error {
-  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -49,15 +64,6 @@
 
 .retry-button:hover {
   background-color: #2980b9;
-}
-
-.profile-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .profile-card {
