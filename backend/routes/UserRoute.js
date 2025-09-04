@@ -1,3 +1,4 @@
+// backend/routes/userRoute.js
 import express from "express";
 import { db } from "../server.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
