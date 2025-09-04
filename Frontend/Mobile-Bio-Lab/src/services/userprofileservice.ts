@@ -1,4 +1,6 @@
 // src/services/userprofileservice.ts
+
+// Unified type that matches your DB + backend
 export type UserProfile = {
   id: number;
   firstName: string;
@@ -9,19 +11,20 @@ export type UserProfile = {
   status: string;
   vu_id: string;
   mobile: string;
-  profilePicture: string | null; // ✅ match DB column
+  profilePicture: string | null;
 };
 
-// Fetch profile by ID
+// --------------------
+//  USER PROFILE
+// --------------------
+
+// Fetch a user profile by ID (view-only, normal user/admin)
 export const getUserProfile = async (id: number): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found in localStorage");
 
   const res = await fetch(`http://localhost:5000/api/users/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // <-- send token
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
@@ -33,16 +36,13 @@ export const getUserProfile = async (id: number): Promise<UserProfile> => {
   return res.json();
 };
 
-// Fetch currently logged-in user
+// Fetch currently logged-in user (self profile)
 export const getCurrentUser = async (): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found in localStorage");
 
   const res = await fetch("http://localhost:5000/api/profile/me", {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
@@ -51,28 +51,5 @@ export const getCurrentUser = async (): Promise<UserProfile> => {
     throw new Error("Failed to fetch current user");
   }
 
-  const data = await res.json();
-  return data; // backend already returns the user object
-};
-// src/components/UserProfile/UserProfileModal.tsx
-// src/services/userprofileservice.ts
-export const updateUserProfile = async (id: number, formData: FormData) => {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`http://localhost:5000/api/users/${id}`, {
-    method: "PUT",
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("updateUserProfile failed:", res.status, text);
-    throw new Error("Failed to update user profile");
-  }
-
   return res.json();
 };
-
-

@@ -1,4 +1,6 @@
-// Define the User type used for admin operations
+// src/services/updateprofileservice.ts
+
+// Admin user type
 export type User = {
   id: number;
   firstName: string;
@@ -12,11 +14,17 @@ export type User = {
   profilePicture: string | null;
 };
 
-// Fetch all users for admin
+// --------------------
+//  ADMIN OPERATIONS
+// --------------------
+
+// Fetch all users (admin only)
 export const getAllUsersForAdmin = async (): Promise<User[]> => {
   const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found, please login");
+
   const res = await fetch("http://localhost:5000/api/admin/update-profile/all", {
-    headers: { Authorization: token ? `Bearer ${token}` : "" },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
@@ -25,22 +33,45 @@ export const getAllUsersForAdmin = async (): Promise<User[]> => {
     throw new Error("Failed to fetch users for admin");
   }
 
-  const data = await res.json();
-
-  // Ensure we always return an array
-  return Array.isArray(data) ? data : data.users ?? [];
+  return res.json();
 };
-// Delete user by admin
-export const deleteUserByAdmin = async (id: number): Promise<{ message: string }> => {
+
+// Admin updates user by ID
+export const adminUpdateUser = async (
+  id: number,
+  formData: FormData
+): Promise<User> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found, please login");
+
+  const res = await fetch(
+    `http://localhost:5000/api/admin/update-profile/${id}`,
+    {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("adminUpdateUser failed:", res.status, text);
+    throw new Error("Failed to update user");
+  }
+
+  return res.json();
+};
+
+// Admin deletes user
+export const deleteUserByAdmin = async (
+  id: number
+): Promise<{ message: string }> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found, please login");
 
   const res = await fetch(`http://localhost:5000/api/admin/delete/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {

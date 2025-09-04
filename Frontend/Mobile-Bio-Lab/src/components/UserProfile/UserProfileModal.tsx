@@ -1,6 +1,7 @@
-// src/components/UserProfile/UserProfileModa.tsx
+// src/components/UserProfile/UserProfileModal.tsx
 import React, { useState, useEffect } from "react";
-import { updateUserProfile, type UserProfile } from "../../services/userprofileservice";
+import { type UserProfile } from "../../services/userprofileservice";
+import { adminUpdateUser } from "../../services/updateprofileservice"; // ✅ only keep this
 import "./UserProfileModal.css";
 
 interface Props {
@@ -36,8 +37,12 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
 
       const img = new Image();
       img.onload = () => {
-        // Standard passport photo ~ 300x400px (can allow a little tolerance)
-        if (img.width < 250 || img.height < 350 || img.width > 350 || img.height > 450) {
+        if (
+          img.width < 250 ||
+          img.height < 350 ||
+          img.width > 350 ||
+          img.height > 450
+        ) {
           alert("Passport photo must be approx 300x400px.");
           resolve(false);
         } else {
@@ -62,65 +67,67 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
   };
 
   const handleSave = async () => {
-  if (!user?.id) {
-    console.error("❌ User ID is missing, cannot update");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("email", email);
-  formData.append("city", city);
-  if (profileFile) formData.append("profilePicture", profileFile);
-
-  setLoading(true);
-  try {
-    await updateUserProfile(user.id, formData);
-    console.log("✅ Updated user:", user.id);
-    onUpdated();
-  } catch (error) {
-    console.error("Update failed:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    const userId = Number(user?.id);
+if (!user || isNaN(userId)) {
+  console.error("User ID is missing or invalid. User object:", user);
+  alert("Something went wrong: user ID is missing.");
+  return;
+}
 
 
- return (
-  <div className="profile-container">
-    <div className="profile-card">
-      <h3>Edit User Profile</h3>
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("city", city);
+    if (profileFile) formData.append("profilePicture", profileFile);
 
-      {/* Passport Photo Preview at top */}
-      {previewUrl && (
-        <div className="passport-photo">
-          <img src={previewUrl} alt="Preview" className="preview-img" />
+    setLoading(true);
+    try {
+      await adminUpdateUser(userId, formData); // ✅ Only admin updates
+      console.log("✅ Admin updated user:", userId);
+      onUpdated();
+    } catch (error) {
+      console.error("Update failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="profile-container">
+      <div className="profile-card">
+        <h3>Admin Edit User Profile</h3>
+
+        {previewUrl && (
+          <div className="passport-photo">
+            <img src={previewUrl} alt="Preview" className="preview-img" />
+          </div>
+        )}
+
+        <label>VU Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <label>City:</label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
+
+        <label>Profile Picture (Passport Size):</label>
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+
+        <div className="actions">
+          <button onClick={handleSave} disabled={loading}>
+            {loading ? "Saving..." : "Save"}
+          </button>
         </div>
-      )}
-
-      <label>VU Email:</label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <label>City:</label>
-      <input
-        type="text"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-      />
-
-      <label>Profile Picture (Passport Size):</label>
-      <input type="file" accept="image/*" onChange={handleFileChange} />
-
-      <div className="actions">
-        <button onClick={handleSave} disabled={loading}>
-          {loading ? "Saving..." : "Save"}
-        </button>
       </div>
     </div>
-  </div>
-);
+  );
 };
+
 export default UserProfileForm;
