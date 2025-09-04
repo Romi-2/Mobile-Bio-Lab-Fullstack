@@ -13,12 +13,16 @@ export type UserProfile = {
   mobile: string;
   profilePicture: string | null;
 };
+// src/services/userprofileservice.ts
+export type UserProfileResponse = {
+  user: UserProfile;
+};
 
 // --------------------
-//  USER PROFILE
+//  USER OPERATIONS
 // --------------------
 
-// Fetch a user profile by ID (view-only, normal user/admin)
+// Fetch a user profile by ID (normal user)
 export const getUserProfile = async (id: number): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found in localStorage");
@@ -33,22 +37,52 @@ export const getUserProfile = async (id: number): Promise<UserProfile> => {
     throw new Error("Failed to fetch user profile");
   }
 
-  return res.json();
+  const data: UserProfileResponse = await res.json(); // explicitly tell TS the shape
+
+  return data.user; // now TypeScript knows we’re returning UserProfile
 };
 
-// Fetch currently logged-in user (self profile)
+
+// Fetch currently logged-in user
 export const getCurrentUser = async (): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found in localStorage");
 
   const res = await fetch("http://localhost:5000/api/profile/me", {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!res.ok) {
     const text = await res.text();
     console.error("getCurrentUser failed:", res.status, text);
     throw new Error("Failed to fetch current user");
+  }
+
+  return res.json();
+};
+
+// --------------------
+//  ADMIN OPERATIONS
+// --------------------
+
+// Fetch all users (admin)
+export const getAllUsersForAdmin = async (): Promise<UserProfile[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found, please login");
+
+  const res = await fetch(
+    "http://localhost:5000/api/admin/update-profile/all",
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("getAllUsersForAdmin failed:", res.status, text);
+    throw new Error("Failed to fetch users for admin");
   }
 
   return res.json();

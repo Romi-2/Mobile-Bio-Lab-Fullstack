@@ -1,7 +1,7 @@
-// src/components/UserProfile/UserProfileModal.tsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { type UserProfile } from "../../services/userprofileservice";
-import { adminUpdateUser } from "../../services/updateprofileservice"; // ✅ only keep this
+import { adminUpdateUser } from "../../services/updateprofileservice";
 import "./UserProfileModal.css";
 
 interface Props {
@@ -15,6 +15,9 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(user.profilePicture || "");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setEmail(user.email || "");
@@ -23,57 +26,30 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
     setProfileFile(null);
   }, [user]);
 
-  const validatePassportPhoto = (file: File): Promise<boolean> => {
-    return new Promise((resolve) => {
-      if (!file.type.startsWith("image/")) {
-        alert("Only image files are allowed.");
-        return resolve(false);
-      }
-
-      if (file.size > 200 * 1024) {
-        alert("File size must be less than 200KB.");
-        return resolve(false);
-      }
-
-      const img = new Image();
-      img.onload = () => {
-        if (
-          img.width < 250 ||
-          img.height < 350 ||
-          img.width > 350 ||
-          img.height > 450
-        ) {
-          alert("Passport photo must be approx 300x400px.");
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      };
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const isValid = await validatePassportPhoto(file);
-      if (!isValid) {
-        e.target.value = ""; // reset input
-        return;
-      }
-      setProfileFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files are allowed.");
+      return;
     }
+
+    if (file.size > 200 * 1024) {
+      alert("File size must be less than 200KB.");
+      return;
+    }
+
+    setProfileFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleSave = async () => {
     const userId = Number(user?.id);
-if (!user || isNaN(userId)) {
-  console.error("User ID is missing or invalid. User object:", user);
-  alert("Something went wrong: user ID is missing.");
-  return;
-}
-
+    if (!user || isNaN(userId)) {
+      setMessage({ text: "❌ User ID is missing!", type: "error" });
+      return;
+    }
 
     const formData = new FormData();
     formData.append("email", email);
@@ -82,18 +58,27 @@ if (!user || isNaN(userId)) {
 
     setLoading(true);
     try {
-      await adminUpdateUser(userId, formData); // ✅ Only admin updates
-      console.log("✅ Admin updated user:", userId);
+      await adminUpdateUser(userId, formData);
+      setMessage({ text: "✅ Profile successfully updated!", type: "success" });
       onUpdated();
     } catch (error) {
-      console.error("Update failed:", error);
+      console.error(error);
+      setMessage({ text: "❌ Failed to update profile", type: "error" });
     } finally {
       setLoading(false);
+      setTimeout(() => setMessage(null), 3000); // auto-hide
     }
   };
 
   return (
     <div className="profile-container">
+      {/* ✅ Dropdown notification at top of screen */}
+      {message && (
+        <div className={`dropdown-message ${message.type}`}>
+          {message.text}
+        </div>
+      )}
+
       <div className="profile-card">
         <h3>Admin Edit User Profile</h3>
 
@@ -104,18 +89,10 @@ if (!user || isNaN(userId)) {
         )}
 
         <label>VU Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 
         <label>City:</label>
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
+        <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
 
         <label>Profile Picture (Passport Size):</label>
         <input type="file" accept="image/*" onChange={handleFileChange} />
@@ -123,6 +100,9 @@ if (!user || isNaN(userId)) {
         <div className="actions">
           <button onClick={handleSave} disabled={loading}>
             {loading ? "Saving..." : "Save"}
+          </button>
+          <button onClick={() => navigate(-1)} className="back-button">
+            Back
           </button>
         </div>
       </div>

@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: flex-start;
   padding: 32px;
-  background-color: #f9f9f9;
+  background-color: #fff;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -107,6 +107,47 @@
   padding: 4px;
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Dropdown message */
+.dropdown-message {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  z-index: 9999;
+  animation: slideDown 0.5s ease;
+}
+
+/* Colors */
+.dropdown-message.success {
+  background-color: #4caf50; /* green */
+}
+.dropdown-message.error {
+  background-color: #f44336; /* red */
+}
+
+/* Slide down effect */
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.back-button {
+  margin-left: 10px;
+  background-color: #3b82f6;
+  color: #fff;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.back-button:hover {
+  background-color:#2563eb;
 }
 
 /* ================= UserProfileForm Responsive ================= */

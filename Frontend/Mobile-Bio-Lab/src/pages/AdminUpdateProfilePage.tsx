@@ -14,6 +14,7 @@ const AdminUpdateProfilePage: React.FC = () => {
       if (!id) return;
       try {
         const userData = await getUserProfile(Number(id));
+        console.log("Fetched user:", userData); // ✅ Already a UserProfile
         setUser(userData);
       } catch (error) {
         console.error("Failed to fetch user:", error);
@@ -21,6 +22,7 @@ const AdminUpdateProfilePage: React.FC = () => {
         navigate("/adminDashboard/users"); // redirect back to users list
       }
     };
+
     fetchUser();
   }, [id, navigate]);
 
