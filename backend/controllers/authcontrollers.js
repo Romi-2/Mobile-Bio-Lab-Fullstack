@@ -21,6 +21,7 @@ exports.registerUser = (req, res) => {
 
 exports.loginUser = (req, res) => {
   const { email, password } = req.body;
+
   User.findByEmail(email, (err, users) => {
     if (err) return res.status(500).json(err);
     if (users.length === 0) return res.status(404).json({ msg: "User not found" });
@@ -37,14 +38,17 @@ exports.loginUser = (req, res) => {
         { expiresIn: "1d" }
       );
 
-      // ✅ Store token in ActivationToken column (optional)
-      const query = "UPDATE users SET ActivationToken = ? WHERE id = ?";
+      // ✅ Update DB with token
       User.updateToken(user.id, token, (err, result) => {
-        if (err) console.error("Failed to store token:", err);
+        if (err) {
+          console.error("❌ Failed to store token:", err);
+        } else {
+          console.log("✅ Token stored for user:", user.id);
+        }
       });
 
+      // Return token + user
       res.json({ token, user });
     });
   });
 };
-

@@ -1,24 +1,17 @@
-// backend/routes/profileRoute.js
-import express from "express";
-import { db } from "../server.js"; // make sure db is exported in server.js
-import { protect } from "../middleware/authMiddleware.js";
-
-const router = express.Router(); // ← initialize router
-
-// GET currently logged-in user
 router.get("/me", protect, (req, res) => {
-  const userId = req.user.id; // set in protect middleware
+  const userId = req.user.id;
+
   db.query(
     `SELECT 
       id, 
       first_name AS firstName, 
       last_name AS lastName, 
-      vu_id AS vuId,
-      mobile AS mobileNumber, 
+      vu_id AS vu_id,
+      mobile AS mobile, 
       email, 
       role, 
       city, 
-      profilePicture, 
+      SUBSTRING_INDEX(profilePicture, '/', -1) AS profilePicture, 
       status
     FROM users
     WHERE id = ?`,
@@ -35,5 +28,3 @@ router.get("/me", protect, (req, res) => {
     }
   );
 });
-
-export default router; // ← default export

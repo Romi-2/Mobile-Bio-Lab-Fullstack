@@ -1,13 +1,19 @@
-const userSchema = new mongoose.Schema(
-  {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    city: { type: String },
-    profilePicture: { type: String, default: "" },
-    isActive: { type: Boolean, default: false },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+import { db } from "../server.js"; // adjust path if needed
+
+const User = {
+  findByEmail: (email, callback) => {
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [email], callback);
   },
-  { timestamps: true }
-);
+
+  updateToken: (id, token, callback) => {
+    const sql = "UPDATE users SET ActivationToken = ? WHERE id = ?";
+    db.query(sql, [token, id], callback);
+  },
+};
+
+export default User;
+File: backend/controllers/authcontrollers.js
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
