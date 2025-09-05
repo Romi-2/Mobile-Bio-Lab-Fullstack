@@ -1,3 +1,10 @@
+import express from "express";
+import { db } from "../server.js";
+import { protect } from "../middleware/authMiddleware.js"; // make sure protect middleware exists
+
+const router = express.Router();
+
+// Get current user's profile
 router.get("/me", protect, (req, res) => {
   const userId = req.user.id;
 
@@ -28,3 +35,5 @@ router.get("/me", protect, (req, res) => {
     }
   );
 });
+
+export default router; // ✅ default export
