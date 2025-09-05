@@ -45,15 +45,15 @@ const Profile: React.FC = () => {
     <div className="profile-container">
       <div className="profile-card">
         <div className="profile-header">
-            <img
-                src={
-                  user?.profilePicture
-                    ? `http://localhost:5000/uploads/${user.profilePicture}`
-                    : "/default-avatar.png"
-                }
-                alt="Profile"
-                className="profile-avatar"
-              />
+          <img
+                    src={
+                      user?.profilePicture
+                        ? `http://localhost:5000${user.profilePicture}`
+                        : "/default-avatar.png"
+                    }
+                    alt="Profile"
+                    className="profile-avatar"
+                  />
 
           <p>{user?.role}</p>
         </div>
