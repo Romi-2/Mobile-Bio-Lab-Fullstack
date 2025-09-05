@@ -16,6 +16,8 @@ import "./App.css";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/Landingpage";
 import AdminHome from "./components/Adminhome/Adminhome"; // ✅ correct path
+import ForgotPasswordPage from "./pages/Forgetpasswordpage";
+ 
 
 function AppContent() {
   const location = useLocation();
@@ -33,6 +35,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+           <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
           {/* User dashboard */}
          <Route
   path="/userdashboard"
