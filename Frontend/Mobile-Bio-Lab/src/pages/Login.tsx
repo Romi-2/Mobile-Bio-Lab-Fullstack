@@ -115,14 +115,11 @@ const Login: React.FC = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="login-links">
-          <p>
-            <Link to="/forgotPassword">Forgot Password?</Link>
-          </p>
-          <p>
-            New user? <Link to="/register">Register here</Link>
-          </p>
-        </div>
+        <div className="login-links"> 
+  <Link to="/forgotPassword">Forgot Password?</Link>
+  <Link to="/register">Register here</Link>
+</div>
+
       </div>
     </div>
   );

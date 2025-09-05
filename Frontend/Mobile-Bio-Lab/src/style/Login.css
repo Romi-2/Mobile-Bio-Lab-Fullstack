@@ -140,6 +140,22 @@
   font-weight: 500;
 }
 
+.login-links {
+  display: flex;
+  justify-content: space-between; /* pushes links to opposite sides */
+  margin-top: 10px;
+}
+
+.login-links a {
+  text-decoration: none;
+  color: #1976d2;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+
 /* Responsive Styles */
 
 /* Tablets */
