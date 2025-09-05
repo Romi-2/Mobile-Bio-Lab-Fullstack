@@ -6,8 +6,8 @@ const RegistrationSuccess: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="register-container">
-      <div className="register-card" style={{ textAlign: "center" }}>
+    <div className="registeration-container">
+      <div className="registeration-card" style={{ textAlign: "center" }}>
         <h2 style={{ color: "#1976d2" }}>✅ Registration Successful!</h2>
         <p>Your account has been created successfully.</p>
         <p>Please wait for an activation email from the admin to access your account.</p>
