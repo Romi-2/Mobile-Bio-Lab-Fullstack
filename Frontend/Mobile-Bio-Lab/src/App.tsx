@@ -17,7 +17,7 @@ import Profile from "./pages/Profile";
 import LandingPage from "./pages/Landingpage";
 import AdminHome from "./components/Adminhome/Adminhome"; // ✅ correct path
 import ForgotPasswordPage from "./pages/Forgetpasswordpage";
- 
+import ResetPasswordPage from "./pages/resetpasswordpage";
 
 function AppContent() {
   const location = useLocation();
@@ -36,6 +36,7 @@ function AppContent() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           {/* User dashboard */}
          <Route
   path="/userdashboard"
