@@ -57,7 +57,7 @@ const UsersList: React.FC = () => {
       <h2>Users List</h2>
 
       {/* ✅ Dropdown notification */}
-      {message && <div className="dropdown-message">{message}</div>}
+      {message && <div className="list-dropdown-message">{message}</div>}
 
       <input
         type="text"

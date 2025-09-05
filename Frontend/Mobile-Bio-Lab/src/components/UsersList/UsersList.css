@@ -38,7 +38,7 @@
 }
 
 /* ✅ Dropdown message */
-.dropdown-message {
+.list-dropdown-message {
   position: fixed;
   top: 10px;
   right: 20px;
@@ -51,7 +51,7 @@
   z-index: 9999;
 }
 
-.dropdown-message.error {
+.list-dropdown-message.error {
   background: #f44336; /* red for errors */
 }
 
