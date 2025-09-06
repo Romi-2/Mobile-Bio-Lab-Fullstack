@@ -46,7 +46,7 @@ router.post("/approve/:id", protect, adminOnly, (req, res) => {
     const { email: userEmail, first_name: firstName, vu_id } = rows[0];
 
     // Use vu_id in activation link
-    const activationLink = `http://localhost:3000/activate/${vu_id}?token=${activationToken}`;
+    const activationLink = `http://localhost:5173/login?token=${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -55,9 +55,9 @@ router.post("/approve/:id", protect, adminOnly, (req, res) => {
       html: `
         <p>Hello ${firstName},</p>
         <p>Your account has been approved! Click below to activate your account:</p>
-        <a href="${activationLink}">Activate Now</a>
+        <a href="${activationLink}">Activate Now (${vu_id})</a>
         <p>This link will expire in 24 hours.</p>
-      `,
+        `,
     };
 
     // Send email

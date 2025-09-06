@@ -1,3 +1,6 @@
+
+// forgetpasswordRoute.js
+import bcrypt from "bcryptjs";
 import express from "express";
 import crypto from "crypto";
 import { db } from "../server.js";
@@ -66,7 +69,7 @@ router.post("/forgot-password", async (req, res) => {
   });
 });
 
-// forgetpasswordRoute.js
+// reset password route
 router.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -75,22 +78,32 @@ router.post("/reset-password/:token", async (req, res) => {
   db.query(
     "SELECT * FROM users WHERE resetToken = ? AND resetTokenExpiry > ?",
     [token, Date.now()],
-    (err, results) => {
+    async (err, results) => {
       if (err) return res.status(500).json({ error: "DB error" });
       if (results.length === 0)
         return res.status(400).json({ error: "Invalid or expired token" });
 
       const userId = results[0].id;
-      db.query(
-        "UPDATE users SET password = ?, resetToken = NULL, resetTokenExpiry = NULL WHERE id = ?",
-        [password, userId],
-        (err2) => {
-          if (err2) return res.status(500).json({ error: "DB error" });
-          res.json({ message: "Password reset successfully" });
-        }
-      );
+
+      try {
+        // ✅ Hash the new password before saving
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        db.query(
+          "UPDATE users SET password = ?, resetToken = NULL, resetTokenExpiry = NULL WHERE id = ?",
+          [hashedPassword, userId],
+          (err2) => {
+            if (err2) return res.status(500).json({ error: "DB error" });
+            res.json({ message: "Password reset successfully" });
+          }
+        );
+      } catch (hashErr) {
+        console.error("Hash error:", hashErr);
+        res.status(500).json({ error: "Error hashing password" });
+      }
     }
   );
 });
+
 
 export default router;
