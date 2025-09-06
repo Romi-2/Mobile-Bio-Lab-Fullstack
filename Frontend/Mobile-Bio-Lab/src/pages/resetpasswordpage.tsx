@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import './ResetPasswordPage.css';
+import "../style/reserpasswordpage.css";
 
 interface ResetPasswordResponse {
   message: string;
@@ -29,7 +29,7 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     try {
       const res = await axios.post<ResetPasswordResponse>(
-        `http://localhost:5000/api/auth/reset-password/${token}`,
+     `http://localhost:5000/api/auth/reset-password/${token}`,   
         { password }
       );
       setMessage(res.data.message);
