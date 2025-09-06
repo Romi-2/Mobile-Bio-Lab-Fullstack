@@ -95,11 +95,11 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <div className="input-group password-group">
+            <div className="input-group password-group">
             <label>Password</label>
             <div className="password-wrapper">
               <input
-                type={showPassword ? "text" : "password"} // 👁️ toggle
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -109,10 +109,11 @@ const Login: React.FC = () => {
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "🙈" : "👁️"} {/* icon */}
+                {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
           </div>
+
 
           <button type="submit">Login</button>
         </form>

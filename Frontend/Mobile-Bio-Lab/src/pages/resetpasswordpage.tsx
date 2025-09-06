@@ -42,38 +42,36 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-      <h2>Reset Password</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ position: "relative", marginBottom: "10px" }}>
-          <input
-            type={showPassword ? "text" : "password"} // 👁️ toggle
-            placeholder="New Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px", paddingRight: "40px" }}
-          />
-          <span
-            onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: "absolute",
-              right: "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-              fontSize: "1.2rem",
-              userSelect: "none",
-            }}
-          >
-            {showPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-        <button type="submit" style={{ padding: "8px 16px" }}>
-          Reset Password
-        </button>
-      </form>
-      {message && <p style={{ marginTop: "10px" }}>{message}</p>}
-    </div>
-  );
+  <div className="reset-container">
+    <h2>Reset Password</h2>
+    <form onSubmit={handleSubmit}>
+      <div style={{ position: "relative", marginBottom: "10px" }}>
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="New Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <span
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            cursor: "pointer",
+            fontSize: "1.2rem",
+            userSelect: "none",
+          }}
+        >
+          {showPassword ? "🙈" : "👁️"}
+        </span>
+      </div>
+      <button type="submit">Reset Password</button>
+    </form>
+    {message && <p>{message}</p>}
+  </div>
+);
+
 }
