@@ -1,6 +1,6 @@
 
 // forgetpasswordRoute.js
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import express from "express";
 import crypto from "crypto";
 import { db } from "../server.js";
@@ -69,12 +69,10 @@ router.post("/forgot-password", async (req, res) => {
   });
 });
 
-// reset password route
 router.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
-  // Find user by token & check expiry
   db.query(
     "SELECT * FROM users WHERE resetToken = ? AND resetTokenExpiry > ?",
     [token, Date.now()],
@@ -86,7 +84,7 @@ router.post("/reset-password/:token", async (req, res) => {
       const userId = results[0].id;
 
       try {
-        // ✅ Hash the new password before saving
+        // Hash password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
 
         db.query(
