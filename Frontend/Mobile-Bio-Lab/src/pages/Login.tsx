@@ -15,10 +15,10 @@ type User = {
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👁️ state
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // ✅ fetchProfile function
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -32,7 +32,7 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         console.log("✅ User Profile:", profileData);
-        localStorage.setItem("profile", JSON.stringify(profileData)); // optional
+        localStorage.setItem("profile", JSON.stringify(profileData));
       } else {
         console.error("❌ Failed to fetch profile:", profileData.message);
       }
@@ -63,12 +63,10 @@ const Login: React.FC = () => {
           return;
         }
 
-        // ✅ Store token + user
         localStorage.setItem("token", data.token);
         localStorage.setItem("loggedInUser", JSON.stringify(data.user));
         localStorage.setItem("role", data.user.role);
 
-        // ✅ Fetch user profile after login
         await fetchProfile();
 
         navigate("/home");
@@ -80,8 +78,6 @@ const Login: React.FC = () => {
       setError("Something went wrong. Try again later.");
     }
   };
-
-  
 
   return (
     <div className="login-container">
@@ -99,15 +95,23 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <div className="input-group">
+          <div className="input-group password-group">
             <label>Password</label>
-            <input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"} // 👁️ toggle
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"} {/* icon */}
+              </span>
+            </div>
           </div>
 
           <button type="submit">Login</button>
@@ -115,11 +119,10 @@ const Login: React.FC = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="login-links"> 
-  <Link to="/forgotPassword">Forgot Password?</Link>
-  <Link to="/register">Register here</Link>
-</div>
-
+        <div className="login-links">
+          <Link to="/forgotPassword">Forgot Password?</Link>
+          <Link to="/register">Register here</Link>
+        </div>
       </div>
     </div>
   );
