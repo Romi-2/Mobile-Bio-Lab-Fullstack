@@ -10,17 +10,15 @@ function Home() {
 
       <section className="home-content">
         <div className="card">
-          <h2>Fast Registration</h2>
+          <h2>Device Integration</h2>
           <p>
-            Easily register users with just a few clicks and keep track of their
-            status securely.
+            Connect to BLE devices to capture real-time environmental or biological data.
           </p>
         </div>
         <div className="card">
-          <h2>Secure Dashboard</h2>
+          <h2>Reservation System</h2>
           <p>
-            Admins have access to an advanced dashboard to manage approvals,
-            updates, and more.
+            Registered users can reserve slots to access the mobile bio lab on wheels.
           </p>
         </div>
         <div className="card">
