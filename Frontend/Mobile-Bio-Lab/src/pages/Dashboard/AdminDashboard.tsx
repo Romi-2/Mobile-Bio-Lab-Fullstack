@@ -45,6 +45,17 @@ const AdminDashboard: React.FC = () => {
                 Update Profile
               </NavLink>
             </li>
+            <li>
+            <NavLink
+              to="reports"
+              className={({ isActive }) =>
+                `menu-link ${isActive ? "active" : ""}`
+              }
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              Reports
+            </NavLink>
+          </li>
           </ul>
         </nav>
       </aside>
