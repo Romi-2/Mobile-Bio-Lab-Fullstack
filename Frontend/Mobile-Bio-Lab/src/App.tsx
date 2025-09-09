@@ -18,7 +18,7 @@ import LandingPage from "./pages/Landingpage";
 import AdminHome from "./components/Adminhome/Adminhome"; // ✅ correct path
 import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
-
+import AdminReport from "./components/";
 function AppContent() {
   const location = useLocation();
   const showHeader =
@@ -37,6 +37,7 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+           <Route path="/admin/report" element={<AdminReport />} />
           {/* User dashboard */}
          <Route
   path="/userdashboard"
