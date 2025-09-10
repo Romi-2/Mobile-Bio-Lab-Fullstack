@@ -14,16 +14,11 @@ const Profile: React.FC = () => {
       setLoading(true);
       setError("");
       const userData = await getCurrentUser();
-
-      if (!userData) throw new Error("User data not found"); // Validation
-
+      if (!userData) throw new Error("User data not found");
       setUser(userData);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred while fetching user data.");
-      }
+      if (err instanceof Error) setError(err.message);
+      else setError("An unknown error occurred while fetching user data.");
       console.error("Profile fetch error:", err);
     } finally {
       setLoading(false);
@@ -47,9 +42,8 @@ const Profile: React.FC = () => {
     }
   };
 
-  // Helper: safe profile image URL
   const profileImageUrl = user?.profilePicture
-    ? `http://localhost:5000/uploads/profilePics/${user.profilePicture}`
+    ? `http://localhost:5000${user.profilePicture}`
     : "/default-avatar.png";
 
   if (loading) return <div>Loading user profile...</div>;
@@ -71,7 +65,6 @@ const Profile: React.FC = () => {
               alt="Profile"
               className="profile-avatar"
               onError={(e) => {
-                // Fallback if image fails to load
                 (e.target as HTMLImageElement).src = "/default-avatar.png";
               }}
             />
@@ -80,41 +73,20 @@ const Profile: React.FC = () => {
 
           <div className="profile-details">
             <h2>Personal Information</h2>
-
-            <div className="detail-item">
-              <span className="detail-label">First Name:</span>
-              <span className="detail-value">{user.firstName || "N/A"}</span>
-            </div>
-
-            <div className="detail-item">
-              <span className="detail-label">Last Name:</span>
-              <span className="detail-value">{user.lastName || "N/A"}</span>
-            </div>
-
-            <div className="detail-item">
-              <span className="detail-label">VU ID:</span>
-              <span className="detail-value">{user.vu_id || "N/A"}</span>
-            </div>
-
-            <div className="detail-item">
-              <span className="detail-label">Mobile:</span>
-              <span className="detail-value">{user.mobile || "N/A"}</span>
-            </div>
-
-            <div className="detail-item">
-              <span className="detail-label">Email:</span>
-              <span className="detail-value">{user.email || "N/A"}</span>
-            </div>
-
-            <div className="detail-item">
-              <span className="detail-label">Role:</span>
-              <span className="detail-value">{user.role || "N/A"}</span>
-            </div>
-
-            <div className="detail-item">
-              <span className="detail-label">City:</span>
-              <span className="detail-value">{user.city || "N/A"}</span>
-            </div>
+            {[
+              ["First Name", user.firstName],
+              ["Last Name", user.lastName],
+              ["VU ID", user.vu_id],
+              ["Mobile", user.mobile],
+              ["Email", user.email],
+              ["Role", user.role],
+              ["City", user.city],
+            ].map(([label, value]) => (
+              <div className="detail-item" key={label}>
+                <span className="detail-label">{label}:</span>
+                <span className="detail-value">{value || "N/A"}</span>
+              </div>
+            ))}
 
             <div className="profile-actions">
               <button className="pdf-button" onClick={handleDownloadPDF}>
