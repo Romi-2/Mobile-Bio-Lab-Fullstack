@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// UpdateProfilePage.tsx
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllUsersForAdmin, deleteUserByAdmin } from "../services/updateprofileservice";
 import type { User } from "../services/updateprofileservice";
@@ -10,26 +11,50 @@ const UpdateProfilePage: React.FC = () => {
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // Email validation function
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
-  const fetchUsers = async () => {
+  // Fetch users with validation
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await getAllUsersForAdmin();
-      setUsers(res);
+
+      const validUsers = res.filter(
+        (user) =>
+          user.firstName &&
+          user.lastName &&
+          user.email &&
+          user.city &&
+          validateEmail(user.email)
+      );
+
+      setUsers(validUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
       setUsers([]);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  // Edit user
+  const handleEdit = (user: User) => {
+    if (!user.firstName || !user.lastName || !validateEmail(user.email)) {
+      setMessage("Cannot edit user with invalid data");
+      setMessageType("error");
+      setTimeout(() => setMessage(null), 3000);
+      return;
+    }
+    navigate(`/adminDashboard/profile/${user.id}`);
   };
 
-  const handleEdit = (id: number) => {
-    navigate(`/adminDashboard/profile/${id}`);
-  };
-
+  // Delete user
   const handleDelete = async (id: number) => {
-    // Custom confirmation instead of window.confirm
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (!confirmDelete) return;
 
@@ -37,29 +62,21 @@ const UpdateProfilePage: React.FC = () => {
       const res = await deleteUserByAdmin(id);
       setMessage(res.message || "User deleted successfully");
       setMessageType("success");
-      fetchUsers(); // refresh table
+      fetchUsers(); // Refresh table
     } catch (err) {
       console.error("Delete failed:", err);
       setMessage("Error deleting user");
       setMessageType("error");
     }
 
-    // Hide message automatically after 3 seconds
-    setTimeout(() => {
-      setMessage(null);
-    }, 3000);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
     <div className="update-profile-page">
       <h2>Update User Profiles</h2>
 
-      {/* Dropdown message */}
-      {message && (
-        <div className={`dropdown-message ${messageType}`}>
-          {message}
-        </div>
-      )}
+      {message && <div className={`dropdown-message ${messageType}`}>{message}</div>}
 
       <table>
         <thead>
@@ -89,7 +106,7 @@ const UpdateProfilePage: React.FC = () => {
               <td>{user.email}</td>
               <td>{user.city}</td>
               <td>
-                <button onClick={() => handleEdit(user.id)}>Edit Profile</button>
+                <button onClick={() => handleEdit(user)}>Edit Profile</button>
                 <button onClick={() => handleDelete(user.id)}>Delete</button>
               </td>
             </tr>

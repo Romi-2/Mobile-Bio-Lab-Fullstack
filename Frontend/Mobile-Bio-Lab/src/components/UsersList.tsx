@@ -7,7 +7,7 @@ import "../style/UsersList.css";
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
-  const [message, setMessage] = useState<string | null>(null); // ✅ for dropdown message
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,19 +21,21 @@ const UsersList: React.FC = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
       setUsers([]);
+      setMessage("❌ Failed to fetch users.");
+      setTimeout(() => setMessage(null), 3000);
     }
   };
 
   const handleDelete = async (id: number) => {
-    const confirm = window.confirm("Are you sure you want to delete this user?");
-    if (!confirm) return;
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (!confirmDelete) return;
 
     try {
       const res = await deleteUser(id);
       setMessage(res.message || "User deleted successfully ✅");
       fetchUsers();
-
-      // Auto-hide message after 3s
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Delete failed:", error);
@@ -46,11 +48,16 @@ const UsersList: React.FC = () => {
     navigate(`/adminDashboard/profile/${id}`);
   };
 
-  const filtered = users.filter(
-    (u) =>
-      u.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      u.city.toLowerCase().includes(search.toLowerCase())
-  );
+  // ✅ Trimmed search for safety
+  const trimmedSearch = search.trim().toLowerCase();
+
+  const filtered = users.filter((u) => {
+    const firstName = u.firstName?.toLowerCase() || "";
+    const city = u.city?.toLowerCase() || "";
+
+    if (!trimmedSearch) return true; // if search empty, include all
+    return firstName.includes(trimmedSearch) || city.includes(trimmedSearch);
+  });
 
   return (
     <div className="users-list">
@@ -66,23 +73,30 @@ const UsersList: React.FC = () => {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <ul>
-        {filtered.map((u) => (
-          <li key={u.id}>
-            <span>
-              {u.firstName} {u.lastName} ({u.city})
-            </span>
-            <div className="actions">
-              <button className="delete-btn" onClick={() => handleDelete(u.id)}>
-                Delete
-              </button>
-              <button className="edit-btn" onClick={() => handleEdit(u.id)}>
-                Edit
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {filtered.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        <ul>
+          {filtered.map((u) => (
+            <li key={u.id}>
+              <span>
+                {u.firstName || "N/A"} {u.lastName || ""} ({u.city || "N/A"})
+              </span>
+              <div className="actions">
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(u.id)}
+                >
+                  Delete
+                </button>
+                <button className="edit-btn" onClick={() => handleEdit(u.id)}>
+                  Edit
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import logo from "../assets/biology-graphic-clipart-design-free-png.webp";
-
 import "../style/Navbar.css";
 
 type User = {
@@ -24,7 +23,26 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
     if (storedUser && storedUser !== "undefined") {
-      setLoggedInUser(JSON.parse(storedUser) as User);
+      try {
+        const parsedUser: User = JSON.parse(storedUser);
+
+        // Validate essential fields
+        if (
+          parsedUser.id &&
+          parsedUser.firstName &&
+          parsedUser.email &&
+          parsedUser.role &&
+          parsedUser.status
+        ) {
+          setLoggedInUser(parsedUser);
+        } else {
+          console.warn("Invalid user object in localStorage, clearing...");
+          localStorage.removeItem("loggedInUser");
+        }
+      } catch (error) {
+        console.error("Failed to parse user from localStorage", error);
+        localStorage.removeItem("loggedInUser");
+      }
     }
   }, []);
 
@@ -58,7 +76,7 @@ const Navbar: React.FC = () => {
         {/* Hamburger for mobile */}
         <div
           className="hamburger"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setMenuOpen((prev) => !prev)}
         >
           <span></span>
           <span></span>
@@ -82,7 +100,8 @@ const Navbar: React.FC = () => {
                 <Link to="/home">Home</Link>
               </li>
 
-                            {loggedInUser && (
+              {/* Dashboard Link based on role */}
+              {loggedInUser.role && (
                 <li>
                   <Link
                     to={
@@ -95,7 +114,6 @@ const Navbar: React.FC = () => {
                   </Link>
                 </li>
               )}
-
 
               <li>
                 <button onClick={handleLogout}>Logout</button>

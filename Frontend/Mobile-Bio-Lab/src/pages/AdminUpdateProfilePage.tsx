@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUserProfile, type UserProfile } from "../services/userprofileservice";
-import UserProfileForm from "../components/UserProfile/UserProfileModal";
+import UserProfileForm from "../components/UserProfileModal";
 
 const AdminUpdateProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

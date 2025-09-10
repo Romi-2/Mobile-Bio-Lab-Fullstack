@@ -1,69 +1,125 @@
-import React, { useState  } from "react";
+import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import "../../style/UserDashboard.css";
 
+type AccountStatus = "Pending" | "Approved" | "Rejected";
+
+const validStatuses: AccountStatus[] = ["Pending", "Approved", "Rejected"];
+const COLORS = ["#facc15", "#22c55e", "#ef4444"];
+
 const UserDashboard: React.FC = () => {
-  // Always Approved
-  const [accountStatus] = useState<"Pending" | "Approved" | "Rejected">("Approved");
+  const [accountStatus, setAccountStatus] = useState<AccountStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
-  // Chart data
-  const chartData = [
-    { name: "Pending", value: accountStatus === "Pending" ? 1 : 0 },
-    { name: "Approved", value: accountStatus === "Approved" ? 1 : 0 },
-    { name: "Rejected", value: accountStatus === "Rejected" ? 1 : 0 },
-  ];
+  // Fetch account status from backend
+  useEffect(() => {
+    const fetchAccountStatus = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-  const COLORS = ["#facc15", "#22c55e", "#ef4444"];
+        // Simulated API call (replace with real API)
+        const response = await new Promise<{ status: string }>((resolve) =>
+          setTimeout(() => resolve({ status: "Approved" }), 500)
+        );
+
+        const status: string = response.status;
+
+        if (validStatuses.includes(status as AccountStatus)) {
+          setAccountStatus(status as AccountStatus);
+        } else {
+          setAccountStatus("Pending"); // fallback for invalid status
+        }
+      } catch (err) {
+        console.error("Failed to fetch account status:", err);
+        setError("Unable to fetch account status. Showing default.");
+        setAccountStatus("Pending");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccountStatus();
+  }, []);
+
+  const chartData =
+    accountStatus !== null
+      ? validStatuses.map((status) => ({
+          name: status,
+          value: accountStatus === status ? 1 : 0,
+        }))
+      : [];
 
   const handleDeleteAccount = () => {
+    if (!accountStatus || !validStatuses.includes(accountStatus)) {
+      alert("Cannot delete account: invalid status.");
+      return;
+    }
+
     if (window.confirm("Are you sure you want to delete your account?")) {
+      // TODO: Call backend API
       alert("Your account has been deleted!");
-      // TODO: Call backend API for account deletion
     }
   };
 
+  if (loading) return <div>Loading dashboard...</div>;
+
   return (
     <div className="user-dashboard">
-      {/* Sidebar */}
       <aside className="sidebar">
         <h2>User Dashboard</h2>
         <ul>
           <li>
             <div className="sidebar-item">
-              <span className={`status ${accountStatus.toLowerCase()}`}>{accountStatus}</span>
+              <span
+                className={`status ${accountStatus?.toLowerCase()}`}
+                aria-label={`Account status: ${accountStatus}`}
+              >
+                {accountStatus}
+              </span>
             </div>
           </li>
-
           <li>
             <div className="sidebar-item">
-              <button className="delete-btn" onClick={handleDeleteAccount}>Delete Account</button>
+              <button
+                className="delete-btn"
+                onClick={handleDeleteAccount}
+                aria-label="Delete your account"
+              >
+                Delete Account
+              </button>
             </div>
           </li>
         </ul>
+        {error && <p className="error-message">{error}</p>}
       </aside>
 
-      {/* Main Content */}
       <main className="main-content">
         <h3>Account Status Overview</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={chartData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              label
-            >
-              {chartData.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        {chartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                label
+              >
+                {chartData.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <p>No valid account data available</p>
+        )}
       </main>
     </div>
   );

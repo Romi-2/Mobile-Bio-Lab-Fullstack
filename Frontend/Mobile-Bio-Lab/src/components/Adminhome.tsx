@@ -6,12 +6,26 @@ import "../style/Adminhome.css";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AdminHome: React.FC = () => {
+  // Sample data (could be fetched from backend)
+  const totalUsers = 160;
+  const pendingUsers = 30;
+  const admins = 10;
+
+  // Validate data
+  const isValidNumber = (value: unknown) => typeof value === "number" && value >= 0;
+
+  const validatedTotalUsers = isValidNumber(totalUsers) ? totalUsers : 0;
+  const validatedPendingUsers = isValidNumber(pendingUsers) ? pendingUsers : 0;
+  const validatedAdmins = isValidNumber(admins) ? admins : 0;
+
   const data = {
-    labels: ["Active Users", "Pending Users", "Admins"],
+    labels: ["Active Users", "Pending Users", "Admins"].filter(Boolean), // ensure non-empty
     datasets: [
       {
         label: "# of Users",
-        data: [120, 30, 10],
+        data: [validatedTotalUsers - validatedPendingUsers - validatedAdmins, validatedPendingUsers, validatedAdmins].map(
+          (val) => (isValidNumber(val) ? val : 0)
+        ),
         backgroundColor: [
           "rgba(75, 192, 192, 0.6)",
           "rgba(255, 206, 86, 0.6)",
@@ -33,16 +47,20 @@ const AdminHome: React.FC = () => {
 
       {/* Cards row */}
       <div className="dashboard-cards-row">
-        <div className="card">Total Users: 160</div>
-        <div className="card">Pending Users: 30</div>
-        <div className="card">Admins: 10</div>
+        <div className="card">Total Users: {validatedTotalUsers}</div>
+        <div className="card">Pending Users: {validatedPendingUsers}</div>
+        <div className="card">Admins: {validatedAdmins}</div>
       </div>
 
       {/* Pie Chart */}
       <div className="charts">
         <div className="chart">
           <h3>User Distribution</h3>
-          <Pie data={data} />
+          {data.datasets.length > 0 && data.labels.length > 0 ? (
+            <Pie data={data} />
+          ) : (
+            <p>No valid chart data available</p>
+          )}
         </div>
       </div>
     </div>

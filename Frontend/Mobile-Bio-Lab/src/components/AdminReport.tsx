@@ -9,7 +9,7 @@ export default function AdminReport() {
   const [city, setCity] = useState("");
   const [error, setError] = useState("");
 
-  const validateInputs = () => {
+  const validateInputs = (): boolean => {
     const trimmedRole = role.trim();
     const trimmedCity = city.trim();
 
@@ -23,17 +23,19 @@ export default function AdminReport() {
       return false;
     }
 
-    if (trimmedCity && !/^[a-zA-Z\s,]+$/.test(trimmedCity)) {
-      setError("City can only contain letters, commas, and spaces.");
-      return false;
+    if (trimmedCity) {
+      const cityRegex = /^[a-zA-Z\s,]+$/;
+      if (!cityRegex.test(trimmedCity)) {
+        setError("City can only contain letters, commas, and spaces.");
+        return false;
+      }
+      if (trimmedCity.length > 100) {
+        setError("City name is too long.");
+        return false;
+      }
     }
 
-    if (trimmedCity && trimmedCity.length > 100) {
-      setError("City name is too long.");
-      return false;
-    }
-
-    setError(""); // no errors
+    setError(""); // clear errors if all validations pass
     return true;
   };
 
@@ -98,9 +100,9 @@ export default function AdminReport() {
         <button
           onClick={handleDownload}
           className="btn-download"
-          disabled={!role && !city} // disable if nothing entered
+          disabled={!role.trim() && !city.trim()} // disable if nothing entered
         >
-        Download PDF
+          Download PDF
         </button>
       </div>
     </div>

@@ -1,6 +1,10 @@
 // src/components/ProtectedRoute.tsx
 import { Navigate } from "react-router-dom";
 
+interface User {
+  role?: string;
+}
+
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles: string[];
@@ -8,10 +12,22 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const storedUser = localStorage.getItem("loggedInUser");
-  const user = storedUser ? JSON.parse(storedUser) : null;
 
-  if (!user || !allowedRoles.includes(user.role)) {
-    // Not logged in or role not allowed → redirect to login
+  let user: User | null = null;
+  try {
+    if (storedUser && storedUser !== "undefined") {
+      user = JSON.parse(storedUser) as User;
+    }
+  } catch {
+    user = null; // invalid JSON → treat as not logged in
+  }
+
+  const userRole = user?.role?.trim().toLowerCase() || "";
+
+  const isAllowed =
+    userRole && allowedRoles.map((r) => r.toLowerCase()).includes(userRole);
+
+  if (!isAllowed) {
     return <Navigate to="/login" replace />;
   }
 

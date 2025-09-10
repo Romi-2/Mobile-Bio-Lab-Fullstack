@@ -15,9 +15,15 @@ type User = {
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👁️ state
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Email validation
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
   const fetchProfile = async () => {
     try {
@@ -45,21 +51,39 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError("");
 
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    // Frontend validations
+    if (!validateEmail(trimmedEmail)) {
+      setError("❌ Please enter a valid email address.");
+      return;
+    }
+
+    if (trimmedPassword.length < 6) {
+      setError("❌ Password must be at least 6 characters long.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: trimmedEmail, password: trimmedPassword }),
       });
 
-      const data: { token?: string; user?: User; message?: string } =
-        await response.json();
+      const data: { token?: string; user?: User; message?: string } = await response.json();
 
       if (response.ok && data.user && data.token) {
         const status = data.user.status.trim().toLowerCase();
 
         if (status === "pending") {
-          setError("⏳ Please wait for approval from admin.");
+          setError("⏳ Your account is pending approval.");
+          return;
+        }
+
+        if (status === "rejected") {
+          setError("❌ Your account has been rejected.");
           return;
         }
 
@@ -75,7 +99,7 @@ const Login: React.FC = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Something went wrong. Try again later.");
+      setError("Something went wrong. Please try again later.");
     }
   };
 
@@ -95,7 +119,7 @@ const Login: React.FC = () => {
             />
           </div>
 
-            <div className="input-group password-group">
+          <div className="input-group password-group">
             <label>Password</label>
             <div className="password-wrapper">
               <input
@@ -113,7 +137,6 @@ const Login: React.FC = () => {
               </span>
             </div>
           </div>
-
 
           <button type="submit">Login</button>
         </form>

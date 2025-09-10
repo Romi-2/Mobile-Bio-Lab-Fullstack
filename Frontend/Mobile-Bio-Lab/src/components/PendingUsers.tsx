@@ -47,13 +47,27 @@ const PendingUsers: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUsers(res.data.users);
+      // Validate each user object before setting state
+      const validUsers = Array.isArray(res.data.users)
+        ? res.data.users.filter(
+            (u) =>
+              u.id &&
+              u.firstName &&
+              u.lastName &&
+              u.email &&
+              u.role &&
+              u.status
+          )
+        : [];
+
+      setUsers(validUsers);
     } catch (err: unknown) {
       const error = err as AxiosErrorResponse;
-      let errorMsg = error?.response?.data?.error || error?.message || "An unknown error occurred";
+      let errorMsg =
+        error?.response?.data?.error || error?.message || "An unknown error occurred";
 
       if (typeof errorMsg !== "string") {
-        errorMsg = JSON.stringify(errorMsg); // convert objects → string
+        errorMsg = JSON.stringify(errorMsg);
       }
 
       setError(errorMsg);
@@ -67,7 +81,10 @@ const PendingUsers: React.FC = () => {
     try {
       setUpdatingId(id);
       const token = getToken();
-      if (!token) return;
+      if (!token) {
+        alert("No token found. Please login.");
+        return;
+      }
 
       await axios.post(
         `http://localhost:5000/api/admin/${action}/${id}`,
@@ -110,7 +127,7 @@ const PendingUsers: React.FC = () => {
           {users.map((u) => (
             <li key={u.id}>
               <span>
-                {u.firstName} {u.lastName} - {u.city}
+                {u.firstName.trim()} {u.lastName.trim()} - {u.city?.trim() || "N/A"}
               </span>
               <div className="actions">
                 <button

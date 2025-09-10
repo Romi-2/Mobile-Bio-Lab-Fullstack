@@ -26,7 +26,7 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
     setProfileFile(null);
   }, [user]);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -44,7 +44,40 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
+  const validateInputs = (): boolean => {
+    const trimmedEmail = email.trim();
+    const trimmedCity = city.trim();
+
+    if (!trimmedEmail) {
+      setMessage({ text: "❌ Email is required.", type: "error" });
+      return false;
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setMessage({ text: "❌ Invalid email format.", type: "error" });
+      return false;
+    }
+
+    // City validation (optional)
+    if (trimmedCity && !/^[a-zA-Z\s,]+$/.test(trimmedCity)) {
+      setMessage({ text: "❌ City can only contain letters, commas, and spaces.", type: "error" });
+      return false;
+    }
+
+    if (trimmedCity.length > 100) {
+      setMessage({ text: "❌ City name is too long.", type: "error" });
+      return false;
+    }
+
+    setMessage(null);
+    return true;
+  };
+
   const handleSave = async () => {
+    if (!validateInputs()) return;
+
     const userId = Number(user?.id);
     if (!user || isNaN(userId)) {
       setMessage({ text: "❌ User ID is missing!", type: "error" });
@@ -52,8 +85,8 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
     }
 
     const formData = new FormData();
-    formData.append("email", email);
-    formData.append("city", city);
+    formData.append("email", email.trim());
+    formData.append("city", city.trim());
     if (profileFile) formData.append("profilePicture", profileFile);
 
     setLoading(true);
@@ -72,7 +105,6 @@ const UserProfileForm: React.FC<Props> = ({ user, onUpdated }) => {
 
   return (
     <div className="profile-container">
-      {/* ✅ Dropdown notification at top of screen */}
       {message && (
         <div className={`dropdown-message ${message.type}`}>
           {message.text}
