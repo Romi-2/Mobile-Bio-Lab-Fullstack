@@ -11,23 +11,27 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const storedUser = localStorage.getItem("loggedInUser");
+  if (!Array.isArray(allowedRoles) || allowedRoles.length === 0) {
+    console.warn("ProtectedRoute: No allowedRoles provided");
+    return <Navigate to="/login" replace />;
+  }
 
   let user: User | null = null;
+  const storedUser = localStorage.getItem("loggedInUser");
+
   try {
     if (storedUser && storedUser !== "undefined") {
       user = JSON.parse(storedUser) as User;
     }
-  } catch {
-    user = null; // invalid JSON → treat as not logged in
+  } catch (err) {
+    console.error("ProtectedRoute: Failed to parse user from localStorage", err);
+    user = null;
   }
 
   const userRole = user?.role?.trim().toLowerCase() || "";
+  const allowedRolesNormalized = allowedRoles.map((r) => r.trim().toLowerCase());
 
-  const isAllowed =
-    userRole && allowedRoles.map((r) => r.toLowerCase()).includes(userRole);
-
-  if (!isAllowed) {
+  if (!userRole || !allowedRolesNormalized.includes(userRole)) {
     return <Navigate to="/login" replace />;
   }
 

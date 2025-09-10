@@ -1,13 +1,28 @@
 import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import "../../style/AdminDashboard.css"; 
+import "../../style/AdminDashboard.css";
 
 const AdminDashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false); // explicit type
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
+  const toggleSidebar = () => {
+    try {
+      setIsSidebarOpen(prev => !prev);
+    } catch (err) {
+      console.error("Failed to toggle sidebar:", err);
+      setError("Something went wrong while toggling the sidebar.");
+    }
+  };
 
-  const closeSidebar = () => setIsSidebarOpen(false);
+  const closeSidebar = () => {
+    try {
+      setIsSidebarOpen(false);
+    } catch (err) {
+      console.error("Failed to close sidebar:", err);
+      setError("Something went wrong while closing the sidebar.");
+    }
+  };
 
   return (
     <div className="admin-dashboard">
@@ -74,7 +89,11 @@ const AdminDashboard: React.FC = () => {
           &#9776;
         </button>
 
-        <Outlet />
+        {/* Error fallback for Outlet */}
+        {error && <div className="error-message">{error}</div>}
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
       {/* Mobile overlay */}
@@ -86,3 +105,29 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: unknown, info: unknown) {
+    console.error("Error in Outlet:", error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div className="error-message">Something went wrong while loading content.</div>;
+    }
+    return this.props.children;
+  }
+}

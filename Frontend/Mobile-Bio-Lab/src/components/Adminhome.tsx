@@ -23,9 +23,11 @@ const AdminHome: React.FC = () => {
     datasets: [
       {
         label: "# of Users",
-        data: [validatedTotalUsers - validatedPendingUsers - validatedAdmins, validatedPendingUsers, validatedAdmins].map(
-          (val) => (isValidNumber(val) ? val : 0)
-        ),
+        data: [
+          validatedTotalUsers - validatedPendingUsers - validatedAdmins,
+          validatedPendingUsers,
+          validatedAdmins
+        ].map((val) => (isValidNumber(val) ? val : 0)),
         backgroundColor: [
           "rgba(75, 192, 192, 0.6)",
           "rgba(255, 206, 86, 0.6)",
@@ -39,6 +41,19 @@ const AdminHome: React.FC = () => {
         borderWidth: 1,
       },
     ],
+  };
+
+  // Render with error boundary
+  const renderChart = () => {
+    try {
+      if (!data.datasets.length || !data.labels.length) {
+        return <p>No valid chart data available</p>;
+      }
+      return <Pie data={data} />;
+    } catch (err) {
+      console.error("Chart rendering error:", err);
+      return <p>Failed to render chart. Please try again later.</p>;
+    }
   };
 
   return (
@@ -56,11 +71,7 @@ const AdminHome: React.FC = () => {
       <div className="charts">
         <div className="chart">
           <h3>User Distribution</h3>
-          {data.datasets.length > 0 && data.labels.length > 0 ? (
-            <Pie data={data} />
-          ) : (
-            <p>No valid chart data available</p>
-          )}
+          {renderChart()}
         </div>
       </div>
     </div>

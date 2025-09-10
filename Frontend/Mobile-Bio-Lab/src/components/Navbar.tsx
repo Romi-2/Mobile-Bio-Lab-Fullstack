@@ -17,16 +17,16 @@ type User = {
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false); // mobile menu toggle
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Check if user is already logged in
+  // Load user from localStorage with validation
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
     if (storedUser && storedUser !== "undefined") {
       try {
         const parsedUser: User = JSON.parse(storedUser);
 
-        // Validate essential fields
+        // Validate required fields
         if (
           parsedUser.id &&
           parsedUser.firstName &&
@@ -40,23 +40,28 @@ const Navbar: React.FC = () => {
           localStorage.removeItem("loggedInUser");
         }
       } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
+        console.error("Failed to parse user from localStorage:", error);
         localStorage.removeItem("loggedInUser");
       }
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("token");
-    setLoggedInUser(null);
-    navigate("/login");
+    try {
+      localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("token");
+      setLoggedInUser(null);
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+      alert("An error occurred while logging out. Please try again.");
+    }
   };
 
   return (
     <nav className="navbar-container">
       <div className="navbar-inner">
-        {/* Profile Icon on left */}
+        {/* Profile Icon */}
         {loggedInUser && (
           <div className="navbar-left">
             <Link to="/profile" className="profile-icon">
@@ -65,7 +70,7 @@ const Navbar: React.FC = () => {
           </div>
         )}
 
-        {/* Logo in center */}
+        {/* Logo */}
         <div className="navbar-logo">
           <Link to="/">
             <img src={logo} alt="Mobile Bio Lab Logo" className="logo-img" />
@@ -73,11 +78,8 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Hamburger for mobile */}
-        <div
-          className="hamburger"
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
+        {/* Hamburger */}
+        <div className="hamburger" onClick={() => setMenuOpen((prev) => !prev)}>
           <span></span>
           <span></span>
           <span></span>
@@ -100,7 +102,7 @@ const Navbar: React.FC = () => {
                 <Link to="/home">Home</Link>
               </li>
 
-              {/* Dashboard Link based on role */}
+              {/* Dashboard link */}
               {loggedInUser.role && (
                 <li>
                   <Link
