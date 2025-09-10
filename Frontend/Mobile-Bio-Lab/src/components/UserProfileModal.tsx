@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { type UserProfile } from "../../services/userprofileservice";
-import { adminUpdateUser } from "../../services/updateprofileservice";
-import "./UserProfileModal.css";
+import { type UserProfile } from "../services/userprofileservice";
+import { adminUpdateUser } from "../services/updateprofileservice";
+import "../style/UserProfileModal.css";
 
 interface Props {
   user: UserProfile;

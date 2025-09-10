@@ -18,7 +18,7 @@ import LandingPage from "./pages/Landingpage";
 import AdminHome from "./components/Adminhome"; // ✅ correct path
 import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
-import AdminReport from "./pages/AdminReport";
+import AdminReport from "./components/AdminReport";
 function AppContent() {
   const location = useLocation();
   const showHeader =

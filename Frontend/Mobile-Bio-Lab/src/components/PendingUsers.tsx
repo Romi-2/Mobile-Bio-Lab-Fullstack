@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import "./PendingUsers.css";
+import "../style/PendingUsers.css";
 
 interface User {
   id: number;

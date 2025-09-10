@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAllUsers, deleteUser } from "../services/userslistservice";
 import type { User } from "../services/adminservice";
 import { useNavigate } from "react-router-dom";
-import "./UsersList.css";
+import "../style/UsersList.css";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
