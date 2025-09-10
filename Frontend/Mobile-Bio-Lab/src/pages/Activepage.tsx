@@ -3,20 +3,32 @@ import { useEffect, useState } from "react";
 import { activateUser } from "../services/activeservice";
 
 function ActivatePage() {
-  const { userId } = useParams(); // now using userId from URL
+  const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [message, setMessage] = useState("Activating your account...");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const activate = async () => {
-      if (!userId) return setMessage("❌ Invalid user ID");
+      if (!userId || isNaN(Number(userId))) {
+        setMessage("❌ Invalid user ID");
+        setLoading(false);
+        return;
+      }
 
-      const data = await activateUser(Number(userId));
-      if (data.success) {
-        setMessage("✅ " + data.message);
-        setTimeout(() => navigate("/login"), 3000);
-      } else {
-        setMessage("❌ " + (data.message || "Activation failed."));
+      try {
+        const data = await activateUser(Number(userId));
+        if (data.success) {
+          setMessage("✅ " + data.message);
+          setTimeout(() => navigate("/login"), 3000);
+        } else {
+          setMessage("❌ " + (data.message || "Activation failed."));
+        }
+      } catch (error: unknown) {
+        console.error("Activation error:", error);
+        setMessage("❌ Something went wrong. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -26,7 +38,7 @@ function ActivatePage() {
   return (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
       <h2>Account Activation</h2>
-      <p>{message}</p>
+      <p>{loading ? "Processing..." : message}</p>
     </div>
   );
 }
