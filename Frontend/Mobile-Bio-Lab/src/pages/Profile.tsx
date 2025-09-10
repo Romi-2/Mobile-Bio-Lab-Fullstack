@@ -14,10 +14,17 @@ const Profile: React.FC = () => {
       setLoading(true);
       setError("");
       const userData = await getCurrentUser();
+
+      if (!userData) throw new Error("User data not found"); // Validation
+
       setUser(userData);
     } catch (err) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Unknown error occurred");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred while fetching user data.");
+      }
+      console.error("Profile fetch error:", err);
     } finally {
       setLoading(false);
     }
@@ -27,91 +34,96 @@ const Profile: React.FC = () => {
     fetchUser();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error)
-    return (
-      <div>
-        Error: {error}. Please <a href="/login">login again</a>
-      </div>
-    );
-
   const handleDownloadPDF = () => {
-  if (!user) return;
-  // Match the route in profileExportRoute.js
-  window.open(`http://localhost:5000/api/export/profile/${user.id}`, "_blank");
-};
+    if (!user?.id) {
+      setError("Cannot download PDF: User ID is missing.");
+      return;
+    }
+    try {
+      window.open(`http://localhost:5000/api/export/profile/${user.id}`, "_blank");
+    } catch (err) {
+      console.error("PDF download error:", err);
+      setError("Failed to download PDF. Please try again.");
+    }
+  };
+
+  // Helper: safe profile image URL
+  const profileImageUrl = user?.profilePicture
+    ? `http://localhost:5000/uploads/profilePics/${user.profilePicture}`
+    : "/default-avatar.png";
+
+  if (loading) return <div>Loading user profile...</div>;
 
   return (
     <div className="profile-container">
-      <div className="profile-card">
-        <div className="profile-header">
-          <img
-                    src={
-                      user?.profilePicture
-                        ? `http://localhost:5000${user.profilePicture}`
-                        : "/default-avatar.png"
-                    }
-                    alt="Profile"
-                    className="profile-avatar"
-                  />
-
-          <p>{user?.role}</p>
+      {error && (
+        <div className="error-message">
+          <p>Error: {error}</p>
+          <button onClick={fetchUser}>Retry</button>
         </div>
+      )}
 
-        <div className="profile-details">
-          <h2>Personal Information</h2>
+      {user && (
+        <div className="profile-card">
+          <div className="profile-header">
+            <img
+              src={profileImageUrl}
+              alt="Profile"
+              className="profile-avatar"
+              onError={(e) => {
+                // Fallback if image fails to load
+                (e.target as HTMLImageElement).src = "/default-avatar.png";
+              }}
+            />
+            <p>{user.role || "N/A"}</p>
+          </div>
 
-          {user?.firstName && (
-  <div className="detail-item">
-    <span className="detail-label">First Name:</span>
-    <span className="detail-value">{user.firstName}</span>
-  </div>
-)}
-{user?.lastName && (
-  <div className="detail-item">
-    <span className="detail-label">Last Name:</span>
-    <span className="detail-value">{user.lastName}</span>
-  </div>
-)}
-{user?.vu_id && (
-  <div className="detail-item">
-    <span className="detail-label">VU ID:</span>
-    <span className="detail-value">{user.vu_id}</span>
-  </div>
-)}
-{user?.mobile && (
-  <div className="detail-item">
-    <span className="detail-label">Mobile:</span>
-    <span className="detail-value">{user.mobile}</span>
-  </div>
-)}
-{user?.email && (
-  <div className="detail-item">
-    <span className="detail-label">Email:</span>
-    <span className="detail-value">{user.email}</span>
-  </div>
-)}
-{user?.role && (
-  <div className="detail-item">
-    <span className="detail-label">Role:</span>
-    <span className="detail-value">{user.role}</span>
-  </div>
-)}
-{user?.city && (
-  <div className="detail-item">
-    <span className="detail-label">City:</span>
-    <span className="detail-value">{user.city}</span>
-  </div>
+          <div className="profile-details">
+            <h2>Personal Information</h2>
 
-)}
+            <div className="detail-item">
+              <span className="detail-label">First Name:</span>
+              <span className="detail-value">{user.firstName || "N/A"}</span>
+            </div>
 
-          <div className="profile-actions">
-            <button className="pdf-button" onClick={handleDownloadPDF}>
-              Download PDF
-            </button>
+            <div className="detail-item">
+              <span className="detail-label">Last Name:</span>
+              <span className="detail-value">{user.lastName || "N/A"}</span>
+            </div>
+
+            <div className="detail-item">
+              <span className="detail-label">VU ID:</span>
+              <span className="detail-value">{user.vu_id || "N/A"}</span>
+            </div>
+
+            <div className="detail-item">
+              <span className="detail-label">Mobile:</span>
+              <span className="detail-value">{user.mobile || "N/A"}</span>
+            </div>
+
+            <div className="detail-item">
+              <span className="detail-label">Email:</span>
+              <span className="detail-value">{user.email || "N/A"}</span>
+            </div>
+
+            <div className="detail-item">
+              <span className="detail-label">Role:</span>
+              <span className="detail-value">{user.role || "N/A"}</span>
+            </div>
+
+            <div className="detail-item">
+              <span className="detail-label">City:</span>
+              <span className="detail-value">{user.city || "N/A"}</span>
+            </div>
+
+            <div className="profile-actions">
+              <button className="pdf-button" onClick={handleDownloadPDF}>
+                Download PDF
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
