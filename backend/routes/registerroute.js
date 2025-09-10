@@ -8,28 +8,33 @@ import path from "path";
 
 const router = express.Router();
 
-// Ensure uploads/profilePics folder exists
+// Ensure folder exists
 const uploadDir = "uploads/profilePics";
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// Multer setup
+// Multer storage with safe filenames
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}-profilePicture${ext}`);
+    const safeName = file.originalname
+      .replace(/\s+/g, "_")
+      .replace(/[()]/g, "")
+      .replace(/[^a-zA-Z0-9_-]/g, "");
+    cb(null, `${Date.now()}-${safeName}${ext}`);
   },
 });
+
 const upload = multer({ storage });
 
-// POST: Register new user
 router.post("/", upload.single("profilePicture"), async (req, res) => {
   try {
     const { firstName, lastName, vuId, email, password, mobile, city, role } = req.body;
     const profilePicture = req.file ? `/uploads/profilePics/${req.file.filename}` : null;
 
-    if (!firstName || !lastName || !email || !password)
-      return res.status(400).json({ error: "⚠️ Please fill all required fields" });
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: "Please fill all required fields" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -43,12 +48,9 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       query,
       [firstName, lastName, vuId, email, hashedPassword, mobile, role, city, profilePicture],
       (err, result) => {
-        if (err) {
-          console.error("❌ DB Error:", err);
-          return res.status(500).json({ error: "Database error", details: err.message });
-        }
+        if (err) return res.status(500).json({ error: "Database error", details: err.message });
         res.status(201).json({
-          message: "✅ User registered successfully",
+          message: "User registered successfully",
           userId: result.insertId,
           profilePicture,
         });

@@ -1,10 +1,10 @@
+// backend/routes/profileRoute.js
 import express from "express";
 import { db } from "../server.js";
-import { protect } from "../middleware/authMiddleware.js"; // make sure protect middleware exists
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Get current user's profile
 router.get("/me", protect, (req, res) => {
   const userId = req.user.id;
 
@@ -14,26 +14,29 @@ router.get("/me", protect, (req, res) => {
       first_name AS firstName, 
       last_name AS lastName, 
       vu_id AS vu_id,
-      mobile AS mobile, 
+      mobile, 
       email, 
       role, 
       city, 
-      SUBSTRING_INDEX(profilePicture, '/', -1) AS profilePicture, 
+      profilePicture,
       status
     FROM users
     WHERE id = ?`,
     [userId],
     (err, results) => {
-      if (err) {
-        console.error("DB Error:", err);
-        return res.status(500).json({ message: "Database error" });
+      if (err) return res.status(500).json({ message: "Database error" });
+      if (results.length === 0) return res.status(404).json({ message: "User not found" });
+
+      const user = results[0];
+
+      // Ensure full path for frontend
+      if (user.profilePicture && !user.profilePicture.startsWith("/uploads/")) {
+        user.profilePicture = `/uploads/${user.profilePicture}`;
       }
-      if (results.length === 0) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.json(results[0]);
+
+      res.json(user);
     }
   );
 });
 
-export default router; // ✅ default export
+export default router;
