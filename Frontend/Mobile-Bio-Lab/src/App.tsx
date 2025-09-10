@@ -8,14 +8,14 @@ import RegistrationSuccess from "./pages/RegistrationSuccess";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-import PendingUsers from "./components/PendingUsers/PendingUsers"; // ✅ correct path
-import UsersList from "./components/UsersList/UsersList"; // ✅ correct path
+import PendingUsers from "./components/PendingUsers"; // ✅ correct path
+import UsersList from "./components/UsersList"; // ✅ correct path
 import AdminUpdateProfilePage from "./pages/AdminUpdateProfilePage"; // ✅ correct path
 import UpdateProfilePage from "./pages/UpdateProfilePage"; // ✅ correct path
 import "./App.css";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/Landingpage";
-import AdminHome from "./components/Adminhome/Adminhome"; // ✅ correct path
+import AdminHome from "./components/Adminhome"; // ✅ correct path
 import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
 import AdminReport from "./pages/AdminReport";
