@@ -1,17 +1,55 @@
 import { useState } from "react";
 import { downloadUserReport } from "../services/reportService";
-import "../App.css"; // ✅ add CSS file
+import "../style/AdminReport.css";
 
 export default function AdminReport() {
+  const allowedRoles = ["Student", "Researcher", "Technician"];
+
   const [role, setRole] = useState("");
   const [city, setCity] = useState("");
+  const [error, setError] = useState("");
+
+  const validateInputs = () => {
+    const trimmedRole = role.trim();
+    const trimmedCity = city.trim();
+
+    if (!trimmedRole && !trimmedCity) {
+      setError("Please select a role or enter a city.");
+      return false;
+    }
+
+    if (trimmedRole && !allowedRoles.includes(trimmedRole)) {
+      setError("Invalid role selected.");
+      return false;
+    }
+
+    if (trimmedCity && !/^[a-zA-Z\s,]+$/.test(trimmedCity)) {
+      setError("City can only contain letters, commas, and spaces.");
+      return false;
+    }
+
+    if (trimmedCity && trimmedCity.length > 100) {
+      setError("City name is too long.");
+      return false;
+    }
+
+    setError(""); // no errors
+    return true;
+  };
 
   const handleDownload = async () => {
+    if (!validateInputs()) return;
+
     try {
-      await downloadUserReport(role, city);
+      await downloadUserReport(role.trim(), city.trim());
     } catch (err) {
       console.error("Report download failed", err);
+      setError("Failed to download report. Please try again.");
     }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleDownload();
   };
 
   return (
@@ -19,35 +57,52 @@ export default function AdminReport() {
       <h2 className="report-title">📑 Generate User Report</h2>
 
       <div className="report-filters">
+        {/* Role Dropdown */}
         <div className="form-group">
-          <label>Role</label>
+          <label htmlFor="role">Role</label>
           <select
+            id="role"
             value={role}
             onChange={(e) => setRole(e.target.value)}
             className="form-input"
           >
-            <option value="">All Roles</option>
-            <option value="Student">Student</option>
-            <option value="Researcher">Researcher</option>
-            <option value="Technician">Technician</option>
+            <option value="">-- Select Role --</option>
+            {allowedRoles.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
           </select>
         </div>
 
+        {/* City Input */}
         <div className="form-group">
-          <label>City</label>
+          <label htmlFor="city">City</label>
           <input
+            id="city"
             type="text"
             placeholder="Enter City"
             value={city}
             onChange={(e) => setCity(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="form-input"
           />
         </div>
       </div>
 
-      <button onClick={handleDownload} className="btn-download">
+      {/* Error Message */}
+      {error && <p className="error-message">{error}</p>}
+
+      {/* Action Button */}
+      <div className="actions">
+        <button
+          onClick={handleDownload}
+          className="btn-download"
+          disabled={!role && !city} // disable if nothing entered
+        >
         Download PDF
-      </button>
+        </button>
+      </div>
     </div>
   );
 }

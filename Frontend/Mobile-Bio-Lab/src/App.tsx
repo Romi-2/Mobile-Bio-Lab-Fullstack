@@ -23,7 +23,6 @@ function AppContent() {
   const location = useLocation();
   const showHeader =
     location.pathname !== "/login" && location.pathname !== "/register";
-
   return (
     <>
       {showHeader && <Navbar />}
@@ -37,7 +36,6 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-           <Route path="/admin/report" element={<AdminReport />} />
           {/* User dashboard */}
          <Route
   path="/userdashboard"
@@ -51,20 +49,21 @@ function AppContent() {
 
 
           {/* Admin dashboard with nested routes */}
-          <Route
-  path="/adminDashboard/*"
-  element={
-    <ProtectedRoute allowedRoles={["admin"]}>
-      <AdminDashboard />
-    </ProtectedRoute>
-  }
->
-  <Route index element={<AdminHome />} /> {/* default content */}
-  <Route path="pending" element={<PendingUsers />} />
-  <Route path="users" element={<UsersList />} />
-  <Route path="profile" element={<UpdateProfilePage />} />
-  <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
-</Route>
+         <Route
+            path="/adminDashboard/*"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<AdminHome />} />
+            <Route path="pending" element={<PendingUsers />} />
+            <Route path="users" element={<UsersList />} />
+            <Route path="profile" element={<UpdateProfilePage />} />
+            <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
+            <Route path="reports" element={<AdminReport />} />   {/* ✅ FIXED here */}
+          </Route>
 
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
