@@ -90,4 +90,20 @@
 .card a:hover {
   background: #0056b3;
 }
+
+.reservation-btn {
+  margin-top: 10px;
+  padding: 10px 16px;
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.reservation-btn:hover {
+  background-color: #239f84;
+}
+
 /* home page end */

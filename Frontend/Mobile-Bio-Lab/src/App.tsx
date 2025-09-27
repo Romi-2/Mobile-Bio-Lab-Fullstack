@@ -19,6 +19,9 @@ import AdminHome from "./components/Adminhome"; // ✅ correct path
 import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
 import AdminReport from "./components/AdminReport";
+import ReservationPage from "./pages/Reservationpage";
+import SamplePage from "./pages/Samplepage";
+
 function AppContent() {
   const location = useLocation();
   const showHeader =
@@ -36,6 +39,9 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+           <Route path="/reservation" element={<ReservationPage />} />
+           <Route path="/sample" element={<SamplePage />} />
+
           {/* User dashboard */}
          <Route
   path="/userdashboard"
@@ -64,7 +70,6 @@ function AppContent() {
             <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
             <Route path="reports" element={<AdminReport />} />   {/* ✅ FIXED here */}
           </Route>
-
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/activate/:studentId" element={<ActivatePage />} />

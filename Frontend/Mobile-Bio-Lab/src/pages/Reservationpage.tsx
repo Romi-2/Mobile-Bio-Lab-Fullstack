@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";   // ✅ import navigation hook
+import "../style/Reservation.css";
 
 interface ReservationResponse {
   msg: string;
@@ -8,14 +10,14 @@ interface ReservationResponse {
 }
 
 // Custom type guard to check if error is an AxiosError
-function isAxiosError(error: unknown): error is { 
-  response?: { 
-    data?: { 
-      msg?: string 
-    } 
-  } 
+function isAxiosError(error: unknown): error is {
+  response?: {
+    data?: {
+      msg?: string;
+    };
+  };
 } {
-  return typeof error === 'object' && error !== null && 'response' in error;
+  return typeof error === "object" && error !== null && "response" in error;
 }
 
 const ReservationForm = () => {
@@ -28,6 +30,8 @@ const ReservationForm = () => {
     time: "",
     duration: 60,
   });
+
+  const navigate = useNavigate(); // ✅ initialize navigate
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,6 +50,10 @@ const ReservationForm = () => {
         duration: form.duration,
       });
       alert(res.data.msg);
+
+      // ✅ navigate to Sample Page after success
+      navigate("/sample");
+
     } catch (error) {
       if (isAxiosError(error)) {
         alert(error.response?.data?.msg || "Error booking slot");
