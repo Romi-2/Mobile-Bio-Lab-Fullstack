@@ -15,6 +15,7 @@ import profileExportRoute from "./routes/profileExportRoute.js";
 import updateProfileRoute from "./routes/updateprofileRoute.js";
 import forgotPasswordRoute from "./routes/forgetpasswordRoute.js";
 import adminReportRoute from "./routes/adminReportRoute.js";
+import reservationRoutes from "./routes/reservationRoute.js";
 
 
 
@@ -54,6 +55,7 @@ app.use("/api/export", profileExportRoute);
 app.use("/api/admin/update-profile", updateProfileRoute);
 app.use("/api/auth", forgotPasswordRoute);
 app.use("/api/admin", adminReportRoute);
+app.use("/api", reservationRoutes);
 
 // Test route
 app.get("/", (req, res) => res.send("🚀 API is running..."));

@@ -1,41 +1,36 @@
-// routes/reservationRoutes.js
+// backend/routes/reservationRoute.js
 import express from "express";
-import { db } from "../server.js";  // MySQL connection
-import { authenticate } from "../middleware/auth.js"; // JWT middleware
+import { db } from "../server.js";
 
 const router = express.Router();
 
-// Book a reservation
-router.post("/", authenticate, (req, res) => {
-  const { reservation_date, reservation_time, duration } = req.body;
-  const userId = req.user.id;
+// Create Reservation
+router.post("/create", async (req, res) => {
+  const { userId, date, time, guests } = req.body;
 
-  // Prevent double booking
-  const checkQuery = `
-    SELECT * FROM reservations 
-    WHERE reservation_date = ? AND reservation_time = ? AND status = 'approved'
-  `;
-  db.query(checkQuery, [reservation_date, reservation_time], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    if (results.length > 0) return res.status(400).json({ msg: "Slot already booked!" });
+  try {
+    // Insert new reservation
+    const [result] = await db.query(
+      "INSERT INTO reservations (user_id, date, time, guests, status) VALUES (?, ?, ?, ?, ?)",
+      [userId, date, time, guests, "pending"]
+    );
 
-    const insertQuery = `
-      INSERT INTO reservations (user_id, reservation_date, reservation_time, duration) 
-      VALUES (?, ?, ?, ?)
-    `;
-    db.query(insertQuery, [userId, reservation_date, reservation_time, duration], (err2, result) => {
-      if (err2) return res.status(500).json({ error: err2 });
-      res.json({ msg: "Reservation request submitted!", id: result.insertId });
+    const reservationId = result.insertId;
+
+    // ✅ Update the reservation after creating (example: confirm automatically)
+    await db.query(
+      "UPDATE reservations SET status = ? WHERE id = ?",
+      ["confirmed", reservationId]
+    );
+
+    res.status(201).json({
+      message: "Reservation created and updated successfully",
+      reservationId,
     });
-  });
-});
-
-// Get user reservations
-router.get("/my", authenticate, (req, res) => {
-  db.query("SELECT * FROM reservations WHERE user_id = ?", [req.user.id], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
-  });
+  } catch (error) {
+    console.error("Error creating reservation:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;
