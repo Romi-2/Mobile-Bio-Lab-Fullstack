@@ -1,0 +1,39 @@
+.sample-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.sample-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.sample-form h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.sample-form input,
+.sample-form select {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.sample-form button {
+  padding: 0.75rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sample-form button:hover {
+  background-color: #45a049;
+}

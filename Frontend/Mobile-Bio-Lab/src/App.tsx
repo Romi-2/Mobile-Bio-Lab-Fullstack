@@ -40,7 +40,7 @@ function AppContent() {
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
            <Route path="/reservation" element={<ReservationPage />} />
-           <Route path="/sample" element={<SamplePage />} />
+           <Route path="/sample/:reservationId" element={<SamplePage />} />
 
           {/* User dashboard */}
          <Route

@@ -1,106 +1,93 @@
-import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";   // ✅ import navigation hook
+// frontend/src/pages/ReservationPage.tsx
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { createReservation } from "../services/reservationservice";
+import type { ReservationData, ReservationResponse } from "../services/reservationservice";
 import "../style/Reservation.css";
 
-interface ReservationResponse {
-  msg: string;
-  id?: number;
-}
+const ReservationPage: React.FC = () => {
+  const navigate = useNavigate();
 
-// Custom type guard to check if error is an AxiosError
-function isAxiosError(error: unknown): error is {
-  response?: {
-    data?: {
-      msg?: string;
-    };
-  };
-} {
-  return typeof error === "object" && error !== null && "response" in error;
-}
-
-const ReservationForm = () => {
-  const [form, setForm] = useState<{
-    date: string;
-    time: string;
-    duration: number;
-  }>({
-    date: "",
-    time: "",
+  const [formData, setFormData] = useState<ReservationData>({
+    user_id: 0, // will be updated after loading user
+    reservation_date: "",
+    reservation_time: "",
     duration: 60,
+    status: "pending",
   });
 
-  const navigate = useNavigate(); // ✅ initialize navigate
+  // Load logged-in user's ID from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("loggedInUser");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setFormData((prev) => ({ ...prev, user_id: user.id }));
+    }
+  }, []);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: name === "duration" ? Number(value) : value,
-    }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]:
+        e.target.type === "number" ? Number(e.target.value) : e.target.value,
+    });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.user_id) {
+      alert("❌ You must be logged in to make a reservation");
+      return;
+    }
+
     try {
-      const res = await axios.post<ReservationResponse>("/api/reservations", {
-        reservation_date: form.date,
-        reservation_time: form.time,
-        duration: form.duration,
-      });
-      alert(res.data.msg);
-
-      // ✅ navigate to Sample Page after success
-      navigate("/sample");
-
+      const response: ReservationResponse = await createReservation(formData);
+      alert(response.msg);
+      // Navigate to sample page with reservation ID
+      navigate(`/sample/${response.id}`);
     } catch (error) {
-      if (isAxiosError(error)) {
-        alert(error.response?.data?.msg || "Error booking slot");
+      if (error instanceof Error) {
+        console.error("❌ Reservation Error:", error.message);
+        alert(error.message);
       } else {
-        alert("Error booking slot");
+        console.error("❌ Unknown Reservation Error:", error);
+        alert("❌ Unknown error occurred");
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded">
-      <h2 className="text-lg font-bold mb-2">Book a Slot</h2>
-
-      <input
-        type="date"
-        name="date"
-        value={form.date}
-        onChange={handleChange}
-        required
-        className="border p-2 mr-2"
-      />
-
-      <input
-        type="time"
-        name="time"
-        value={form.time}
-        onChange={handleChange}
-        required
-        className="border p-2 mr-2"
-      />
-
-      <input
-        type="number"
-        name="duration"
-        value={form.duration}
-        onChange={handleChange}
-        min={30}
-        max={180}
-        className="border p-2 mr-2"
-      />{" "}
-      mins
-
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-        Reserve
-      </button>
-    </form>
+    <div className="reservation-container">
+      <form onSubmit={handleSubmit} className="reservation-form">
+        <h2>Book a Reservation</h2>
+        <input
+          type="date"
+          name="reservation_date"
+          value={formData.reservation_date}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="time"
+          name="reservation_time"
+          value={formData.reservation_time}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="number"
+          name="duration"
+          value={formData.duration}
+          onChange={handleChange}
+          min={15}
+          step={15}
+          required
+        />
+        <button type="submit">Reserve</button>
+      </form>
+    </div>
   );
 };
 
-export default ReservationForm;
+export default ReservationPage;
