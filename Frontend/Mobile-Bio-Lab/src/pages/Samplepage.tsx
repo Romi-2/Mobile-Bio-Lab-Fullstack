@@ -1,178 +1,233 @@
 // frontend/src/pages/SamplePage.tsx
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useZxing } from "react-zxing"; // ✅ QR Scanner
+import { useNavigate } from "react-router-dom";
+import QrScanner from "qr-scanner"; // ✅ library for decoding QR from images
 import "../style/sample.css";
 
-interface SampleResponse {
-  msg: string;
-  id?: number;
-}
-
-interface SampleFormData {
-  reservation_id: number;
+interface FormData {
+  sampleId: string;
   sampleType: string;
   collectionDate: string;
   collectionTime: string;
+  geoLocation: string;
   temperature: string;
   pH: string;
   salinity: string;
-  location: string;
-  sampleId: string; // ✅ added for QR
+}
+
+interface Errors {
+  [key: string]: string;
 }
 
 const SamplePage: React.FC = () => {
   const navigate = useNavigate();
-  const { reservationId } = useParams<{ reservationId: string }>();
 
-  const [form, setForm] = useState<SampleFormData>({
-    reservation_id: Number(reservationId) || 0,
+  const [form, setForm] = useState<FormData>({
+    sampleId: "",
     sampleType: "",
     collectionDate: "",
     collectionTime: "",
+    geoLocation: "",
     temperature: "",
     pH: "",
     salinity: "",
-    location: "",
-    sampleId: "",
   });
 
-  const [scanMode, setScanMode] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
-  // ✅ Setup QR Scanner
-  const { ref } = useZxing({
-    onDecodeResult(result) {
-      const qrText = result.getText();
-      console.log("QR Code Result:", qrText);
+  // ✅ Handle QR Upload & Decode
+  const handleQRUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) return;
 
-      // Example: if QR contains JSON data
+    const file = event.target.files[0];
+    try {
+      const result = await QrScanner.scanImage(file);
+
       try {
-        const parsed = JSON.parse(qrText);
-        setForm((prev) => ({ ...prev, ...parsed }));
-        alert("QR scanned and form auto-filled!");
+        // If QR contains JSON data
+        const parsed = JSON.parse(result);
+
+        setForm((prev) => ({
+          ...prev,
+          ...parsed,
+          sampleType: parsed.sampleType || prev.sampleType, // ✅ ensure sampleType is set
+        }));
+
+        alert("Sample data populated from QR/Barcode!");
       } catch {
-        // Otherwise, just set sampleId
-        setForm((prev) => ({ ...prev, sampleId: qrText }));
-        alert("QR scanned!");
+        // If QR contains only plain text (e.g., sample ID)
+        setForm((prev) => ({ ...prev, sampleId: result }));
+        alert("Sample ID populated from QR/Barcode!");
       }
+    } catch (err) {
+      console.error("❌ QR Scan failed:", err);
+      alert("Could not read QR code from image.");
+    }
+  };
 
-      setScanMode(false); // stop scanner
-    },
-  });
-
+  // Handle field changes
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // ✅ Custom Validation
+  const validateForm = (): boolean => {
+    const newErrors: Errors = {};
+
+    if (!form.sampleId.trim()) newErrors.sampleId = "Sample ID is required";
+    if (!form.sampleType) newErrors.sampleType = "Please select a sample type";
+    if (!form.collectionDate)
+      newErrors.collectionDate = "Collection date is required";
+    if (!form.collectionTime)
+      newErrors.collectionTime = "Collection time is required";
+    if (!form.geoLocation.trim())
+      newErrors.geoLocation = "Geolocation is required";
+    if (!form.temperature.trim())
+      newErrors.temperature = "Temperature is required";
+    if (!form.pH.trim()) newErrors.pH = "pH is required";
+    if (!form.salinity.trim()) newErrors.salinity = "Salinity is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submit
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!form.sampleType) {
-      alert("Please select a sample type");
-      return;
-    }
-    try {
-      const res = await axios.post<SampleResponse>(
-        "http://localhost:5000/api/samples",
-        form
-      );
-      alert(res.data.msg);
-      navigate(`/waiting-approval/${form.reservation_id}`);
-    } catch (err) {
-      console.error("Error saving sample:", err);
-      alert("Error saving sample");
-    }
+
+    if (!validateForm()) return;
+
+    console.log("Form submitted:", form);
+    alert("Form submitted successfully!");
+    navigate("/success"); // example redirect
   };
 
   return (
     <div className="sample-container">
-      <form onSubmit={handleSubmit} className="sample-form">
-        <h2>Submit Sample Details</h2>
+      <h2>Biological Sample Entry</h2>
 
+      <form onSubmit={handleSubmit} noValidate>
+        {/* Sample ID */}
+        <label>Sample ID:</label>
         <input
           type="text"
           name="sampleId"
-          placeholder="Sample ID"
           value={form.sampleId}
           onChange={handleChange}
-          required
         />
+        {errors.sampleId && <span className="error">{errors.sampleId}</span>}
 
-        <button
-          type="button"
-          onClick={() => setScanMode((prev) => !prev)}
-          className="scan-btn"
-        >
-          {scanMode ? "Stop Scanning" : "Scan QR Code"}
-        </button>
+        {/* ✅ Upload QR/Barcode */}
+       {/* Upload QR/Barcode */}
+<div className="form-group">
+  <label htmlFor="qr-upload" className="scan-btn">
+    Upload QR/Barcode
+  </label>
+  <input
+    type="file"
+    id="qr-upload"
+    accept="image/*"
+    onChange={handleQRUpload}
+    style={{ display: "none" }}
+  />
+</div>
 
-        {scanMode && <video ref={ref} style={{ width: "100%" }} />}
+<div className="form-group">
+      <label htmlFor="sampleType">Sample Type:</label>
+      <select
+        id="sampleType"
+        name="sampleType"
+        value={form.sampleType}
+        onChange={handleChange}
+        required
+      >
+        <option value="">-- Select Sample Type --</option>
+        <option value="water">Water</option>
+        <option value="soil">Soil</option>
+        <option value="plant">Plant</option>
+        <option value="biological fluids">Biological Fluids</option>
+      </select>
+      {errors.sampleType && (
+        <span className="error">{errors.sampleType}</span>
+      )}
+    </div>
 
-        <select
-          name="sampleType"
-          value={form.sampleType}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Sample Type</option>
-          <option value="water">Water</option>
-          <option value="soil">Soil</option>
-          <option value="plant">Plant</option>
-          <option value="biological fluids">Biological Fluids</option>
-        </select>
-
+        <label>Collection Date:</label>
         <input
           type="date"
           name="collectionDate"
           value={form.collectionDate}
           onChange={handleChange}
-          required
         />
+        {errors.collectionDate && (
+          <span className="error">{errors.collectionDate}</span>
+        )}
 
+        {/* Collection Time */}
+        <label>Collection Time:</label>
         <input
           type="time"
           name="collectionTime"
           value={form.collectionTime}
           onChange={handleChange}
-          required
         />
+        {errors.collectionTime && (
+          <span className="error">{errors.collectionTime}</span>
+        )}
 
+        {/* Geolocation */}
+        <label>Geolocation:</label>
+        <input
+          type="text"
+          name="geoLocation"
+          placeholder="e.g., 31.5204° N, 74.3587° E"
+          value={form.geoLocation}
+          onChange={handleChange}
+        />
+        {errors.geoLocation && (
+          <span className="error">{errors.geoLocation}</span>
+        )}
+
+        {/* ✅ Field Conditions */}
+        <h3>Field Conditions</h3>
+
+        <label>Temperature (°C):</label>
         <input
           type="text"
           name="temperature"
-          placeholder="Temperature (°C)"
           value={form.temperature}
           onChange={handleChange}
         />
+        {errors.temperature && (
+          <span className="error">{errors.temperature}</span>
+        )}
 
+        <label>pH:</label>
         <input
           type="text"
           name="pH"
-          placeholder="pH Level"
           value={form.pH}
           onChange={handleChange}
         />
+        {errors.pH && <span className="error">{errors.pH}</span>}
 
+        <label>Salinity (ppt):</label>
         <input
           type="text"
           name="salinity"
-          placeholder="Salinity (ppt)"
           value={form.salinity}
           onChange={handleChange}
         />
+        {errors.salinity && (
+          <span className="error">{errors.salinity}</span>
+        )}
 
-        <input
-          type="text"
-          name="location"
-          placeholder="Geolocation / Field Location"
-          value={form.location}
-          onChange={handleChange}
-        />
-
-        <button type="submit">Submit Sample</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

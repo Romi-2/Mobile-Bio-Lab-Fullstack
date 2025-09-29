@@ -75,6 +75,16 @@ const AdminDashboard: React.FC = () => {
                 Reports
               </NavLink>
             </li>
+            <li>
+             <NavLink
+              to="/sample"
+              className={({ isActive }) =>
+                `menu-link ${isActive ? "active" : ""}`
+              }
+            >
+              Sample
+            </NavLink>
+            </li>
           </ul>
         </nav>
       </aside>
