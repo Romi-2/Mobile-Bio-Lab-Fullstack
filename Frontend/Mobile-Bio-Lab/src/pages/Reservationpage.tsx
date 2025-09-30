@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QrScanner from "qr-scanner"; // ✅ library for decoding QR
-import "../style/reservation.css"; // <-- only if this file exists
+import "../style/reservation.css"; // <-- make sure this file exists
 
 interface FormData {
   sampleId: string;
@@ -19,7 +19,7 @@ interface Errors {
   [key: string]: string;
 }
 
-const SamplePage: React.FC = () => {
+const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState<FormData>({
@@ -34,6 +34,7 @@ const SamplePage: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<Errors>({});
+  const [qrMessage, setQrMessage] = useState<string | null>(null);
 
   // ✅ Handle QR Upload & Decode
   const handleQRUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,18 +51,18 @@ const SamplePage: React.FC = () => {
         setForm((prev) => ({
           ...prev,
           ...parsed,
-          sampleType: parsed.sampleType || prev.sampleType, // ✅ ensure sampleType is set
+          sampleType: parsed.sampleType || prev.sampleType,
         }));
 
-        alert("Sample data populated from QR/Barcode!");
+        setQrMessage("✅ Sample data populated from QR/Barcode!");
       } catch {
         // If QR contains only plain text (e.g., sample ID)
         setForm((prev) => ({ ...prev, sampleId: result }));
-        alert("Sample ID populated from QR/Barcode!");
+        setQrMessage("✅ Sample ID populated from QR/Barcode!");
       }
     } catch (err) {
       console.error("❌ QR Scan failed:", err);
-      alert("Could not read QR code from image.");
+      setQrMessage("❌ Could not read QR code from image.");
     }
   };
 
@@ -103,8 +104,8 @@ const SamplePage: React.FC = () => {
     if (!validateForm()) return;
 
     console.log("Form submitted:", form);
-    alert("Form submitted successfully!");
-    navigate("/success"); // example redirect
+    // ✅ redirect directly (no alerts)
+    navigate("/reservation-success");
   };
 
   return (
@@ -123,39 +124,39 @@ const SamplePage: React.FC = () => {
         {errors.sampleId && <span className="error">{errors.sampleId}</span>}
 
         {/* ✅ Upload QR/Barcode */}
-       {/* Upload QR/Barcode */}
-<div className="form-group">
-  <label htmlFor="qr-upload" className="scan-btn">
-    Upload QR/Barcode
-  </label>
-  <input
-    type="file"
-    id="qr-upload"
-    accept="image/*"
-    onChange={handleQRUpload}
-    style={{ display: "none" }}
-  />
-</div>
+        <div className="form-group">
+          <label htmlFor="qr-upload" className="scan-btn">
+            Upload QR/Barcode
+          </label>
+          <input
+            type="file"
+            id="qr-upload"
+            accept="image/*"
+            onChange={handleQRUpload}
+            style={{ display: "none" }}
+          />
+          {qrMessage && <p className="qr-message">{qrMessage}</p>}
+        </div>
 
-<div className="form-group">
-      <label htmlFor="sampleType">Sample Type:</label>
-      <select
-        id="sampleType"
-        name="sampleType"
-        value={form.sampleType}
-        onChange={handleChange}
-        required
-      >
-        <option value="">-- Select Sample Type --</option>
-        <option value="water">Water</option>
-        <option value="soil">Soil</option>
-        <option value="plant">Plant</option>
-        <option value="biological fluids">Biological Fluids</option>
-      </select>
-      {errors.sampleType && (
-        <span className="error">{errors.sampleType}</span>
-      )}
-    </div>
+        <div className="form-group">
+          <label htmlFor="sampleType">Sample Type:</label>
+          <select
+            id="sampleType"
+            name="sampleType"
+            value={form.sampleType}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Select Sample Type --</option>
+            <option value="water">Water</option>
+            <option value="soil">Soil</option>
+            <option value="plant">Plant</option>
+            <option value="biological fluids">Biological Fluids</option>
+          </select>
+          {errors.sampleType && (
+            <span className="error">{errors.sampleType}</span>
+          )}
+        </div>
 
         <label>Collection Date:</label>
         <input
@@ -233,4 +234,4 @@ const SamplePage: React.FC = () => {
   );
 };
 
-export default SamplePage;
+export default ReservationPage;

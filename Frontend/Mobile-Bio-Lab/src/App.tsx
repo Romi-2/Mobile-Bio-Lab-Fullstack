@@ -20,7 +20,11 @@ import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
 import AdminReport from "./components/AdminReport";
 import ReservationPage from "./pages/Reservationpage";
-import SampleApprove from "./components/sampleapprove"; 
+import ReservationPending  from "./components/reservationpending"; 
+import ReservationSuccess from "./pages/ReservationSuccess";
+import SlotReservationPage from "./pages/SlotReservationPage";
+
+
 
 
 function AppContent() {
@@ -41,7 +45,7 @@ function AppContent() {
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
            <Route path="/reservation" element={<ReservationPage />} />
-
+           <Route path="/slot-reservation" element={<SlotReservationPage />} />
           {/* User dashboard */}
          <Route
   path="/userdashboard"
@@ -69,11 +73,12 @@ function AppContent() {
             <Route path="profile" element={<UpdateProfilePage />} />
             <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
             <Route path="reports" element={<AdminReport />} /> 
-            <Route path="sample-approve" element={<SampleApprove />} />
+            <Route path="reservation-pending" element={<ReservationPending />} />
           </Route>
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/activate/:studentId" element={<ActivatePage />} />
+           <Route path="/reservation-success" element={<ReservationSuccess />} />
         </Routes>
       </main>
     </>

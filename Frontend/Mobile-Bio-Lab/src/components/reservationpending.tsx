@@ -1,9 +1,7 @@
+// frontend/src/components/sampleapprove.tsx
 import React, { useEffect, useState } from "react";
-import {
-  getPendingReservations,
-  updateReservationStatus,
-} from "../services/reservationservice";
-import "../style/sampleapprove.css";
+import { getPendingReservations, updateReservationStatus,} from "../services/reservationservice";
+import "../style/reservationpending.css";
 
 interface Reservation {
   id: number;

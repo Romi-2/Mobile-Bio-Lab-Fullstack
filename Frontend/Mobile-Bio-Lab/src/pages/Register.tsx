@@ -81,7 +81,7 @@ const Register: React.FC = () => {
     }
 
     // Password strength: min 6 chars, at least 1 number and 1 letter
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
     if (!passwordRegex.test(password)) {
       alert("⚠️ Password must be at least 6 characters and include at least 1 number.");
       return false;

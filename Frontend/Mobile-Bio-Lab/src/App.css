@@ -135,3 +135,66 @@ select {
 
 
 /* end */
+
+
+/* reservation-Success start */
+.reservation-success {
+  text-align: center;
+  margin-top: 80px;
+  padding: 50px 40px; /* increased padding for height */
+  border: 2px solid #4caf50;
+  border-radius: 16px;
+  background-color: #f6fff6;
+  max-width: 700px; /* wider box */
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.reservation-success h2 {
+  color: #2e7d32;
+  font-size: 26px; /* bigger heading */
+  margin-bottom: 15px;
+}
+
+.reservation-success p {
+  font-size: 18px; /* bigger text */
+  color: #444;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.reservation-success .button-group {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* spacing between buttons */
+}
+
+.reservation-success .btn {
+  min-width: 140px; /* wider button */
+  padding: 14px 22px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* ensures text is always centered */
+}
+
+.reservation-success .btn:hover {
+  background-color: #388e3c;
+  transform: translateY(-2px); /* slight hover lift */
+}
+
+.reservation-success .btn:active {
+  transform: translateY(0);
+}
+
+/* reservation-Success end */
