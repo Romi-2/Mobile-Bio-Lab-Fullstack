@@ -1,8 +1,8 @@
 // frontend/src/pages/ReservationPage.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import QrScanner from "qr-scanner"; // ✅ library for decoding QR from images
-import "../style/sample.css";
+import QrScanner from "qr-scanner"; // ✅ library for decoding QR
+import "../style/reservation.css"; // <-- only if this file exists
 
 interface FormData {
   sampleId: string;
