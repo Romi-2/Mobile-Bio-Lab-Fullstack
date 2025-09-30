@@ -108,8 +108,8 @@ const SamplePage: React.FC = () => {
   };
 
   return (
-    <div className="sample-container">
-      <h2>Biological Sample Entry</h2>
+    <div className="Reservation-container">
+      <h2>Slot Reservation</h2>
 
       <form onSubmit={handleSubmit} noValidate>
         {/* Sample ID */}

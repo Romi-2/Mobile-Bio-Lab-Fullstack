@@ -37,19 +37,15 @@ export const createReservation = async (
 
 // ✅ Get all pending reservations
 export const getPendingReservations = async () => {
-  const token = localStorage.getItem("token");
-  const res = await axios.get(`${API_URL}/pending`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data.reservations;
+  const response = await axios.get("http://localhost:5000/api/reservations/pending");
+  return response.data;
 };
 
-// ✅ Approve or Reject reservation
 export const updateReservationStatus = async (id: number, action: "approve" | "reject") => {
-  const token = localStorage.getItem("token");
-  await axios.post(
-    `${API_URL}/${action}/${id}`,
-    {},
-    { headers: { Authorization: `Bearer ${token}` } }
+  const response = await axios.put(
+    `http://localhost:5000/api/reservations/${id}`,
+    { status: action }
   );
+  return response.data;
 };
+

@@ -20,7 +20,6 @@ import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
 import AdminReport from "./components/AdminReport";
 import ReservationPage from "./pages/Reservationpage";
-import SamplePage from "./pages/Samplepage";
 import SampleApprove from "./components/sampleapprove"; 
 
 
@@ -42,7 +41,6 @@ function AppContent() {
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
            <Route path="/reservation" element={<ReservationPage />} />
-           <Route path="/sample/:reservationId" element={<SamplePage />} />
 
           {/* User dashboard */}
          <Route
