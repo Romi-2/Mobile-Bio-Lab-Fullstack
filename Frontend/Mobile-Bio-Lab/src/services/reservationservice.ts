@@ -34,3 +34,22 @@ export const createReservation = async (
     throw new Error("❌ Unknown error occurred while creating reservation");
   }
 };
+
+// ✅ Get all pending reservations
+export const getPendingReservations = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${API_URL}/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.reservations;
+};
+
+// ✅ Approve or Reject reservation
+export const updateReservationStatus = async (id: number, action: "approve" | "reject") => {
+  const token = localStorage.getItem("token");
+  await axios.post(
+    `${API_URL}/${action}/${id}`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};

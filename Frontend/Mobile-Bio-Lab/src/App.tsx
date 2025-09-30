@@ -21,6 +21,8 @@ import ResetPasswordPage from "./pages/resetpasswordpage";
 import AdminReport from "./components/AdminReport";
 import ReservationPage from "./pages/Reservationpage";
 import SamplePage from "./pages/Samplepage";
+import SampleApprove from "./components/sampleapprove"; 
+
 
 function AppContent() {
   const location = useLocation();
@@ -68,7 +70,8 @@ function AppContent() {
             <Route path="users" element={<UsersList />} />
             <Route path="profile" element={<UpdateProfilePage />} />
             <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
-            <Route path="reports" element={<AdminReport />} />   {/* ✅ FIXED here */}
+            <Route path="reports" element={<AdminReport />} /> 
+            <Route path="sample-approve" element={<SampleApprove />} />
           </Route>
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
