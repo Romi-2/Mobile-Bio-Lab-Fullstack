@@ -1,0 +1,91 @@
+.slot-reservation {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+.slot-reservation h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.slot-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.slot-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.slot-form select,
+.slot-button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* Active state */
+.slot-button.active-btn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.slot-button.active-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Disabled-looking state */
+.slot-button.disabled-btn {
+  background-color: #aaa;
+  color: #eee;
+  cursor: not-allowed;
+}
+
+/* ===== MEDIA QUERIES ===== */
+
+/* Mobile */
+@media screen and (max-width: 600px) {
+  .slot-reservation {
+    margin: 20px;
+    padding: 15px;
+  }
+  .slot-form select,
+  .slot-form button {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+/* Tablets */
+@media screen and (max-width: 992px) {
+  .slot-reservation {
+    max-width: 90%;
+    padding: 18px 20px;
+  }
+
+  .slot-reservation h2 {
+    font-size: 22px;
+  }
+
+  .slot-form select,
+  .slot-form button {
+    font-size: 15px;
+    padding: 9px;
+  }
+}
+
+/* Desktop */
+@media screen and (min-width: 993px) {
+  .slot-reservation {
+    max-width: 500px;
+  }
+}

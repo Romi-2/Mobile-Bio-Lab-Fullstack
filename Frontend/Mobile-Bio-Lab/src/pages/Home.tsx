@@ -5,7 +5,7 @@ function Home() {
   const navigate = useNavigate();
 
   const handleReservationClick = () => {
-    navigate("/reservation");
+    navigate("/slot-reservation");
   };
 
   return (

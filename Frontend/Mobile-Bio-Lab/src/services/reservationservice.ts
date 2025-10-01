@@ -1,14 +1,12 @@
 // frontend/src/services/reservationService.ts
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/reservations";
+const SAMPLE_URL = "http://localhost:5000/api/samples";
 
 export interface ReservationData {
   user_id: number;
-  reservation_date: string; // YYYY-MM-DD
-  reservation_time: string; // HH:mm:ss
-  duration?: number;
-  status?: string;
+  slot_id: number;
 }
 
 export interface ReservationResponse {
@@ -16,36 +14,38 @@ export interface ReservationResponse {
   id?: number;
 }
 
-export const createReservation = async (
-  data: ReservationData
-): Promise<ReservationResponse> => {
-  try {
-    const response = await axios.post<ReservationResponse>(API_URL, data);
-    return response.data;
-  } catch (err: unknown) {
-    if (axios.isAxiosError(err)) {
-      const axiosError = err as AxiosError<{ msg: string }>;
-      throw new Error(
-        axiosError.response?.data?.msg ||
-          axiosError.message ||
-          "Reservation failed"
-      );
-    }
-    throw new Error("❌ Unknown error occurred while creating reservation");
-  }
+// Create reservation
+export const createReservation = async (data: ReservationData): Promise<ReservationResponse> => {
+  const res = await axios.post<ReservationResponse>(API_URL, data);
+  return res.data;
 };
 
-// ✅ Get all pending reservations
+// Submit sample data
+export interface SampleData {
+  reservationId: number;
+  sampleId: string;
+  sampleType: string;
+  collectionDate: string;
+  collectionTime: string;
+  geoLocation: string;
+  temperature: string;
+  pH: string;
+  salinity: string;
+}
+
+export const submitSample = async (data: SampleData) => {
+  const res = await axios.post(SAMPLE_URL, data);
+  return res.data;
+};
+
+// Get pending reservations (admin)
 export const getPendingReservations = async () => {
-  const response = await axios.get("http://localhost:5000/api/reservations/pending");
-  return response.data;
+  const res = await axios.get(`${API_URL}/pending`);
+  return res.data;
 };
 
+// Update reservation status (admin)
 export const updateReservationStatus = async (id: number, action: "approve" | "reject") => {
-  const response = await axios.put(
-    `http://localhost:5000/api/reservations/${id}`,
-    { status: action }
-  );
-  return response.data;
+  const res = await axios.put(`${API_URL}/${id}`, { status: action });
+  return res.data;
 };
-
