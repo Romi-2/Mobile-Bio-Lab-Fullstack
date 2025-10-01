@@ -1,35 +1,41 @@
-// backend/routes/reservationRoute.js
 import express from "express";
 import { db } from "../server.js";
 
 const router = express.Router();
 
-// Create reservation with slot_id
+// Create reservation
 router.post("/", async (req, res) => {
-  try {
-    const { user_id, slot_id, duration } = req.body;
+  const user_id = Number(req.body.user_id);
+  const slot_id = Number(req.body.slot_id);
 
-    const [[slot]] = await db.query(
-      "SELECT * FROM available_slots WHERE id=? AND isBooked=0",
+  if (!user_id || !slot_id) {
+    return res.status(400).json({ msg: "user_id and slot_id are required" });
+  }
+
+  try {
+    // Check if slot is available
+    const [slotCheckRows] = await db.query(
+      "SELECT id FROM available_slots WHERE id = ? AND isBooked = 0",
       [slot_id]
     );
 
-    if (!slot) {
-      return res.status(400).json({ msg: "Slot not available" });
+    if (Array.isArray(slotCheckRows) && slotCheckRows.length === 0) {
+      return res.status(400).json({ msg: "Slot already booked or invalid" });
     }
 
+    // Insert reservation
     const [result] = await db.query(
-      `INSERT INTO reservations (user_id, slot_id, reservation_date, reservation_time, duration) 
-       VALUES (?, ?, ?, ?, ?)`,
-      [user_id, slot_id, slot.date, slot.start_time, duration]
+      "INSERT INTO reservations (user_id, slot_id, status) VALUES (?, ?, 'pending')",
+      [user_id, slot_id]
     );
 
-    await db.query("UPDATE available_slots SET isBooked=1 WHERE id=?", [slot_id]);
+    // Mark slot as booked
+    await db.query("UPDATE available_slots SET isBooked = 1 WHERE id = ?", [slot_id]);
 
-    res.status(201).json({ msg: "Reservation created", id: result.insertId });
+    return res.json({ id: result.insertId, msg: "Reservation created" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error creating reservation" });
+    console.error("Error creating reservation:", error);
+    return res.status(500).json({ msg: "Internal server error" });
   }
 });
 
