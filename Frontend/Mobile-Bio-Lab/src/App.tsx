@@ -27,7 +27,6 @@ import SlotReservationPage from "./pages/SlotReservationPage";
 
 
 
-
 function AppContent() {
   const location = useLocation();
   const showHeader =
@@ -46,6 +45,7 @@ function AppContent() {
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
            <Route path="/reservation" element={<ReservationPage />} />
+      
            <Route path="/slot-reservation" element={<SlotReservationPage />} />
           {/* User dashboard */}
          <Route

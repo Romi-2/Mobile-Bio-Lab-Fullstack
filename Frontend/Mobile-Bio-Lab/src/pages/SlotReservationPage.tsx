@@ -55,28 +55,31 @@ const SlotReservationPage: React.FC = () => {
       {loading && <p>Loading slots...</p>}
       <div className="slots-container">
         {slots.length === 0 && !loading && <p>No slots available!</p>}
-        {slots.map(slot => (
-          <div
-            key={slot.id}
-            className={`slot-card ${selectedSlot === slot.id ? "selected" : ""} ${slot.available_seats <= 0 ? "full" : ""}`}
-            onClick={() => setSelectedSlot(slot.id)}
-          >
-            <h3>{slot.city}</h3>
-            <p>
-              <strong>Date:</strong> {slot.date} <br />
-              <strong>Time:</strong> {slot.start_time} - {slot.end_time} <br />
-              <strong>Seats:</strong>{" "}
-              {slot.available_seats > 0 ? slot.available_seats : "Full"}
-            </p>
-            <button
-              className="reserve-button"
-              onClick={() => handleReserve(slot.id)}
-              disabled={slot.available_seats <= 0 || loading}
-            >
-              {slot.available_seats > 0 ? "Reserve" : "Full"}
-            </button>
-          </div>
-        ))}
+        {slots.map((slot, index) => (
+  <div
+    key={`${slot.id}-${index}`}
+    className={`slot-card ${selectedSlot === slot.id ? "selected" : ""} ${slot.available_seats <= 0 ? "full" : ""}`}
+    onClick={() => setSelectedSlot(slot.id)}
+  >
+    <h3>{slot.city}</h3>
+    <p>
+      <strong>Date:</strong> {slot.date} <br />
+      <strong>Time:</strong> {slot.start_time} - {slot.end_time} <br />
+      <strong>Seats:</strong>{" "}
+      {slot.available_seats > 0 ? slot.available_seats : "Full"}
+    </p>
+    <button
+      className="reserve-button"
+      onClick={(e) => {
+        e.stopPropagation(); // prevent also selecting
+        handleReserve(slot.id);
+      }}
+      disabled={slot.available_seats <= 0 || loading}
+    >
+      {slot.available_seats > 0 ? "Reserve" : "Full"}
+    </button>
+  </div>
+))}
       </div>
     </div>
   );

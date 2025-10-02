@@ -1,42 +1,62 @@
-/* src/style/ReservationPage.css */
 .reservation-page {
   max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #f9f9f9;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f8faff;
   border-radius: 12px;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-.reservation-page h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #2a4d69;
-}
-
-.reservation-page form {
+.reservation-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1rem;
 }
 
-.reservation-page input,
-.reservation-page select {
+.reservation-form label {
+  font-weight: 600;
+  color: #2d3e50;
+}
+
+.reservation-form input,
+.reservation-form select {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
 }
 
-.reservation-page button {
+.submit-btn {
   padding: 12px;
-  background: #2a4d69;
-  color: white;
+  background: #007bff;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
+  color: #fff;
   font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.reservation-page button:hover {
-  background: #1e3550;
+.submit-btn:hover {
+  background: #0056b3;
+}
+
+.scan-btn {
+  padding: 10px;
+  background: #28a745;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.scan-btn:hover {
+  background: #1e7e34;
+}
+
+.qr-scanner {
+  margin: 1rem 0;
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  overflow: hidden;
 }
