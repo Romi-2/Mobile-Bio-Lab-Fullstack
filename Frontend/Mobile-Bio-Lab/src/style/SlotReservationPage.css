@@ -1,91 +1,60 @@
-.slot-reservation {
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9;
+.slot-reservation-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  text-align: center;
   font-family: Arial, sans-serif;
 }
 
-.slot-reservation h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.slots-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.slot-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.slot-form label {
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.slot-form select,
-.slot-button {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
+.slot-card {
+  border: 2px solid #4a90e2;
+  border-radius: 12px;
+  padding: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: 0.3s;
+  background-color: #f9faff;
 }
 
-/* Active state */
-.slot-button.active-btn {
-  background-color: #007bff;
-  color: #fff;
+.slot-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.slot-button.active-btn:hover {
-  background-color: #0056b3;
-}
-
-/* Disabled-looking state */
-.slot-button.disabled-btn {
-  background-color: #aaa;
-  color: #eee;
+.slot-card.full {
+  border-color: #ccc;
+  background-color: #eee;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
-/* ===== MEDIA QUERIES ===== */
-
-/* Mobile */
-@media screen and (max-width: 600px) {
-  .slot-reservation {
-    margin: 20px;
-    padding: 15px;
-  }
-  .slot-form select,
-  .slot-form button {
-    font-size: 14px;
-    padding: 8px;
-  }
+.slot-card.selected {
+  border-color: #1a73e8;
+  background-color: #e6f0ff;
 }
 
-/* Tablets */
-@media screen and (max-width: 992px) {
-  .slot-reservation {
-    max-width: 90%;
-    padding: 18px 20px;
-  }
-
-  .slot-reservation h2 {
-    font-size: 22px;
-  }
-
-  .slot-form select,
-  .slot-form button {
-    font-size: 15px;
-    padding: 9px;
-  }
+.reserve-button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #4a90e2;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-/* Desktop */
-@media screen and (min-width: 993px) {
-  .slot-reservation {
-    max-width: 500px;
-  }
+.reserve-button:hover:enabled {
+  background-color: #1a73e8;
+}
+
+.reserve-button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
 }

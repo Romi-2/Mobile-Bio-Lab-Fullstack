@@ -1,3 +1,4 @@
+// frontend/src/App.tsx
 import { Routes, Route, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -20,9 +21,9 @@ import ForgotPasswordPage from "./pages/Forgetpasswordpage";
 import ResetPasswordPage from "./pages/resetpasswordpage";
 import AdminReport from "./components/AdminReport";
 import ReservationPage from "./pages/Reservationpage";
-import ReservationPending  from "./components/reservationpending"; 
 import ReservationSuccess from "./pages/ReservationSuccess";
 import SlotReservationPage from "./pages/SlotReservationPage";
+
 
 
 
@@ -73,12 +74,13 @@ function AppContent() {
             <Route path="profile" element={<UpdateProfilePage />} />
             <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
             <Route path="reports" element={<AdminReport />} /> 
-            <Route path="reservation-pending" element={<ReservationPending />} />
+            {/* <Route path="reservation-pending" element={<ReservationPending />} /> */}
           </Route>
 
           <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/activate/:studentId" element={<ActivatePage />} />
-           <Route path="/reservation-success" element={<ReservationSuccess />} />
+           {/* Success page */}
+        <Route path="/reservation-success" element={<ReservationSuccess />} />
         </Routes>
       </main>
     </>

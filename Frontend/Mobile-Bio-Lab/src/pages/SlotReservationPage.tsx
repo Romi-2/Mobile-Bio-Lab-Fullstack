@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import "../style/SlotReservationPage.css";
+import { getAvailableSlots } from "../services/slotservice";
+import "../style/SlotReservationPage.css"; // We'll create this CSS
 
 interface Slot {
   id: number;
@@ -9,32 +9,25 @@ interface Slot {
   date: string;
   start_time: string;
   end_time: string;
-  isBooked: number;
-}
-
-interface ReservationResponse {
-  id: number;
-  msg: string;
+  available_seats: number;
 }
 
 const SlotReservationPage: React.FC = () => {
-  const [slots, setSlots] = useState<Slot[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const navigate = useNavigate();
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
 
-  // Fetch available slots
+  // Fetch slots from backend
   useEffect(() => {
-    const fetchSlots = async (): Promise<void> => {
+    const fetchSlots = async () => {
       try {
-        const res = await axios.get<Slot[]>("http://localhost:5000/api/slots");
-        setSlots(Array.isArray(res.data) ? res.data : []);
+        setLoading(true);
+        const data = await getAvailableSlots();
+        setSlots(data);
       } catch (err) {
-        const error = err as AxiosError;
-        console.error("Fetch slots error:", error.message);
-        setError("Failed to load available slots.");
+        console.error(err);
+        alert("Failed to load slots");
       } finally {
         setLoading(false);
       }
@@ -42,71 +35,49 @@ const SlotReservationPage: React.FC = () => {
     fetchSlots();
   }, []);
 
-  // Handle slot reservation
-  const handleReserve = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    if (selectedSlot === null) return;
+  // Handle reservation click
+  const handleReserve = (slotId: number) => {
+    const slot = slots.find(s => s.id === slotId);
+    if (!slot) return;
 
-    try {
-      const res = await axios.post<ReservationResponse>(
-        "http://localhost:5000/api/reservations",
-        { user_id: 1, slot_id: selectedSlot }
-      );
-      alert("✅ Slot reserved successfully!");
-      navigate("/reservation-form", { state: { reservationId: res.data.id } });
-    } catch (err) {
-      const error = err as AxiosError<{ msg: string }>;
-      alert(error.response?.data?.msg || "Failed to reserve slot");
-      console.error(error.response?.data || error.message);
+    if (slot.available_seats <= 0) {
+      alert("All seats are reserved for this slot.");
+      return;
     }
+
+    // Navigate to ReservationPage with selected slot data
+    navigate("/reservation", { state: { ...slot } });
   };
 
-  // Handle login
-  const handleSlotLogin = (): void => {
-  alert("Login clicked from Slot Reservation Page!");
-};
-
-  if (loading) return <p>Loading slots...</p>;
-  if (error) return <p>{error}</p>;
-
-  const availableSlots = slots.filter((s) => s.isBooked === 0);
-
   return (
-    <div className="slot-reservation">
-      <h2>Book a Slot</h2>
-
-      {availableSlots.length === 0 ? (
-        <p>No available slots at the moment. Please check later.</p>
-      ) : (
-        <form className="slot-form" onSubmit={handleReserve}>
-          <label>Select a slot:</label>
-          <select
-            value={selectedSlot ?? ""}
-            onChange={(e) => setSelectedSlot(Number(e.target.value) || null)}
+    <div className="slot-reservation-page">
+      <h2>Reserve Your Slot</h2>
+      {loading && <p>Loading slots...</p>}
+      <div className="slots-container">
+        {slots.length === 0 && !loading && <p>No slots available!</p>}
+        {slots.map(slot => (
+          <div
+            key={slot.id}
+            className={`slot-card ${selectedSlot === slot.id ? "selected" : ""} ${slot.available_seats <= 0 ? "full" : ""}`}
+            onClick={() => setSelectedSlot(slot.id)}
           >
-            <option value="">-- Choose a Slot --</option>
-            {availableSlots.map((slot) => (
-              <option key={slot.id} value={slot.id}>
-                {slot.city} | {slot.date} | {slot.start_time} - {slot.end_time}
-              </option>
-            ))}
-          </select>
-
-          <button
-            type="submit"
-            className={`slot-button ${selectedSlot === null ? "disabled-btn" : "active-btn"}`}
-            disabled={selectedSlot === null}
-          >
-            Reserve
-          </button>
-        </form>
-      )}
-
-      {/* Login button always visible */}
-      // Then in JSX
-<button type="button" onClick={handleSlotLogin} className="login-button">
-  Login
-</button>
+            <h3>{slot.city}</h3>
+            <p>
+              <strong>Date:</strong> {slot.date} <br />
+              <strong>Time:</strong> {slot.start_time} - {slot.end_time} <br />
+              <strong>Seats:</strong>{" "}
+              {slot.available_seats > 0 ? slot.available_seats : "Full"}
+            </p>
+            <button
+              className="reserve-button"
+              onClick={() => handleReserve(slot.id)}
+              disabled={slot.available_seats <= 0 || loading}
+            >
+              {slot.available_seats > 0 ? "Reserve" : "Full"}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,189 +1,42 @@
-.Reservation-container {
+/* src/style/ReservationPage.css */
+.reservation-page {
   max-width: 600px;
-  margin: 2rem auto;
-  padding: 1.5rem;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+.reservation-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2a4d69;
+}
+
+.reservation-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.reservation-page input,
+.reservation-page select {
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background: #f9f9f9;
 }
 
-.form-group {
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Form layout */
-.sample-form {
-  display: flex;
-  flex-direction: column;
-}
-h2 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #2d3e50;
-  font-size: 1.6rem;
-}
-
-/* Inputs and selects */
-.Reservation-container input,
-.Reservation-container select,
-.Reservation-container textarea {
-  margin-bottom: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Select specifically */
-.Reservation-container select {
-  display: block;
-  visibility: visible;
-  width: 100%;
-  height: auto;
-  background-color: white;
-  cursor: pointer;
-}
-
-/* Buttons */
-.Reservation-container button {
-  padding: 0.75rem 1.5rem;
-  background-color: #1976d2;
+.reservation-page button {
+  padding: 12px;
+  background: #2a4d69;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 1rem;
-
-  /* Center button */
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  transition: all 0.3s ease;
-}
-.scan-btn,
-.scan-btn:link,
-.scan-btn:visited,
-.scan-btn:hover,
-.scan-btn:active,
-.scan-btn:focus {
-  color: #f9f9f9 !important;
-  text-decoration: none; /* remove underline if it's an <a> */
+  font-weight: bold;
 }
 
-.Reservation-container button:hover {
-  background-color:#239f84;
-  transform: scale(1.05);
-}
-
-/* Error messages */
-.error {
-  color: red;
-  font-size: 0.875rem;
-  margin-top: -0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-/* QR/Barcode button */
-.scan-btn {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color:#1976d2;
-  color: #f9f9f9;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  margin-bottom: 1rem;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.scan-btn:hover {
-  background-color:#239f84;
-  transform: translateY(-2px);
-}
-
-/* Subheadings */
-h3 {
-  text-align: center;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-/* ===========================
-   Responsive Design
-=========================== */
-
-/* Mobile (default < 600px) */
-@media (max-width: 600px) {
-  .Reservation-container {
-    margin: 1rem;
-    padding: 1rem;
-  }
-
-  .sample-form h2 {
-    font-size: 1.4rem;
-  }
-
-  .Reservation-container button {
-    width: 100%;
-  }
-}
-
-/* Tablet (600px - 1024px) */
-@media (min-width: 600px) and (max-width: 1024px) {
-  .Reservation-container {
-    max-width: 90%;
-    padding: 2rem;
-  }
-
-  .sample-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem 2rem;
-  }
-
-  .form-group,
-  .sample-form h2,
-  h3,
-  .Reservation-container button {
-    grid-column: span 2;
-  }
-
-  .Reservation-container button {
-    width: 200px;
-    justify-self: center;
-  }
-}
-
-/* Desktop (>= 1024px) */
-@media (min-width: 1024px) {
-  .Reservation-container {
-    max-width: 800px;
-    padding: 2.5rem 3rem;
-  }
-
-  .sample-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem 2rem;
-  }
-
-  .form-group,
-  .sample-form h2,
-  h3,
-  .Reservation-container button {
-    grid-column: span 2;
-  }
-
-  .Reservation-container button {
-    width: 220px;
-    justify-self: center;
-  }
+.reservation-page button:hover {
+  background: #1e3550;
 }
