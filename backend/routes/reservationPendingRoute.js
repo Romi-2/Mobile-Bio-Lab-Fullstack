@@ -1,6 +1,6 @@
 // backend/routes/reservationPendingRoute.js
 import express from "express";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import { getPendingReservations, updateReservationStatus } from "../controllers/reservationapproveController.js";
 
 const router = express.Router();

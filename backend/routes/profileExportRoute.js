@@ -1,6 +1,6 @@
 // backend/routes/profileExportRoute.js
 import express from "express";
-import { db } from "../server.js";              // Import MySQL connection
+import { db } from "../models/Database.js";             // Import MySQL connection
 import { generateUserProfilePDF } from "../utils/pdfHelper.js";
 
 const router = express.Router();

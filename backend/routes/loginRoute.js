@@ -1,7 +1,7 @@
 // loginRoute.js
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import express from "express";
 
 const router = express.Router();

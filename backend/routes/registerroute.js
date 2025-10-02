@@ -1,7 +1,7 @@
 // backend/routes/registerRoute.js
 import express from "express";
 import multer from "multer";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import bcrypt from "bcrypt";
 import fs from "fs";
 import path from "path";

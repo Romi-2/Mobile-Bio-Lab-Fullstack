@@ -1,6 +1,6 @@
 //backend/routes/adminroutes.js
 import express from "express";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import transporter from "../emailConfig.js";
 // import nodemailer from "nodemailer";

@@ -1,5 +1,5 @@
 import express from "express";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import PDFDocument from "pdfkit";
 
 const router = express.Router(); // ✅ this was missing

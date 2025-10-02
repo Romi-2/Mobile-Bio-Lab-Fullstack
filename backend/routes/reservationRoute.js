@@ -1,42 +1,46 @@
+// backend/routes/reservationRoute.js
 import express from "express";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 
 const router = express.Router();
 
-// Create reservation
+// Create reservation with sample details
 router.post("/", async (req, res) => {
-  const user_id = Number(req.body.user_id);
-  const slot_id = Number(req.body.slot_id);
-
-  if (!user_id || !slot_id) {
-    return res.status(400).json({ msg: "user_id and slot_id are required" });
-  }
-
   try {
-    // Check if slot is available
-    const [slotCheckRows] = await db.query(
-      "SELECT id FROM available_slots WHERE id = ? AND isBooked = 0",
-      [slot_id]
+    const { user_id, slot_id, reservation_date, reservation_time, duration, status, sample } = req.body;
+
+    // Example insert
+    const [result] = await db.query(
+      "INSERT INTO reservations (user_id, slot_id, reservation_date, reservation_time, duration, status) VALUES (?, ?, ?, ?, ?, ?)",
+      [user_id, slot_id, reservation_date, reservation_time, duration, status]
     );
 
-    if (Array.isArray(slotCheckRows) && slotCheckRows.length === 0) {
-      return res.status(400).json({ msg: "Slot already booked or invalid" });
+    const reservationId = result.insertId;
+
+    // Insert into samples
+    if (sample) {
+      await db.query(
+        "INSERT INTO samples (reservation_id, sample_id, sample_type, collection_date, collection_time, geo_location, temperature, pH, salinity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          reservationId,
+          sample.sample_id,
+          sample.sample_type,
+          sample.collection_date,
+          sample.collection_time,
+          sample.geo_location,
+          sample.temperature,
+          sample.pH,
+          sample.salinity,
+        ]
+      );
     }
 
-    // Insert reservation
-    const [result] = await db.query(
-      "INSERT INTO reservations (user_id, slot_id, status) VALUES (?, ?, 'pending')",
-      [user_id, slot_id]
-    );
-
-    // Mark slot as booked
-    await db.query("UPDATE available_slots SET isBooked = 1 WHERE id = ?", [slot_id]);
-
-    return res.json({ id: result.insertId, msg: "Reservation created" });
+    res.json({ message: "Reservation created successfully", reservationId });
   } catch (error) {
-    console.error("Error creating reservation:", error);
-    return res.status(500).json({ msg: "Internal server error" });
+    console.error("❌ Error creating reservation:", error);
+    res.status(500).json({ error: "Failed to create reservation" });
   }
 });
+
 
 export default router;

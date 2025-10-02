@@ -1,6 +1,6 @@
 // backend/routes/profileRoute.js
 import express from "express";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

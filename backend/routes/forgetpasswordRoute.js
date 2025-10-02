@@ -3,7 +3,7 @@
 import bcrypt from "bcrypt";
 import express from "express";
 import crypto from "crypto";
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 import nodemailer from "nodemailer";
 
 const router = express.Router();

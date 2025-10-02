@@ -1,9 +1,10 @@
+// Path: backend/models/Database.js
 import mysql from "mysql2/promise";
 
 export const db = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "",       // your MySQL password
+  password: "",
   database: "mobile_bio_lab",
   waitForConnections: true,
   connectionLimit: 10,
