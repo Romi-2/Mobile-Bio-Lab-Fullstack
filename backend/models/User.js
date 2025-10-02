@@ -1,4 +1,4 @@
-import { db } from "../server.js"; // adjust path if needed
+import { db } from "../models/Database.js"; // adjust path if needed
 
 const User = {
   findByEmail: (email, callback) => {

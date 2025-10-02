@@ -1,5 +1,5 @@
 // reservationapproveController.js
-import { db } from "../server.js";
+import { db } from "../models/Database.js";
 
 // Get pending reservations
 export const getPendingReservations = async (req, res) => {

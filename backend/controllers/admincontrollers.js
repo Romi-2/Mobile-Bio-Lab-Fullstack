@@ -1,5 +1,5 @@
 // backend/controllers/adminController.js
-import { db } from "../server.js";   // MySQL connection
+import { db } from "../models/Database.js";   // MySQL connection
 import nodemailer from "nodemailer";
 
 // ✅ Approve User
