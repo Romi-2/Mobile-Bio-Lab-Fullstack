@@ -1,14 +1,38 @@
-// frontend/src/services/slotservice.ts
+// Frontend/Mobile-Bio-Lab/src/services/slotservice.ts
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api/slots";
+const API_URL = "http://localhost:5000/api/slots";
 
-export const getAvailableSlots = async () => {
-  const res = await axios.get(`${BASE_URL}/available`);
-  return res.data;
+export interface Slot {
+  id: number;
+  city: string;
+  date: string; // ✅ lowercase, consistent naming
+  start_time: string;
+  end_time: string;
+  available_seats: number;
+}
+
+// Fetch all available slots
+export const getAvailableSlots = async (): Promise<Slot[]> => {
+  try {
+    const res = await axios.get(`${API_URL}/available`);
+    console.log("Available slots API response:", res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching available slots:", error);
+    throw error;
+  }
 };
 
-export const reserveSlot = async (slot_id: number, user_id: number) => {
-  const res = await axios.post(`${BASE_URL}/reserve`, { slot_id, user_id });
-  return res.data;
+// Fetch slots by city
+export const getSlotsByCity = async (city: string): Promise<Slot[]> => {
+  try {
+    const res = await axios.get(`${API_URL}/city/${city}`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error fetching slots for city ${city}:`, error);
+    // fallback to all slots
+    const allSlots = await getAvailableSlots();
+    return allSlots.filter(slot => slot.city.toLowerCase() === city.toLowerCase());
+  }
 };

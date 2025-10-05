@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAvailableSlots } from "../services/slotservice";
-import "../style/SlotReservationPage.css"; // We'll create this CSS
+import "../style/SlotReservationPage.css";
 
 interface Slot {
   id: number;
@@ -12,11 +12,17 @@ interface Slot {
   available_seats: number;
 }
 
+interface CitySlot {
+  city: string;
+  totalSeats: number;
+  slots: Slot[];
+}
+
 const SlotReservationPage: React.FC = () => {
   const navigate = useNavigate();
-  const [slots, setSlots] = useState<Slot[]>([]);
+  const [citySlots, setCitySlots] = useState<CitySlot[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   // Fetch slots from backend
   useEffect(() => {
@@ -24,10 +30,15 @@ const SlotReservationPage: React.FC = () => {
       try {
         setLoading(true);
         const data = await getAvailableSlots();
-        setSlots(data);
+        console.log("Fetched slots data:", data); // Debug log
+        
+        // Group slots by city
+        const groupedSlots = groupSlotsByCity(data);
+        setCitySlots(groupedSlots);
+        console.log("Grouped city slots:", groupedSlots); // Debug log
       } catch (err) {
-        console.error(err);
-        alert("Failed to load slots");
+        console.error("Error fetching slots:", err);
+        alert("Failed to load available slots");
       } finally {
         setLoading(false);
       }
@@ -35,51 +46,87 @@ const SlotReservationPage: React.FC = () => {
     fetchSlots();
   }, []);
 
-  // Handle reservation click
-  const handleReserve = (slotId: number) => {
-    const slot = slots.find(s => s.id === slotId);
-    if (!slot) return;
+  // Group slots by city and calculate total available seats
+  const groupSlotsByCity = (slots: Slot[]): CitySlot[] => {
+    const cityMap = new Map<string, CitySlot>();
+    
+    slots.forEach(slot => {
+      if (!cityMap.has(slot.city)) {
+        cityMap.set(slot.city, {
+          city: slot.city,
+          totalSeats: 0,
+          slots: []
+        });
+      }
+      
+      const citySlot = cityMap.get(slot.city)!;
+      citySlot.slots.push(slot);
+      citySlot.totalSeats += slot.available_seats;
+    });
+    
+    return Array.from(cityMap.values()).filter(city => city.totalSeats > 0);
+  };
 
-    if (slot.available_seats <= 0) {
-      alert("All seats are reserved for this slot.");
-      return;
+  // Handle city selection
+  const handleCitySelect = (city: string) => {
+    setSelectedCity(city);
+    
+    // Get all slots for this city
+    const citySlotData = citySlots.find(cs => cs.city === city);
+    
+    if (citySlotData && citySlotData.slots.length > 0) {
+      // Navigate to ReservationPage with selected city data
+      navigate("/reservation", { 
+        state: { 
+          selectedCity: city,
+          citySlots: citySlotData.slots 
+        } 
+      });
+    } else {
+      alert("No available slots for this city");
     }
-
-    // Navigate to ReservationPage with selected slot data
-    navigate("/reservation", { state: { ...slot } });
   };
 
   return (
     <div className="slot-reservation-page">
-      <h2>Reserve Your Slot</h2>
-      {loading && <p>Loading slots...</p>}
-      <div className="slots-container">
-        {slots.length === 0 && !loading && <p>No slots available!</p>}
-        {slots.map((slot, index) => (
-  <div
-    key={`${slot.id}-${index}`}
-    className={`slot-card ${selectedSlot === slot.id ? "selected" : ""} ${slot.available_seats <= 0 ? "full" : ""}`}
-    onClick={() => setSelectedSlot(slot.id)}
-  >
-    <h3>{slot.city}</h3>
-    <p>
-      <strong>Date:</strong> {slot.date} <br />
-      <strong>Time:</strong> {slot.start_time} - {slot.end_time} <br />
-      <strong>Seats:</strong>{" "}
-      {slot.available_seats > 0 ? slot.available_seats : "Full"}
-    </p>
-    <button
-      className="reserve-button"
-      onClick={(e) => {
-        e.stopPropagation(); // prevent also selecting
-        handleReserve(slot.id);
-      }}
-      disabled={slot.available_seats <= 0 || loading}
-    >
-      {slot.available_seats > 0 ? "Reserve" : "Full"}
-    </button>
-  </div>
-))}
+      <h2>Select Your City</h2>
+      {loading && <p className="loading-text">Loading available cities...</p>}
+      
+      <div className="cities-container">
+        {citySlots.length === 0 && !loading && (
+          <p className="no-cities-message">No cities available for reservation!</p>
+        )}
+        
+        {citySlots.map((citySlot) => (
+          <div
+            key={citySlot.city}
+            className={`city-card ${selectedCity === citySlot.city ? "selected" : ""}`}
+            onClick={() => handleCitySelect(citySlot.city)}
+          >
+            <div className="city-header">
+              <h3 className="city-name">{citySlot.city}</h3>
+              <div className="seat-badge">
+                <span className="seat-count">{citySlot.totalSeats}</span>
+                <span className="seat-text">seats available</span>
+              </div>
+            </div>
+            
+            <p className="city-description">
+              Click to select available dates and time slots
+            </p>
+
+            <button
+              className="select-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCitySelect(citySlot.city);
+              }}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Select City"}
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

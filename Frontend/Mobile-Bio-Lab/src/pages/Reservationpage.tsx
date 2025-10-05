@@ -1,18 +1,31 @@
-import React, { useState } from "react";
+// frontend/src/pages/ReservationPage.tsx
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createReservation } from "../services/reservationservice";
+import type  { Slot } from "../services/slotservice";
+import { createReservation, getAvailableSlots } from "../services/reservationservice";
 import QRReader from "../components/QRReader";
 import "../style/Reservation.css";
 
 const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
 
+  // State
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [allAvailableSlots, setAllAvailableSlots] = useState<Slot[]>([]);
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [scanMethod, setScanMethod] = useState<"camera" | "upload" | null>(null);
+
+  // Form data
   const [formData, setFormData] = useState({
     user_id: 1,
-    slot_id: 1,
+    slot_id: 0,
     reservation_date: "",
     reservation_time: "",
-    duration: "1h",
+    duration: "1h 30m",
     status: "pending",
     sample_id: "",
     sample_type: "",
@@ -24,165 +37,203 @@ const ReservationPage: React.FC = () => {
     salinity: "",
   });
 
-  const [showQRModal, setShowQRModal] = useState(false);
-  const [qrScanned, setQrScanned] = useState(false);
-  const [scanMethod, setScanMethod] = useState<"camera" | "upload" | null>(null);
+useEffect(() => {
+  const fetchAvailable = async () => {
+    try {
+      const data: Slot[] = await getAvailableSlots();
+      console.log("Fetched available slots:", data);
+      setAllAvailableSlots(data);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+      const uniqueDates = [...new Set(data.map(slot => slot.date))];
+      setAvailableDates(uniqueDates);
+    } catch (err) {
+      console.error("Error fetching available slots:", err);
+    }
   };
 
+  fetchAvailable();
+}, []);
+
+const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const date = e.target.value;
+  setSelectedDate(date);
+  setSelectedTime("");
+
+  if (date) {
+    const timesForDate = allAvailableSlots
+      .filter((slot) => slot.date === date)
+      .map((slot) => `${slot.start_time} TO ${slot.end_time}`);
+
+    setAvailableTimes(timesForDate);
+  } else {
+    setAvailableTimes([]);
+  }
+};
+
+  // Handle time change
+  const handleTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedTime(e.target.value);
+  };
+
+  // Handle input changes
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle QR result
   const handleQRResult = (data: string) => {
     try {
       const qrData = JSON.parse(data);
-      setFormData((prev) => ({ ...prev, ...qrData }));
+      setFormData((prev) => ({
+        ...prev,
+        sample_id: qrData.sample_id || qrData.id || prev.sample_id,
+        sample_type: qrData.sample_type || qrData.type || prev.sample_type,
+        collection_date: qrData.collection_date || qrData.date || prev.collection_date,
+        collection_time: qrData.collection_time || qrData.time || prev.collection_time,
+        geo_location: qrData.geo_location || qrData.location || prev.geo_location,
+        temperature: qrData.temperature || qrData.temp || prev.temperature,
+        pH: qrData.pH || qrData.ph || prev.pH,
+        salinity: qrData.salinity || prev.salinity,
+      }));
     } catch {
       setFormData((prev) => ({ ...prev, sample_id: data }));
     }
-    setQrScanned(true);
-    setShowQRModal(false); // close modal after success
+    setShowQRModal(false);
   };
 
+  // Submit reservation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
+    if (!selectedDate || !selectedTime || !formData.sample_id || !formData.sample_type) {
+      alert("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await createReservation({
-        ...formData,
-        userId: String(formData.user_id),   // ✅ match backend
-        slotId: String(formData.slot_id),
-        date: formData.reservation_date,
-        time: formData.reservation_time,
-      });
+      await createReservation(formData);
+      alert("✅ Reservation created successfully!");
       navigate("/reservation-success");
-    } catch {
+    } catch (error) {
+      console.error("Reservation error:", error);
       alert("❌ Failed to submit reservation");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="reservation-page">
-      <h2>📌 Sample Reservation</h2>
+      <h2>Sample Reservation Form</h2>
 
       <form onSubmit={handleSubmit} className="reservation-form">
-        <label>Sample ID:</label>
-        <input
-          type="text"
-          name="sample_id"
-          value={formData.sample_id}
-          onChange={handleChange}
-        />
+        {/* Sample Info */}
+        <div className="form-card">
+          <div className="card-header"><h3>📋 Sample Information</h3></div>
+          <div className="card-body">
+            <div className="form-group">
+              <div className="input-with-icon">
+                <span className="input-icon">🆔</span>
+                <input
+                  type="text"
+                  name="sample_id"
+                  value={formData.sample_id}
+                  onChange={handleFormChange}
+                  required
+                  placeholder="Enter Sample ID"
+                  className="form-input"
+                />
+                <button
+                  type="button"
+                  className="scan-btn"
+                  onClick={() => { setShowQRModal(true); setScanMethod(null); }}
+                >
+                  📷 Scan QR
+                </button>
+              </div>
+            </div>
 
-        {/* ✅ Scan QR button */}
-        {!qrScanned && (
-          <button
-            type="button"
-            className="scan-btn"
-            onClick={() => {
-              setShowQRModal(true);
-              setScanMethod(null); // reset choice
-            }}
-          >
-            📷 Scan QR
-          </button>
-        )}
+            <div className="form-group">
+              <div className="input-with-icon">
+                <span className="input-icon">🧪</span>
+                <select
+                  name="sample_type"
+                  value={formData.sample_type}
+                  onChange={handleFormChange}
+                  required
+                  className="form-dropdown"
+                >
+                  <option value="">Select Sample Type</option>
+                  <option value="water">Water</option>
+                  <option value="soil">Soil</option>
+                  <option value="plant">Plant</option>
+                  <option value="biological fluids">Biological Fluids</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <label>Sample Type:</label>
-        <select
-          name="sample_type"
-          value={formData.sample_type}
-          onChange={handleChange}
-        >
-          <option value="">Select</option>
-          <option value="water">Water</option>
-          <option value="soil">Soil</option>
-          <option value="plant">Plant</option>
-          <option value="biological fluids">Biological Fluids</option>
-        </select>
+        {/* Reservation Schedule */}
+        <div className="form-card">
+          <div className="card-header"><h3>📅 Reservation Schedule</h3></div>
+          <div className="card-body">
+            <div className="form-group">
+              <select value={selectedDate} onChange={handleDateChange} required>
+                <option value="">Select Date</option>
+                {availableDates.map((date) => (
+                  <option key={date} value={date}>{date}</option>
+                ))}
+              </select>
+            </div>
 
-        <label>Collection Date:</label>
-        <input
-          type="date"
-          name="collection_date"
-          value={formData.collection_date}
-          onChange={handleChange}
-        />
+            <div className="form-group">
+              <select value={selectedTime} onChange={handleTimeChange} required>
+                <option value="">Select Time</option>
+                {availableTimes.map((time, i) => (
+                  <option key={i} value={time}>{time}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
-        <label>Collection Time:</label>
-        <input
-          type="time"
-          name="collection_time"
-          value={formData.collection_time}
-          onChange={handleChange}
-        />
+        {/* Field Conditions */}
+        <div className="form-card">
+          <div className="card-header"><h3>🔬 Field Conditions</h3></div>
+          <div className="card-body">
+            <input type="number" name="temperature" value={formData.temperature} onChange={handleFormChange} placeholder="Temperature (°C)" required />
+            <input type="number" name="pH" value={formData.pH} onChange={handleFormChange} placeholder="pH Level" min="0" max="14" required />
+            <input type="number" name="salinity" value={formData.salinity} onChange={handleFormChange} placeholder="Salinity" required />
+          </div>
+        </div>
 
-        <label>Geo Location:</label>
-        <input
-          type="text"
-          name="geo_location"
-          value={formData.geo_location}
-          onChange={handleChange}
-        />
-
-        <label>Temperature (°C):</label>
-        <input
-          type="number"
-          name="temperature"
-          value={formData.temperature}
-          onChange={handleChange}
-        />
-
-        <label>pH:</label>
-        <input
-          type="number"
-          name="pH"
-          value={formData.pH}
-          onChange={handleChange}
-        />
-
-        <label>Salinity:</label>
-        <input
-          type="number"
-          name="salinity"
-          value={formData.salinity}
-          onChange={handleChange}
-        />
-
-        {/* ✅ Submit only visible if manual filled OR QR scanned */}
-        {(formData.sample_id || qrScanned) && (
-          <button type="submit" className="submit-btn">
-            ✅ Submit Reservation
-          </button>
-        )}
+        <button type="submit" disabled={loading}>
+          {loading ? "⏳ Processing..." : "✅ Submit Reservation"}
+        </button>
       </form>
 
-      {/* ✅ QR Modal */}
+      {/* QR Modal */}
       {showQRModal && (
         <div className="qr-modal">
           <div className="qr-modal-content">
-            <button className="close-btn" onClick={() => setShowQRModal(false)}>
-              ❌
-            </button>
+            <button className="close-btn" onClick={() => setShowQRModal(false)}>❌</button>
             <h3>Scan QR Code</h3>
-
             {!scanMethod ? (
-              <>
-                <p>Choose an option:</p>
+              <div className="scan-options">
                 <button onClick={() => setScanMethod("camera")}>📷 Use Camera</button>
                 <button onClick={() => setScanMethod("upload")}>📂 Upload File</button>
-              </>
+              </div>
             ) : scanMethod === "camera" ? (
               <QRReader onResult={handleQRResult} />
             ) : (
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    // TODO: integrate QR decode from uploaded file
-                    alert("Upload feature not fully implemented");
-                  }
-                }}
-              />
+              <div>
+                <input type="file" accept="image/*" />
+                <button onClick={() => setScanMethod(null)}>Back</button>
+              </div>
             )}
           </div>
         </div>
