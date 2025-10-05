@@ -7,14 +7,10 @@ const router = express.Router();
 // ✅ GET available slots grouped by city with seats info
 router.get("/available", async (req, res) => {
   const query = `
-  SELECT city,
-         \`date\`,
-         start_time,
-         end_time,
-         available_seats
+  SELECT id, city, date, start_time, end_time, available_seats
   FROM available_slots
   WHERE available_seats > 0
-  ORDER BY city, \`date\`, start_time
+  ORDER BY city, date, start_time
 `;
 
   try {
@@ -22,6 +18,26 @@ router.get("/available", async (req, res) => {
     res.json(results);
   } catch (err) {
     console.error("❌ Error fetching slots:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ NEW: Get slots by specific city
+router.get("/city/:city", async (req, res) => {
+  const { city } = req.params;
+  const query = `
+    SELECT id, city, date, start_time, end_time, available_seats
+    FROM available_slots
+    WHERE city = ? AND available_seats > 0
+    ORDER BY date, start_time
+  `;
+
+  try {
+    const [results] = await db.query(query, [city]);
+    console.log(`Found ${results.length} slots for city: ${city}`);
+    res.json(results);
+  } catch (err) {
+    console.error("❌ Error fetching slots by city:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
