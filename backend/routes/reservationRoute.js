@@ -4,29 +4,47 @@ import { db } from "../models/Database.js";
 
 const router = express.Router();
 
-// ✅ TEST ROUTE (to confirm file loads)
-router.get("/test", (req, res) => {
-  res.send("✅ reservationRoute is connected properly");
-});
-
-// ✅ GET available slots
+/* ==========================================================
+   ✅ 1. Fetch Available Slots (Filtered by City if Provided)
+   ========================================================== */
 router.get("/available", async (req, res) => {
+  const { city } = req.query; // 👈 Get city from query string (e.g. /available?city=Lahore)
+
+  // Base query
+  let query = `
+    SELECT 
+      id,
+      city,
+      DATE_FORMAT(date, '%Y-%m-%d') AS date,
+      TIME_FORMAT(start_time, '%H:%i') AS start_time,
+      TIME_FORMAT(end_time, '%H:%i') AS end_time,
+      available_seats
+    FROM available_slots
+    WHERE available_seats > 0
+  `;
+
+  const params = [];
+
+  // If city is provided, filter by it
+  if (city) {
+    query += " AND city = ?";
+    params.push(city);
+  }
+
+  query += " ORDER BY date, start_time";
+
   try {
-    const [rows] = await db.query(
-      `SELECT id, DATE AS date, start_time, end_time, available_seats
-       FROM available_slots
-       WHERE available_seats > 0
-       ORDER BY DATE, start_time`
-    );
-    res.json(rows);
-  } catch (error) {
-    console.error("❌ Error fetching available slots:", error);
-    res.status(500).json({ error: "Failed to fetch available slots" });
+    const [results] = await db.query(query, params);
+    console.log(`✅ Reservation slots fetched for ${city || "all cities"}:`, results.length);
+    res.json(results);
+  } catch (err) {
+    console.error("❌ Error fetching available slots:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// ✅ POST to create reservation
-router.post("/", async (req, res) => {
+// ✅ Reserve a slot
+router.post("/reserve", async (req, res) => {
   try {
     const {
       user_id,
@@ -45,17 +63,15 @@ router.post("/", async (req, res) => {
       salinity,
     } = req.body;
 
-    if (!user_id || !slot_id || !reservation_date || !reservation_time) {
-      return res.status(400).json({ error: "Missing required fields" });
+    // Check if slot exists
+    const [slot] = await db.query("SELECT * FROM available_slots WHERE id = ?", [slot_id]);
+    if (!slot.length) {
+      return res.status(404).json({ error: "Slot not found" });
     }
 
     // Insert reservation
-    const [result] = await db.query(
-      `INSERT INTO reservations 
-       (user_id, slot_id, reservation_date, reservation_time, duration, status,
-        sample_id, sample_type, collection_date, collection_time, geo_location, temperature, pH, salinity)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
+    const query = `
+      INSERT INTO reservations (
         user_id,
         slot_id,
         reservation_date,
@@ -70,22 +86,33 @@ router.post("/", async (req, res) => {
         temperature,
         pH,
         salinity,
-      ]
-    );
+        created_at,
+        updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+    `;
 
-    // Decrement available seats for the slot
-    await db.query(
-      "UPDATE available_slots SET available_seats = available_seats - 1 WHERE id = ? AND available_seats > 0",
-      [slot_id]
-    );
+    const values = [
+      user_id,
+      slot_id,
+      reservation_date,
+      reservation_time,
+      duration || "30 mins",
+      status || "pending",
+      sample_id || null,
+      sample_type || null,
+      collection_date || null,
+      collection_time || null,
+      geo_location || null,
+      temperature || null,
+      pH || null,
+      salinity || null,
+    ];
 
-    res.json({
-      message: "✅ Reservation created successfully",
-      reservationId: result.insertId,
-    });
+    await db.query(query, values);
+    res.status(200).json({ message: "Reservation created successfully ✅" });
   } catch (error) {
-    console.error("❌ Error creating reservation:", error);
-    res.status(500).json({ error: "Failed to create reservation" });
+    console.error("Reservation failed:", error);
+    res.status(500).json({ error: "Server error while creating reservation" });
   }
 });
 
