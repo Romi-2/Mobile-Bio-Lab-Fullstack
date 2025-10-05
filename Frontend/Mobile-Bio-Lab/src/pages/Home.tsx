@@ -19,34 +19,30 @@ function Home() {
         <p>Your trusted platform for managing lab samples and data efficiently.</p>
       </header>
 
-      <section className="home-content">
-        {/* Device Integration card with button */}
-        <div className="card">
+      <section className="home-content container">
+        {/* Device Integration Card */}
+        <div className="home-card">
           <h2>📱 Device Integration</h2>
-          <p>
-            Connect to BLE devices to capture real-time environmental or biological data.
-          </p>
-          <button className="home-btn" onClick={handleDeviceIntegrationClick}>
+          <p>Connect BLE devices to capture real-time environmental or biological data.</p>
+          <button className="select-button" onClick={handleDeviceIntegrationClick}>
             Connect Devices
           </button>
         </div>
 
-        {/* Reservation card with button */}
-        <div className="card">
+        {/* Reservation Card */}
+        <div className="home-card">
           <h2>📅 Reservation System</h2>
-          <p>
-            Registered users can reserve slots to access the mobile bio lab on wheels.
-          </p>
-          <button className="home-btn" onClick={handleReservationClick}>
+          <p>Registered users can reserve slots to access the mobile bio lab on wheels.</p>
+          <button className="select-button" onClick={handleReservationClick}>
             Reserve Now
           </button>
         </div>
 
-        <div className="card">
+        {/* Notification Card */}
+        <div className="home-card">
           <h2>🔔 Reliable Notifications</h2>
           <p>
-            Stay updated with instant notifications for activations, approvals,
-            and updates.
+            Stay updated with instant notifications for activations, approvals, and updates.
           </p>
         </div>
       </section>

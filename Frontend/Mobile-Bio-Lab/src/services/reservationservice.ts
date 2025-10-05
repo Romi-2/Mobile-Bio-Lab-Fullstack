@@ -1,6 +1,5 @@
-// Frontend/Mobile-Bio-Lab/src/services/reservationservice.ts
+// src/services/reservationservice.ts
 import axios from "axios";
-import type { Slot } from "./slotservice"; // ✅ Import the shared interface
 
 const API_URL = "http://localhost:5000/api/reservations";
 
@@ -21,13 +20,8 @@ export interface ReservationData {
   salinity: string;
 }
 
-// ✅ Unified Slot type now used here too
-export const getAvailableSlots = async (): Promise<Slot[]> => {
-  const response = await axios.get<Slot[]>(`${API_URL}/available`);
-  return response.data;
-};
-
+// ✅ Create a reservation
 export const createReservation = async (data: ReservationData) => {
-  const response = await axios.post(API_URL, data);
+  const response = await axios.post(`${API_URL}/reserve`, data);
   return response.data;
 };

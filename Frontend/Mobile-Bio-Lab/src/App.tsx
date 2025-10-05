@@ -23,9 +23,7 @@ import AdminReport from "./components/AdminReport";
 import ReservationPage from "./pages/Reservationpage";
 import ReservationSuccess from "./pages/ReservationSuccess";
 import SlotReservationPage from "./pages/SlotReservationPage";
-// In your App.tsx or routing file
-import BLEDevicesPage from './pages/BLEDevicesPage';
-
+import BluetoothReader from "./components/BluetoothReader";
 
 
 function AppContent() {
@@ -46,8 +44,8 @@ function AppContent() {
            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
            <Route path="/reservation" element={<ReservationPage />} />
-           <Route path="/ble-devices" element={<BLEDevicesPage />} />
            <Route path="/slot-reservation" element={<SlotReservationPage />} />
+           <Route path="/ble-devices" element={<BluetoothReader />} />
           {/* User dashboard */}
          <Route
   path="/userdashboard"

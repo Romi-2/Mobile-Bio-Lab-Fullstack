@@ -1,21 +1,20 @@
-
-/* home page start */
+/* Container and layout */
 .home-container {
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
   background-image: url("../assets/landingpageimage.jpeg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column; /* stack header + content vertically */
-  justify-content: flex-start; /* keep header at the top */
-  align-items: center; /* center horizontally */
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem 1rem;
-  z-index: 1;
+  overflow: hidden;
 }
 
+/* 🔹 Transparent overlay effect */
 .home-container::before {
   content: "";
   position: absolute;
@@ -23,87 +22,111 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(159, 181, 194, 0.393); /* transparency */
-  z-index: -1;
+  background: rgba(250, 251, 253, 0.242); /* adjust opacity: 0.3–0.6 for desired effect */
+  z-index: 1;
 }
 
+/* 🔹 Keep all content above the overlay */
+.home-container > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Header */
 .home-header {
   text-align: center;
   margin-bottom: 2rem;
 }
 
 .home-header h1 {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: #0c0c0c;
 }
 
 .home-header p {
   font-size: 1.2rem;
-  color: #0a0a0a;
+  color: #333;
 }
 
-.home-content {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  flex-wrap: wrap; /* allows wrapping on smaller screens */
-}
-.card {
-  position: relative; /* already set */
-  z-index: 1;         /* already set */
-  background: white;  /* lighter background to see rounding */
-  border: 2px solid #ccc;
-  border-radius: 25px;
-  padding: 2.5rem;
-  width: 280px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease-in-out;
-  overflow: hidden;
-}
-.card:hover {
-  transform: translateY(-5px);
+/* Card section */
+.home-content.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1100px;
 }
 
-.card h2 {
-  font-size: 1.4rem;
-  margin-bottom: 0.5rem;
-  color: #007bff;
+/* Card style (same as slotReservationPage) */
+.home-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 30px;
   text-align: center;
-}
-
-.card p {
-  font-size: 1rem;
-  color: #444;
-  text-align: center;
-}
-
-.card a {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: #007bff;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.card a:hover {
-  background: #0056b3;
-}
-
-.home-btn {
-  margin-top: 10px;
-  padding: 10px 16px;
-  background-color: #007bff; /* Blue */
-  color: white;
-  border: none;
-  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.reservation-btn:hover {
-  background-color: #239f84;
+.home-card:hover {
+  transform: translateY(-6px);
+  border-color: #007bff;
+  box-shadow: 0 6px 18px rgba(0, 123, 255, 0.2);
+  background-color: #f8fbff;
 }
 
-/* home page end */
+/* Typography */
+.home-card h2 {
+  color: #007bff;
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.home-card p {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+/* Button (reused style) */
+.select-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select-button:hover {
+  background: linear-gradient(135deg, #0056b3, #003d80);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .home-header h1 {
+    font-size: 2rem;
+  }
+
+  .home-header p {
+    font-size: 1rem;
+  }
+
+  .home-content.container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .home-card {
+    padding: 24px;
+  }
+}

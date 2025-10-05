@@ -1,0 +1,35 @@
+.ble-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: rgba(240, 248, 255, 0.8);
+  backdrop-filter: blur(6px);
+  border-radius: 20px;
+}
+
+.ble-container button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ble-container button:hover {
+  background-color: #0056b3;
+}
+
+.ble-container p {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.ble-container h3 {
+  margin-top: 10px;
+  color: #007bff;
+}
