@@ -9,8 +9,9 @@ function Home() {
   };
 
   const handleDeviceIntegrationClick = () => {
-    navigate("/ble-devices");
-  };
+  navigate("/ble-devices");
+};
+
 
   return (
     <div className="home-container">

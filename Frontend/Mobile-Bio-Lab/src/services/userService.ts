@@ -42,11 +42,11 @@ export const registerUser = (data: FormData | User) =>
   );
 
 // ------------------------
-// LOGIN (public)
-export const loginUser = (data: { email: string; password: string }) =>
-  axios.post(`${AUTH_API_URL}/login`, data, {
-    headers: { "Content-Type": "application/json" },
-  });
+// // LOGIN (public)
+// export const loginUser = (data: { email: string; password: string }) =>
+//   axios.post(`${AUTH_API_URL}/login`, data, {
+//     headers: { "Content-Type": "application/json" },
+//   });
 
 // ------------------------
 // GET all users (protected)
