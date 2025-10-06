@@ -1,58 +1,63 @@
-// loginRoute.js
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import { db } from "../models/Database.js";
+// backend/routes/loginRoute.js
 import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { db } from "../models/Database.js"; // adjust if needed
 
 const router = express.Router();
 
-const generateAccessToken = (user) => {
-  return jwt.sign(
-    { id: user.id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "15m" } // short expiry for access token
-  );
-};
+// 🧠 Login Route
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-const generateRefreshToken = (user) => {
-  return jwt.sign(
-    { id: user.id },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" } // refresh token lasts longer
-  );
-};
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password are required." });
 
-router.post("/login", (req, res) => {
-  const { email, password } = req.body;
+    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
 
-  db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
-    if (err) return res.status(500).json({ message: "DB error" });
-    if (results.length === 0) return res.status(401).json({ message: "Invalid email or password" });
+    if (!users || users.length === 0)
+      return res.status(404).json({ message: "User not found." });
 
-    const user = results[0];
+    const user = users[0];
 
-    try {
-      // ✅ Compare entered password with hashed password in DB
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid password." });
 
-      // Save refresh token in DB
-      db.query(
-        "INSERT INTO refresh_tokens (userId, token, expiry) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))",
-        [user.id, refreshToken],
-        (err2) => {
-          if (err2) return res.status(500).json({ message: "Error saving refresh token" });
+    if (user.status === "pending")
+      return res.status(403).json({ message: "Account pending approval." });
 
-          res.json({ token: accessToken, refreshToken, user });
-        }
-      );
-    } catch (compareErr) {
-      console.error(compareErr);
-      return res.status(500).json({ message: "Error checking password" });
-    }
-  });
+    if (user.status === "rejected")
+      return res.status(403).json({ message: "Your account has been rejected." });
+
+    // ✅ Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET || "default_secret_key",
+      { expiresIn: "1d" }
+    );
+
+    // ✅ Update token in DB
+    await db.query("UPDATE users SET token = ? WHERE id = ?", [token, user.id]);
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        city: user.city,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Login error:", error);
+    res.status(500).json({ message: "Server error during login" });
+  }
 });
 
 export default router;

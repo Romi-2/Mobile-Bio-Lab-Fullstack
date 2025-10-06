@@ -1,3 +1,4 @@
+// backend/routes/sensorRoute.js
 import express from "express";
 import { db } from "../models/Database.js";
 

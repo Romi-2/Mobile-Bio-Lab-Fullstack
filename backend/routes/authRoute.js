@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { db } from "../models/Database.js";
 
+
 const router = express.Router(); // only once
 
 // --- Helper: Generate JWT ---
@@ -15,42 +16,46 @@ const generateToken = (id, role) => {
   );
 };
 
-// ✅ Login Route
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  if (!email || !password)
-    return res.status(400).json({ message: "Email and password are required" });
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password are required" });
 
-  db.query(
-    "SELECT id, first_name AS firstName, last_name AS lastName, email, password, role, status, city FROM users WHERE email = ?",
-    [email],
-    async (err, results) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      if (results.length === 0) return res.status(404).json({ message: "User not found" });
+    const [results] = await db.query(
+      "SELECT id, first_name AS firstName, last_name AS lastName, email, password, role, status, city FROM users WHERE email = ?",
+      [email]
+    );
 
-      const user = results[0];
+    if (results.length === 0)
+      return res.status(404).json({ message: "User not found" });
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ message: "Incorrect password" });
+    const user = results[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Incorrect password" });
 
-      const token = generateToken(user.id, user.role);
+    const token = generateToken(user.id, user.role);
 
-      res.json({
-        token,
-        user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-          status: user.status,
-          city: user.city,
-        },
-      });
-    }
-  );
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        city: user.city,
+      },
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
+
 // ✅ Activate account route
 router.post("/activate", (req, res) => {
   const { userId } = req.body;
