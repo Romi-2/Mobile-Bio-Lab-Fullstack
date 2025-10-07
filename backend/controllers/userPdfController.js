@@ -1,33 +1,39 @@
-const User = require("../models/User");
-const PDFDocument = require("pdfkit");
+// backend/controllers/userPdfController.js
+import { db } from "../models/Database.js";
+import PDFDocument from "pdfkit";
 
-exports.exportUserProfile = async (req, res) => {
+export const exportUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const [rows] = await db.query(
+      "SELECT first_name AS firstName, last_name AS lastName, email, role, city, vu_id AS vuId FROM users WHERE id = ?",
+      [req.params.id]
+    );
+
+    const user = rows[0];
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const doc = new PDFDocument();
-    let filename = `${user.name.replace(" ", "_")}_profile.pdf`;
-    filename = encodeURIComponent(filename);
+    const filename = encodeURIComponent(`${user.firstName}_${user.lastName}_profile.pdf`);
 
-    res.setHeader("Content-disposition", `attachment; filename="${filename}"`);
-    res.setHeader("Content-type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Type", "application/pdf");
 
     doc.pipe(res);
 
+    // Header
     doc.fontSize(20).text("User Profile", { align: "center" });
-    doc.moveDown();
+    doc.moveDown(1);
 
-    doc.fontSize(14).text(`Name: ${user.name}`);
+    // Profile details
+    doc.fontSize(14).text(`Name: ${user.firstName} ${user.lastName}`);
     doc.text(`Email: ${user.email}`);
     doc.text(`Role: ${user.role}`);
-    doc.text(`City: ${user.city}`);
-    if (user.studentId) doc.text(`Student ID: ${user.studentId}`);
+    doc.text(`City: ${user.city || "N/A"}`);
+    doc.text(`VU ID: ${user.vuId || "N/A"}`);
 
     doc.end();
   } catch (error) {
-    console.error("Error exporting profile:", error);
+    console.error("❌ Error exporting profile:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
-const nodemailer = require("nodemailer");

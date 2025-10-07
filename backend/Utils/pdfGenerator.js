@@ -1,7 +1,7 @@
-const PDFDocument = require("pdfkit");
-const getStream = require("get-stream");
+// backend/utils/pdfGenerator.js
+import PDFDocument from "pdfkit";
 
-exports.generatePdf = (users) => {
+export const generatePdf = (users) => {
   const doc = new PDFDocument();
   doc.fontSize(16).text("User Report", { align: "center" });
   doc.moveDown();
