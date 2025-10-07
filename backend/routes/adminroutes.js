@@ -1,97 +1,117 @@
-//backend/routes/adminroutes.js
+// backend/routes/adminroutes.js
 import express from "express";
 import { db } from "../models/Database.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import transporter from "../emailConfig.js";
-// import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// ✅ Get pending users
-router.get("/pending-users", protect, adminOnly, (req, res) => {
-  const query = `
-    SELECT id, first_name AS firstName, last_name AS lastName, email, city, role, status
-    FROM users
-    WHERE status = 'pending'
-  `;
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
+// ✅ Get all pending users
+router.get("/pending-users", protect, adminOnly, async (req, res) => {
+  try {
+    const query = `
+      SELECT id, first_name AS firstName, last_name AS lastName, email, city, role, status
+      FROM users
+      WHERE status = 'pending'
+    `;
+    const [results] = await db.query(query);
     res.json({ users: results });
-  });
+  } catch (err) {
+    console.error("❌ Database error:", err.message);
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
 });
 
-// ✅ Approve user + store activation token + send email
-router.post("/approve/:id", protect, adminOnly, (req, res) => {
+// ✅ Approve user + send activation email
+router.post("/approve/:id", protect, adminOnly, async (req, res) => {
   const userId = req.params.id;
 
-  // Generate activation token
-  const activationToken = jwt.sign(
-    { id: userId },
-    process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "1d" }
-  );
+  try {
+    // Generate activation token
+    const activationToken = jwt.sign(
+      { id: userId },
+      process.env.JWT_SECRET || "secretkey",
+      { expiresIn: "1d" }
+    );
 
-  // Fetch user email + vu_id
-  const selectQuery = "SELECT email, first_name, vu_id FROM users WHERE id = ?";
-  db.query(selectQuery, [userId], (err, rows) => {
-    if (err) {
-      console.error("❌ Database SELECT error:", err.message);
-      return res.status(500).json({ message: "Database error", error: err.message });
-    }
+    // Fetch user details
+    const [rows] = await db.query(
+      "SELECT email, first_name, vu_id FROM users WHERE id = ?",
+      [userId]
+    );
+
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const { email: userEmail, first_name: firstName, vu_id } = rows[0];
 
-    // Use vu_id in activation link
+    // Create activation link
     const activationLink = `http://localhost:5173/login?token=${activationToken}`;
 
-
+    // Email setup
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: userEmail,
       subject: "Activate Your Account",
       html: `
         <p>Hello ${firstName},</p>
-      <p>Your account has been approved! Click below to activate your account:</p>
-      <a href="${activationLink}">Activate Now (${vu_id})</a>
-      <p>This link will expire in 24 hours.</p>
-            `,
+        <p>Your account has been approved! Click below to activate your account:</p>
+        <a href="${activationLink}">Activate Now (${vu_id})</a>
+        <p>This link will expire in 24 hours.</p>
+      `,
     };
 
-    // Send email
-    transporter.sendMail(mailOptions, (err2) => {
-      if (err2) {
-        console.error("❌ Email sending failed:", err2.message);
-        return res.status(500).json({ message: "Email sending failed", error: err2.message });
-      }
+    // Send activation email
+    await transporter.sendMail(mailOptions);
 
-      // Update user status & save activation token
-      const updateQuery = "UPDATE users SET status = 'approved', activationToken = ? WHERE id = ?";
-      db.query(updateQuery, [activationToken, userId], (err3) => {
-        if (err3) {
-          console.error("❌ Database UPDATE error:", err3.message);
-          return res.status(500).json({ message: "Database update failed", error: err3.message });
-        }
+    // Update user status + token in DB
+    await db.query(
+      "UPDATE users SET status = 'approved', activationToken = ? WHERE id = ?",
+      [activationToken, userId]
+    );
 
-        res.json({ message: "✅ User approved and activation email sent!" });
-      });
-    });
-  });
+    res.json({ message: "✅ User approved and activation email sent!" });
+  } catch (err) {
+    console.error("❌ Error approving user:", err.message);
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  }
 });
 
+// ✅ Reject user
+router.post("/reject/:id", protect, adminOnly, async (req, res) => {
+  try {
+    const [result] = await db.query(
+      "UPDATE users SET status = 'rejected' WHERE id = ?",
+      [req.params.id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "❌ User rejected successfully" });
+  } catch (err) {
+    console.error("❌ Error rejecting user:", err.message);
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
+});
 
 // ✅ Delete user
-router.delete("/delete/:id", protect, adminOnly, (req, res) => {
-  const query = `DELETE FROM users WHERE id = ?`;
-  db.query(query, [req.params.id], (err, result) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
-    res.json({ message: "User deleted successfully" });
-  });
-});
+router.delete("/delete/:id", protect, adminOnly, async (req, res) => {
+  try {
+    const [result] = await db.query("DELETE FROM users WHERE id = ?", [req.params.id]);
 
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "🗑️ User deleted successfully" });
+  } catch (err) {
+    console.error("❌ Error deleting user:", err.message);
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
+});
 
 export default router;

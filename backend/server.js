@@ -48,7 +48,7 @@ app.use("/uploads", express.static("uploads"));
 })();
 
 // ------------------------ ROUTES ------------------------
-app.use("/api/auth/register", registerRoute);
+app.use("/api/auth", registerRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/auth", forgotPasswordRoute);
 app.use("/api/admin", adminRoute);
