@@ -1,16 +1,18 @@
-//backend/routes/forgetpasswordRoute.js 
-import bcrypt from "bcrypt";
+// backend/routes/forgetpasswordRoute.js
 import express from "express";
+import bcrypt from "bcryptjs"; // ✅ consistent with login/register
 import crypto from "crypto";
 import { db } from "../models/Database.js";
 import nodemailer from "nodemailer";
 
 const router = express.Router();
 
-// ✅ Forgot Password
+// ✅ FORGOT PASSWORD
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
-  if (!email) return res.status(400).json({ error: "Email is required" });
+
+  if (!email)
+    return res.status(400).json({ error: "Email is required" });
 
   try {
     const [results] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
@@ -26,8 +28,10 @@ router.post("/forgot-password", async (req, res) => {
       [token, expiry, user.id]
     );
 
-    const resetLink = `http://localhost:5173/reset-password/${token}`;
+    // ✅ Use environment variable for frontend URL
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password/${token}`;
 
+    // ✅ Configure email transporter
     const transporter = nodemailer.createTransport({
       service: "Gmail",
       auth: {
@@ -36,24 +40,41 @@ router.post("/forgot-password", async (req, res) => {
       },
     });
 
+    // ✅ Send professional HTML email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"PKLancer Support" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Password Reset",
-      text: `Click here to reset your password: ${resetLink}`,
+      subject: "Password Reset Request",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+          <h2>🔒 Password Reset Request</h2>
+          <p>Hello ${user.first_name},</p>
+          <p>We received a request to reset your password. Click the button below to set a new one:</p>
+          <a href="${resetLink}" 
+             style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+             Reset Password
+          </a>
+          <p>This link will expire in <b>1 hour</b>.</p>
+          <hr/>
+          <p>If you didn’t request this, you can safely ignore this email.</p>
+        </div>
+      `,
     });
 
-    res.json({ message: "Password reset link sent to your email." });
+    res.json({ success: true, message: "Password reset link sent to your email." });
   } catch (err) {
-    console.error("Forgot password error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error("❌ Forgot password error:", err);
+    res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
 
-// ✅ Reset Password
+// ✅ RESET PASSWORD
 router.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
+
+  if (!password)
+    return res.status(400).json({ error: "Password is required" });
 
   try {
     const [results] = await db.query(
@@ -72,10 +93,10 @@ router.post("/reset-password/:token", async (req, res) => {
       [hashedPassword, userId]
     );
 
-    res.json({ message: "Password reset successfully" });
+    res.json({ success: true, message: "Password reset successfully! You can now log in." });
   } catch (err) {
-    console.error("Reset password error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error("❌ Reset password error:", err);
+    res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
 

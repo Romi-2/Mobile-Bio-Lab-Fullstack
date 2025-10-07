@@ -5,12 +5,11 @@ import { db } from "../models/Database.js";
 const router = express.Router();
 
 /* ==========================================================
-   ✅ 1. Fetch Available Slots (Filtered by City if Provided)
+   ✅ 1. Fetch Available Slots (Optional city filter)
    ========================================================== */
 router.get("/available", async (req, res) => {
-  const { city } = req.query; // 👈 Get city from query string (e.g. /available?city=Lahore)
+  const { city } = req.query;
 
-  // Base query
   let query = `
     SELECT 
       id,
@@ -22,10 +21,8 @@ router.get("/available", async (req, res) => {
     FROM available_slots
     WHERE available_seats > 0
   `;
-
   const params = [];
 
-  // If city is provided, filter by it
   if (city) {
     query += " AND city = ?";
     params.push(city);
@@ -39,11 +36,13 @@ router.get("/available", async (req, res) => {
     res.json(results);
   } catch (err) {
     console.error("❌ Error fetching available slots:", err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Error fetching available slots" });
   }
 });
 
-// ✅ Reserve a slot
+/* ==========================================================
+   ✅ 2. Create a Reservation
+   ========================================================== */
 router.post("/reserve", async (req, res) => {
   try {
     const {
@@ -63,13 +62,15 @@ router.post("/reserve", async (req, res) => {
       salinity,
     } = req.body;
 
-    // Check if slot exists
+    // ✅ Check if slot exists
     const [slot] = await db.query("SELECT * FROM available_slots WHERE id = ?", [slot_id]);
-    if (!slot.length) {
-      return res.status(404).json({ error: "Slot not found" });
-    }
+    if (!slot.length) return res.status(404).json({ error: "Slot not found" });
 
-    // Insert reservation
+    // ✅ Prevent overbooking
+    if (slot[0].available_seats <= 0)
+      return res.status(400).json({ error: "No available seats for this slot" });
+
+    // ✅ Insert reservation
     const query = `
       INSERT INTO reservations (
         user_id,
@@ -108,10 +109,21 @@ router.post("/reserve", async (req, res) => {
       salinity || null,
     ];
 
-    await db.query(query, values);
-    res.status(200).json({ message: "Reservation created successfully ✅" });
+    const [result] = await db.query(query, values);
+
+    // ✅ Reduce available seats by 1
+    await db.query(
+      "UPDATE available_slots SET available_seats = available_seats - 1 WHERE id = ? AND available_seats > 0",
+      [slot_id]
+    );
+
+    res.status(201).json({
+      message: "Reservation created successfully ✅",
+      reservationId: result.insertId,
+      slot_id,
+    });
   } catch (error) {
-    console.error("Reservation failed:", error);
+    console.error("❌ Reservation failed:", error);
     res.status(500).json({ error: "Server error while creating reservation" });
   }
 });

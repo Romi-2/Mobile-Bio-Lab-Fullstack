@@ -5,17 +5,9 @@ import PDFDocument from "pdfkit";
 
 const router = express.Router();
 
-function queryAsync(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (err, results) => {
-      if (err) reject(err);
-      else resolve(results);
-    });
-  });
-}
-
 router.get("/report", async (req, res) => {
   const { role, city } = req.query;
+
   let query = `
     SELECT 
       first_name AS firstName, 
@@ -39,13 +31,15 @@ router.get("/report", async (req, res) => {
   }
 
   try {
-    const rows = await queryAsync(query, params);
-    const doc = new PDFDocument({ margin: 40 });
+    // ✅ Directly use promise-based query
+    const [rows] = await db.query(query, params);
 
+    const doc = new PDFDocument({ margin: 40 });
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", "attachment; filename=user_report.pdf");
 
     doc.pipe(res);
+
     doc.fontSize(20).text("User Report", { align: "center", underline: true });
     doc.moveDown(2);
 
@@ -66,7 +60,7 @@ router.get("/report", async (req, res) => {
 
     doc.end();
   } catch (err) {
-    console.error("❌ Error generating PDF:", err);
+    console.error("❌ Error generating PDF:", err.message);
     res.status(500).json({ error: "Failed to generate PDF" });
   }
 });
