@@ -1,4 +1,4 @@
-// backend/routes/registerRoute.js
+// backend/routes/registerroute.js
 import express from "express";
 import multer from "multer";
 import { db } from "../models/Database.js";
@@ -12,7 +12,7 @@ const router = express.Router();
 const uploadDir = "uploads/profilePics";
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// Multer storage with safe filenames
+// Multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -27,6 +27,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// ✅ Register Route
 router.post("/", upload.single("profilePicture"), async (req, res) => {
   try {
     const { firstName, lastName, vuId, email, password, mobile, city, role } = req.body;
@@ -36,28 +37,30 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       return res.status(400).json({ error: "Please fill all required fields" });
     }
 
+    // Check if email already exists
+    const [existing] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
+    if (existing.length > 0) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = `
-      INSERT INTO users
-      (first_name, last_name, vu_id, email, password, mobile, role, city, profilePicture)
+      INSERT INTO users (first_name, last_name, vu_id, email, password, mobile, role, city, profilePicture)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(
-      query,
-      [firstName, lastName, vuId, email, hashedPassword, mobile, role, city, profilePicture],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: "Database error", details: err.message });
-        res.status(201).json({
-          message: "User registered successfully",
-          userId: result.insertId,
-          profilePicture,
-        });
-      }
-    );
+    const [result] = await db.query(query, [
+      firstName, lastName, vuId, email, hashedPassword, mobile, role, city, profilePicture,
+    ]);
+
+    res.status(201).json({
+      message: "User registered successfully",
+      userId: result.insertId,
+      profilePicture,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("Register Error:", err);
     res.status(500).json({ error: "Server error" });
   }
 });

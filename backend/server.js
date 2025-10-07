@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 import { db } from "./models/Database.js";  // ✅ using pool
 
 // Routes
-import loginRoute from "./routes/loginRoute.js";
 import authRoute from "./routes/authRoute.js";
 import refreshTokenRoute from "./routes/refreshTokenRoute.js";
 import adminRoute from "./routes/adminroutes.js";
@@ -23,6 +22,7 @@ import reservationRoutes from "./routes/reservationRoute.js";
 import reservationPendingRoute from "./routes/reservationPendingRoute.js";
 import slotRoute from "./routes/slotRoute.js";
 import sensorRoute from "./routes/sensorRoute.js";
+
 
 dotenv.config();
 
@@ -48,16 +48,15 @@ app.use("/uploads", express.static("uploads"));
 })();
 
 // ------------------------ ROUTES ------------------------
-app.use("/api/auth", authRoute);
-app.use("/api/auth", loginRoute);
 app.use("/api/auth/register", registerRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/auth", forgotPasswordRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/users", userRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/token", refreshTokenRoute);
 app.use("/api/export", profileExportRoute);
 app.use("/api/admin/update-profile", updateProfileRoute);
-app.use("/api/auth", forgotPasswordRoute);
 app.use("/api/admin", adminReportRoute);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/reservation-pending", reservationPendingRoute);
