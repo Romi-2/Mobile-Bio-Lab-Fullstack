@@ -1,8 +1,10 @@
-// frontend/src/pages/Login.tsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { loginUser } from "../services/userService"; // 👈 Ensure correct path
+import axios from "axios";
 import "../style/Login.css";
 
+// ✅ Define User type (used in API response)
 type User = {
   id: number;
   firstName: string;
@@ -20,12 +22,13 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Email validation
+  // ✅ Email validation
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
+  // ✅ Fetch user profile after login
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -48,6 +51,7 @@ const Login: React.FC = () => {
     }
   };
 
+  // ✅ Handle Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -67,16 +71,17 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmedEmail, password: trimmedPassword }),
+      // ✅ Use Axios service instead of fetch
+      const response = await loginUser({
+        email: trimmedEmail,
+        password: trimmedPassword,
       });
 
-      const data: { token?: string; user?: User; message?: string } = await response.json();
+      // ✅ Type response properly
+      const data: { token?: string; user?: User; message?: string } = response.data;
 
-      if (response.ok && data.user && data.token) {
-        const status = data.user.status.trim().toLowerCase();
+      if (data?.token && data?.user) {
+        const status = data.user.status?.trim().toLowerCase();
 
         if (status === "pending") {
           setError("⏳ Your account is pending approval.");
@@ -88,22 +93,37 @@ const Login: React.FC = () => {
           return;
         }
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-        localStorage.setItem("role", data.user.role);
+        // ✅ Store user & token
+        // Store user & token
+localStorage.setItem("token", data.token);
+localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+localStorage.setItem("role", data.user.role);
 
-        await fetchProfile();
+console.log("✅ Logged in user:", data.user);
 
-        navigate("/home");
+// ✅ Navigate first
+navigate("/home");
+
+// ✅ Then fetch profile
+fetchProfile();
+
       } else {
-        setError(data.message || "Login failed. Please try again.");
+        setError(data.message || "❌ Invalid email or password.");
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Login error:", err);
-      setError("Something went wrong. Please try again later.");
+
+      if (axios.isAxiosError(err)) {
+        const message =
+          err.response?.data?.message || "⚠️ Unable to login. Please try again later.";
+        setError(`❌ ${message}`);
+      } else {
+        setError("⚠️ Something went wrong. Please try again later.");
+      }
     }
   };
 
+  // ✅ UI Section
   return (
     <div className="login-container">
       <div className="login-card">
@@ -139,7 +159,7 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          <button type="submit">Login</button>
+          <button type="submit" className="login-btn">Login</button>
         </form>
 
         {error && <div className="error-message">{error}</div>}

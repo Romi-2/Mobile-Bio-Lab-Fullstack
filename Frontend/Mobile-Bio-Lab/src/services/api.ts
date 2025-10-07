@@ -1,5 +1,5 @@
 // api.ts
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
@@ -10,16 +10,15 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
-      if (!config.headers) {
-        config.headers = {}; // ensure it's not undefined
-      }
-      config.headers["Authorization"] = `Bearer ${token}`;
+      // Convert existing headers to AxiosHeaders or create new ones
+      const headers = config.headers ? new AxiosHeaders(config.headers) : new AxiosHeaders();
+      headers.set('Authorization', `Bearer ${token}`);
+      config.headers = headers;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
-
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
@@ -27,7 +26,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 403 || error.response?.status === 401) {
       localStorage.removeItem('token');
-      localStorage.removeItem('tokenExpiration');
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('role');
       window.location.href = '/login';
     }
     return Promise.reject(error);
