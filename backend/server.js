@@ -22,6 +22,8 @@ import reservationRoutes from "./routes/reservationRoute.js";
 import reservationPendingRoute from "./routes/reservationPendingRoute.js";
 import slotRoute from "./routes/slotRoute.js";
 import sensorRoute from "./routes/sensorRoute.js";
+import shareRoute from "./routes/shareRoute.js";
+import sampleRoute from "./routes/sampleRoute.js";
 
 
 dotenv.config();
@@ -62,6 +64,8 @@ app.use("/api/reservations", reservationRoutes);
 app.use("/api/reservation-pending", reservationPendingRoute);
 app.use("/api/slots", slotRoute);
 app.use("/api/sensors", sensorRoute);
+app.use("/api/share", shareRoute);
+app.use("/api/sample", sampleRoute);
 
 // Test route
 app.get("/", (req, res) => res.send("🚀 API is running..."));
