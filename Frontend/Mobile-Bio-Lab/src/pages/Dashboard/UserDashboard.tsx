@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import "../../style/UserDashboard.css";
 
@@ -12,7 +13,6 @@ const UserDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
-  // Fetch account status from backend
   useEffect(() => {
     const fetchAccountStatus = async () => {
       try {
@@ -29,7 +29,7 @@ const UserDashboard: React.FC = () => {
         if (validStatuses.includes(status as AccountStatus)) {
           setAccountStatus(status as AccountStatus);
         } else {
-          setAccountStatus("Pending"); // fallback for invalid status
+          setAccountStatus("Pending");
         }
       } catch (err) {
         console.error("Failed to fetch account status:", err);
@@ -51,18 +51,6 @@ const UserDashboard: React.FC = () => {
         }))
       : [];
 
-  const handleDeleteAccount = () => {
-    if (!accountStatus || !validStatuses.includes(accountStatus)) {
-      alert("Cannot delete account: invalid status.");
-      return;
-    }
-
-    if (window.confirm("Are you sure you want to delete your account?")) {
-      // TODO: Call backend API
-      alert("Your account has been deleted!");
-    }
-  };
-
   if (loading) return <div>Loading dashboard...</div>;
 
   return (
@@ -80,18 +68,32 @@ const UserDashboard: React.FC = () => {
               </span>
             </div>
           </li>
+
+          {/* ✅ Delete Account NavLink */}
           <li>
-            <div className="sidebar-item">
-              <button
-                className="delete-btn"
-                onClick={handleDeleteAccount}
-                aria-label="Delete your account"
-              >
-                Delete Account
-              </button>
-            </div>
+            <NavLink
+              to="/dashboard/delete-account"
+              className={({ isActive }) =>
+                `menu-link delete-link ${isActive ? "active" : ""}`
+              }
+            >
+              Delete Account
+            </NavLink>
+          </li>
+
+          {/* ✅ Share Sample NavLink */}
+          <li>
+            <NavLink
+              to="/dashboard/share/1"
+              className={({ isActive }) =>
+                `menu-link share-link ${isActive ? "active" : ""}`
+              }
+            >
+              Share Sample
+            </NavLink>
           </li>
         </ul>
+
         {error && <p className="error-message">{error}</p>}
       </aside>
 

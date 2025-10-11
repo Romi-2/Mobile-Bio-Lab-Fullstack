@@ -1,3 +1,4 @@
+// frontend/src/pages/Dashboard/AdminDashboard.tsx
 import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import "../../style/AdminDashboard.css";
@@ -85,6 +86,17 @@ const AdminDashboard: React.FC = () => {
                 Sample Approvals
               </NavLink>
             </li>
+           <li>
+  <NavLink
+    to="/dashboard/sample/1"  // Add /dashboard/ prefix
+    className={({ isActive }) =>
+      `menu-link share-link ${isActive ? "active" : ""}`
+    }
+  >
+    Share Sample
+  </NavLink>
+</li>
+
 
           </ul>
         </nav>
