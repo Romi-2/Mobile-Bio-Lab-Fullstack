@@ -1,9 +1,9 @@
 // frontend/src/pages/SamplePage.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import ShareSample from "../components/shareSample";
-import "../style/SamplePage.css";
+import { useParams, useLocation } from "react-router-dom";
+import ShareSample from "../components/shareSample"; // Import the ShareSample component
+import "../style/sample.css";
 
 interface Sample {
   id: string;
@@ -22,9 +22,13 @@ interface Sample {
 
 const SamplePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const [sample, setSample] = useState<Sample | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Determine if we're in admin dashboard
+  const isAdminDashboard = location.pathname.includes('/dashboard/');
 
   useEffect(() => {
     const fetchSample = async () => {
@@ -61,13 +65,13 @@ const SamplePage: React.FC = () => {
   }, [id]);
 
   if (loading) return (
-    <div className="sample-content">
+    <div className={`sample-content ${isAdminDashboard ? 'with-sidebar' : ''}`}>
       <div className="sample-loading">Loading sample...</div>
     </div>
   );
   
   if (error) return (
-    <div className="sample-content">
+    <div className={`sample-content ${isAdminDashboard ? 'with-sidebar' : ''}`}>
       <div className="sample-error-container">
         <img
           src="/images/no-report.png"
@@ -80,7 +84,7 @@ const SamplePage: React.FC = () => {
   );
 
   if (!sample) return (
-    <div className="sample-content">
+    <div className={`sample-content ${isAdminDashboard ? 'with-sidebar' : ''}`}>
       <div className="sample-empty-container">
         <img
           src="/images/no-report.png"
@@ -93,12 +97,17 @@ const SamplePage: React.FC = () => {
   );
 
   return (
-    <div className="sample-content">
+    <div className={`sample-content ${isAdminDashboard ? 'with-sidebar' : ''}`}>
       <div className="sample-container">
         <div className="sample-card">
-          <h2 className="sample-title">
-            {sample.sample_id || `Sample-${sample.id}`}
-          </h2>
+          <div className="sample-header">
+            <h2 className="sample-title">
+              {sample.sample_id || `Sample-${sample.id}`}
+            </h2>
+            {isAdminDashboard && (
+              <span className="admin-badge">Admin View</span>
+            )}
+          </div>
           
           <p className="sample-info">
             <strong>Sample ID:</strong> {sample.sample_id || `Sample-${sample.id}`}
@@ -159,6 +168,7 @@ const SamplePage: React.FC = () => {
           </p>
         </div>
 
+        {/* Add ShareSample component here for both admin and user */}
         <div className="share-section">
           <ShareSample sampleId={sample.id} />
         </div>

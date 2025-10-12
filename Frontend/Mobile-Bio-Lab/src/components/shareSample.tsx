@@ -1,8 +1,8 @@
 // frontend/src/components/ShareSample.tsx
 import React, { useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import "../style/ShareSample.css";
+import { useParams, useLocation } from "react-router-dom";
+import "../style/shareSample.css";
 
 interface ShareSampleProps {
   sampleId?: string;
@@ -36,6 +36,7 @@ const LinkModal: React.FC<{
 
 const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const resolvedId = sampleId || id!;
 
   const [email, setEmail] = useState("");
@@ -44,10 +45,30 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   const [link, setLink] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [linkGenerated, setLinkGenerated] = useState(false);
+
+  // Determine the correct URL based on current route
+  const getShareableLink = () => {
+    const baseUrl = window.location.origin;
+    const currentPath = location.pathname;
+    
+    if (currentPath.includes('/dashboard/')) {
+      return `${baseUrl}/dashboard/sample/${resolvedId}`;
+    } else if (currentPath.includes('/user/')) {
+      return `${baseUrl}/user/sample/${resolvedId}`;
+    } else {
+      return `${baseUrl}/sample/${resolvedId}`;
+    }
+  };
 
   const handleEmailShare = async () => {
     if (!email) {
       alert("Please enter recipient email");
+      return;
+    }
+
+    if (!message.trim()) {
+      alert("Please enter a message to share with the sample data");
       return;
     }
 
@@ -62,6 +83,7 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
       alert("Email sent successfully!");
       setEmail("");
       setMessage("");
+      setSubject("Shared Sample Data");
     } catch (err) {
       console.error(err);
       alert("Failed to send email");
@@ -71,8 +93,9 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   };
 
   const handleLinkShare = () => {
-    const generatedLink = `${window.location.origin}/dashboard/sample/${resolvedId}`;
+    const generatedLink = getShareableLink();
     setLink(generatedLink);
+    setLinkGenerated(true);
     setShowModal(true);
   };
 
@@ -87,6 +110,14 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
 
   const closeModal = () => {
     setShowModal(false);
+  };
+
+  const copyInlineLink = () => {
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch(() => alert("Failed to copy link to clipboard"));
   };
 
   return (
@@ -112,11 +143,18 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
           required
         />
         <textarea
-          placeholder="Add a personal message (optional)"
+          placeholder="Enter your message to share with the sample data... (Required)"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="share-textarea"
+          rows={4}
+          required
         />
+        <div className="email-note">
+          <small>
+            <strong>Note:</strong> Your message above will be sent along with the complete sample data including Sample ID, collection details, geolocation, and field conditions.
+          </small>
+        </div>
         <button 
           onClick={handleEmailShare} 
           disabled={isSending}
@@ -137,12 +175,31 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
         <button onClick={handleLinkShare} className="share-button">
           Generate & Copy Link
         </button>
-        {link && !showModal && (
-          <div className="link-display">
-            <p>Share this link:</p>
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              {link}
-            </a>
+        
+        {/* Inline link display (appears on the page after generation) */}
+        {linkGenerated && !showModal && (
+          <div className="link-display-inline">
+            <div className="link-message">
+              <strong>✅ Your shareable link has been generated!</strong>
+            </div>
+            <div className="link-container">
+              <input 
+                type="text" 
+                value={link} 
+                readOnly 
+                className="link-input"
+                onClick={(e) => e.currentTarget.select()}
+              />
+              <button 
+                onClick={copyInlineLink}
+                className="copy-link-btn"
+              >
+                Copy Link
+              </button>
+            </div>
+            <p className="link-instruction">
+              Share this link with others to give them access to this sample data.
+            </p>
           </div>
         )}
       </div>

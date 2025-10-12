@@ -48,6 +48,20 @@
   font-family: inherit;
 }
 
+.email-note {
+  margin: -0.5rem 0 1rem 0;
+  padding: 0.75rem;
+  background: #e8f5e8;
+  border-radius: 6px;
+  border-left: 4px solid #2c5530;
+}
+
+.email-note small {
+  color: #2c5530;
+  font-style: italic;
+  line-height: 1.4;
+}
+
 .share-button {
   background: #2c5530;
   color: white;
@@ -85,24 +99,73 @@
 .share-divider span {
   padding: 0 1rem;
   background: white;
+  font-weight: bold;
 }
 
-.link-display {
-  margin-top: 1rem;
-  padding: 1rem;
+/* Inline Link Display */
+.link-display-inline {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
   background: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #e1e5e9;
+  animation: fadeIn 0.3s ease-in;
 }
 
-.link-display a {
+.link-message {
   color: #2c5530;
-  word-break: break-all;
-  text-decoration: none;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
 }
 
-.link-display a:hover {
-  text-decoration: underline;
+.link-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.link-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 6px;
+  background: white;
+  font-family: monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #2c5530;
+}
+
+.link-input:focus {
+  outline: none;
+  border-color: #2c5530;
+}
+
+.copy-link-btn {
+  background: #2c5530;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.copy-link-btn:hover {
+  background: #1e3a24;
+  transform: translateY(-1px);
+}
+
+.link-instruction {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0;
+  font-style: italic;
 }
 
 /* Modal Styles */
@@ -144,6 +207,7 @@
   border: 1px solid #e1e5e9;
   word-break: break-all;
   font-family: monospace;
+  color: #2c5530;
 }
 
 .modal-buttons {
@@ -182,6 +246,18 @@
   background: #545b62;
 }
 
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Responsive Design for Share Component */
 @media (max-width: 768px) {
   .share-section {
@@ -195,5 +271,13 @@
   
   .modal-buttons {
     flex-direction: column;
+  }
+  
+  .link-container {
+    flex-direction: column;
+  }
+  
+  .copy-link-btn {
+    width: 100%;
   }
 }
