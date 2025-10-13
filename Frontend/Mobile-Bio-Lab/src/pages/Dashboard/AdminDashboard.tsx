@@ -4,7 +4,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import "../../style/AdminDashboard.css";
 
 const AdminDashboard: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false); // explicit type
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const toggleSidebar = () => {
@@ -82,22 +82,34 @@ const AdminDashboard: React.FC = () => {
                 className={({ isActive }) =>
                   `menu-link ${isActive ? "active" : ""}`
                 }
+                onClick={closeSidebar}
               >
                 Sample Approvals
               </NavLink>
             </li>
-           <li>
-  <NavLink
-    to="/dashboard/sample/1"  // Add /dashboard/ prefix
-    className={({ isActive }) =>
-      `menu-link share-link ${isActive ? "active" : ""}`
-    }
-  >
-    Share Sample
-  </NavLink>
-</li>
-
-
+            {/* FIXED: Use relative paths */}
+            <li>
+              <NavLink
+                to="sample/1"  // Changed from /dashboard/sample/1
+                className={({ isActive }) =>
+                  `menu-link share-link ${isActive ? "active" : ""}`
+                }
+                onClick={closeSidebar}
+              >
+                Share Sample
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="protocols"  // Changed from /dashboard/protocols
+                className={({ isActive }) =>
+                  `menu-link ${isActive ? "active" : ""}`
+                }
+                onClick={closeSidebar}
+              >
+                Manage Protocols
+              </NavLink>
+            </li>
           </ul>
         </nav>
       </aside>

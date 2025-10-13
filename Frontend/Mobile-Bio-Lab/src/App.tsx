@@ -26,6 +26,9 @@ import SlotReservationPage from "./pages/SlotReservationPage";
 import BluetoothReader from "./components/BluetoothReader";
 import ShareSample from "./components/shareSample";
 import SamplePage from "./pages/SamplePage";
+// Add these routes to your App.tsx
+import ProtocolsList from "./components/ProtocolList";
+import AdminProtocols from "./components/AdminProtocol";
 
 function AppContent() {
   const location = useLocation();
@@ -47,10 +50,12 @@ function AppContent() {
           <Route path="/activate/:studentId" element={<ActivatePage />} />
           <Route path="/registration-success" element={<RegistrationSuccess />} />
 
+          {/* Public Protocols Route */}
+          <Route path="/protocols" element={<ProtocolsList />} />
+
           {/* Sample related */}
           <Route path="/dashboard/share/:id" element={<ShareSample />} />
           <Route path="/dashboard/sample/:id" element={<SamplePage />} />
-
 
           {/* Reservation */}
           <Route path="/reservation" element={<ReservationPage />} />
@@ -63,13 +68,18 @@ function AppContent() {
 
           {/* User Dashboard */}
           <Route
-            path="/userdashboard"
+            path="/userdashboard/*"
             element={
               <ProtectedRoute allowedRoles={["student", "researcher", "technician"]}>
                 <UserDashboard />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<div>User Dashboard Home</div>} />
+            <Route path="protocols" element={<ProtocolsList />} />
+            <Route path="sample/:id" element={<SamplePage />} />
+            {/* Add other user routes here */}
+          </Route>
 
           {/* Admin Dashboard with nested routes */}
           <Route
@@ -86,7 +96,9 @@ function AppContent() {
             <Route path="profile" element={<UpdateProfilePage />} />
             <Route path="profile/:id" element={<AdminUpdateProfilePage />} />
             <Route path="reports" element={<AdminReport />} />
-            <Route path="share/:id" element={<ShareSample />} /> {/* ✅ fixed path */}
+            <Route path="share/:id" element={<ShareSample />} />
+            <Route path="protocols" element={<AdminProtocols />} />
+            <Route path="sample/:id" element={<SamplePage />} />
           </Route>
         </Routes>
       </main>

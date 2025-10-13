@@ -1,6 +1,6 @@
 // frontend/src/pages/Dashboard/UserDashboard.tsx
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom"; // Added Outlet
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts";
 import "../../style/UserDashboard.css";
 
@@ -120,9 +120,10 @@ const UserDashboard: React.FC = () => {
             </div>
           </li>
 
+          {/* FIXED: Use relative paths */}
           <li>
             <NavLink
-              to="/dashboard/delete-account"
+              to="delete-account"  // Changed from /dashboard/delete-account
               className={({ isActive }) =>
                 `menu-link delete-link ${isActive ? "active" : ""}`
               }
@@ -133,12 +134,23 @@ const UserDashboard: React.FC = () => {
 
           <li>
             <NavLink
-              to="/dashboard/sample/1"
+              to="sample/1"  // Changed from /dashboard/sample/1
               className={({ isActive }) =>
                 `menu-link share-link ${isActive ? "active" : ""}`
               }
             >
               Share Sample
+            </NavLink>
+          </li>
+          
+          <li>
+            <NavLink
+              to="protocols"  // Changed from /protocols (absolute) to relative
+              className={({ isActive }) =>
+                `menu-link ${isActive ? "active" : ""}`
+              }
+            >
+              Protocols & Guidelines
             </NavLink>
           </li>
         </ul>
@@ -147,153 +159,161 @@ const UserDashboard: React.FC = () => {
       </aside>
 
       <main className="main-content">
-        <div className="dashboard-header">
-          <h1>Biological Data Analytics</h1>
-          <div className="stats-overview">
-            <div className="stat-card">
-              <h3>Total Samples</h3>
-              <p className="stat-number">{userStats.totalSamples}</p>
+        {/* If you want to show the dashboard content by default, keep this */}
+        {window.location.pathname === '/userdashboard' || window.location.pathname === '/userdashboard/' ? (
+          <>
+            <div className="dashboard-header">
+              <h1>Biological Data Analytics</h1>
+              <div className="stats-overview">
+                <div className="stat-card">
+                  <h3>Total Samples</h3>
+                  <p className="stat-number">{userStats.totalSamples}</p>
+                </div>
+                <div className="stat-card">
+                  <h3>Completed</h3>
+                  <p className="stat-number">{userStats.completedSamples}</p>
+                </div>
+                <div className="stat-card">
+                  <h3>Pending</h3>
+                  <p className="stat-number">{userStats.pendingSamples}</p>
+                </div>
+              </div>
             </div>
-            <div className="stat-card">
-              <h3>Completed</h3>
-              <p className="stat-number">{userStats.completedSamples}</p>
+
+            <div className="charts-grid">
+              {/* Sample Types Distribution */}
+              <div className="chart-container">
+                <h3>Sample Types Distribution</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={mockBiologicalData.sampleTypes}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label={({ name, percent }: { name: string; percent?: number }) => 
+                        `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
+                      }
+                    >
+                      {mockBiologicalData.sampleTypes.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value} samples`, 'Count']} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Monthly Samples Trend */}
+              <div className="chart-container">
+                <h3>Monthly Samples Collection</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={mockBiologicalData.monthlySamples}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="samples" fill="#2c5530" name="Number of Samples" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Parameter Trends */}
+              <div className="chart-container">
+                <h3>Environmental Parameters Trend</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={mockBiologicalData.monthlySamples}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis yAxisId="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip />
+                    <Legend />
+                    <Line 
+                      yAxisId="left"
+                      type="monotone" 
+                      dataKey="temperature" 
+                      stroke="#ff7300" 
+                      name="Temperature (°C)" 
+                      strokeWidth={2}
+                    />
+                    <Line 
+                      yAxisId="right"
+                      type="monotone" 
+                      dataKey="pH" 
+                      stroke="#387908" 
+                      name="pH Level" 
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Parameter Ranges */}
+              <div className="chart-container">
+                <h3>Parameter Value Ranges</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={mockBiologicalData.parameterTrends}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="parameter" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="min" fill="#8884d8" name="Minimum" />
+                    <Bar dataKey="avg" fill="#82ca9d" name="Average" />
+                    <Bar dataKey="max" fill="#ffc658" name="Maximum" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div className="stat-card">
-              <h3>Pending</h3>
-              <p className="stat-number">{userStats.pendingSamples}</p>
+
+            {/* Recent Samples Table */}
+            <div className="recent-samples">
+              <h3>Your Recent Samples</h3>
+              {userSamples.length > 0 ? (
+                <table className="samples-table">
+                  <thead>
+                    <tr>
+                      <th>Sample ID</th>
+                      <th>Type</th>
+                      <th>Collection Date</th>
+                      <th>Temperature (°C)</th>
+                      <th>pH</th>
+                      <th>Salinity (PSU)</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userSamples.map((sample) => (
+                      <tr key={sample.id}>
+                        <td>{sample.id}</td>
+                        <td>{sample.sample_type}</td>
+                        <td>{new Date(sample.collection_date).toLocaleDateString()}</td>
+                        <td>{sample.temperature}</td>
+                        <td>{sample.pH}</td>
+                        <td>{sample.salinity}</td>
+                        <td>
+                          <span className={`status-badge ${sample.status}`}>
+                            {sample.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>No samples found.</p>
+              )}
             </div>
-          </div>
-        </div>
-
-        <div className="charts-grid">
-          {/* Sample Types Distribution */}
-          <div className="chart-container">
-            <h3>Sample Types Distribution</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={mockBiologicalData.sampleTypes}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ name, percent }: { name: string; percent?: number }) => 
-                    `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
-                  }
-                >
-                  {mockBiologicalData.sampleTypes.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => [`${value} samples`, 'Count']} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Monthly Samples Trend */}
-          <div className="chart-container">
-            <h3>Monthly Samples Collection</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={mockBiologicalData.monthlySamples}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="samples" fill="#2c5530" name="Number of Samples" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Parameter Trends */}
-          <div className="chart-container">
-            <h3>Environmental Parameters Trend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={mockBiologicalData.monthlySamples}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis yAxisId="left" />
-                <YAxis yAxisId="right" orientation="right" />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  yAxisId="left"
-                  type="monotone" 
-                  dataKey="temperature" 
-                  stroke="#ff7300" 
-                  name="Temperature (°C)" 
-                  strokeWidth={2}
-                />
-                <Line 
-                  yAxisId="right"
-                  type="monotone" 
-                  dataKey="pH" 
-                  stroke="#387908" 
-                  name="pH Level" 
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Parameter Ranges */}
-          <div className="chart-container">
-            <h3>Parameter Value Ranges</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={mockBiologicalData.parameterTrends}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="parameter" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="min" fill="#8884d8" name="Minimum" />
-                <Bar dataKey="avg" fill="#82ca9d" name="Average" />
-                <Bar dataKey="max" fill="#ffc658" name="Maximum" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Recent Samples Table */}
-        <div className="recent-samples">
-          <h3>Your Recent Samples</h3>
-          {userSamples.length > 0 ? (
-            <table className="samples-table">
-              <thead>
-                <tr>
-                  <th>Sample ID</th>
-                  <th>Type</th>
-                  <th>Collection Date</th>
-                  <th>Temperature (°C)</th>
-                  <th>pH</th>
-                  <th>Salinity (PSU)</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userSamples.map((sample) => (
-                  <tr key={sample.id}>
-                    <td>{sample.id}</td>
-                    <td>{sample.sample_type}</td>
-                    <td>{new Date(sample.collection_date).toLocaleDateString()}</td>
-                    <td>{sample.temperature}</td>
-                    <td>{sample.pH}</td>
-                    <td>{sample.salinity}</td>
-                    <td>
-                      <span className={`status-badge ${sample.status}`}>
-                        {sample.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No samples found.</p>
-          )}
-        </div>
+          </>
+        ) : (
+          // This renders nested routes like /userdashboard/protocols, /userdashboard/sample/1, etc.
+          <Outlet />
+        )}
       </main>
     </div>
   );
