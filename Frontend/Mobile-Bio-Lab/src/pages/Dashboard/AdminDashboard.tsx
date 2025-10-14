@@ -87,7 +87,6 @@ const AdminDashboard: React.FC = () => {
                 Sample Approvals
               </NavLink>
             </li>
-            {/* FIXED: Use relative paths */}
             <li>
               <NavLink
                 to="sample/1"  // Changed from /dashboard/sample/1

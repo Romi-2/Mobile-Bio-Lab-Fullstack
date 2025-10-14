@@ -8,6 +8,25 @@ interface ShareSampleProps {
   sampleId?: string;
 }
 
+// Toast Notification Component
+const Toast: React.FC<{
+  message: string;
+  type: 'success' | 'error' | 'info';
+  onClose: () => void;
+}> = ({ message, type, onClose }) => {
+  React.useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className={`toast toast-${type}`}>
+      <span className="toast-message">{message}</span>
+      <button className="toast-close" onClick={onClose}>×</button>
+    </div>
+  );
+};
+
 // Modal Component
 const LinkModal: React.FC<{ 
   link: string; 
@@ -46,6 +65,11 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   const [isSending, setIsSending] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [linkGenerated, setLinkGenerated] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type });
+  };
 
   // Determine the correct URL based on current route
   const getShareableLink = () => {
@@ -63,12 +87,12 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
 
   const handleEmailShare = async () => {
     if (!email) {
-      alert("Please enter recipient email");
+      showToast("Please enter recipient email", "error");
       return;
     }
 
     if (!message.trim()) {
-      alert("Please enter a message to share with the sample data");
+      showToast("Please enter a message to share with the sample data", "error");
       return;
     }
 
@@ -80,13 +104,13 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
         message: message,
         sampleId: resolvedId,
       });
-      alert("Email sent successfully!");
+      showToast("Email sent successfully!", "success");
       setEmail("");
       setMessage("");
       setSubject("Shared Sample Data");
     } catch (err) {
       console.error(err);
-      alert("Failed to send email");
+      showToast("Failed to send email", "error");
     } finally {
       setIsSending(false);
     }
@@ -102,10 +126,10 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(link)
       .then(() => {
-        alert("Link copied to clipboard!");
+        showToast("Link copied to clipboard!", "success");
         setShowModal(false);
       })
-      .catch(() => alert("Failed to copy link to clipboard"));
+      .catch(() => showToast("Failed to copy link to clipboard", "error"));
   };
 
   const closeModal = () => {
@@ -115,17 +139,26 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   const copyInlineLink = () => {
     navigator.clipboard.writeText(link)
       .then(() => {
-        alert("Link copied to clipboard!");
+        showToast("Link copied to clipboard!", "success");
       })
-      .catch(() => alert("Failed to copy link to clipboard"));
+      .catch(() => showToast("Failed to copy link to clipboard", "error"));
   };
 
   return (
     <div className="share-sample">
+      {/* Toast Notifications */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      
       <h4>Share Sample Data</h4>
       
       <div className="share-email">
-        <h5>Share via Email</h5>
+        <h5 className="share-heading">Share via Email</h5>
         <input
           type="email"
           placeholder="Enter recipient email"
@@ -171,7 +204,7 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
       </div>
 
       <div className="share-link">
-        <h5>Generate Direct Link</h5>
+        <h5 className="share-heading">Generate Direct Link</h5>
         <button onClick={handleLinkShare} className="share-button">
           Generate & Copy Link
         </button>
