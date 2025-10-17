@@ -26,9 +26,11 @@ import SlotReservationPage from "./pages/SlotReservationPage";
 import BluetoothReader from "./components/BluetoothReader";
 import ShareSample from "./components/shareSample";
 import SamplePage from "./pages/SamplePage";
-// Add these routes to your App.tsx
 import ProtocolsList from "./components/ProtocolList";
 import AdminProtocols from "./components/AdminProtocol";
+import { NotificationProvider } from "./context/notificationContext";
+import NotificationPage from "./pages/NotificationPage";
+
 
 function AppContent() {
   const location = useLocation();
@@ -66,6 +68,8 @@ function AppContent() {
           {/* Profile */}
           <Route path="/profile" element={<Profile />} />
 
+           <Route path="/notifications" element={<NotificationPage />} />
+
           {/* User Dashboard */}
           <Route
             path="/userdashboard/*"
@@ -78,10 +82,9 @@ function AppContent() {
             <Route index element={<div>User Dashboard Home</div>} />
             <Route path="protocols" element={<ProtocolsList />} />
             <Route path="sample/:id" element={<SamplePage />} />
-            {/* Add other user routes here */}
           </Route>
 
-          {/* Admin Dashboard with nested routes */}
+          {/* Admin Dashboard */}
           <Route
             path="/adminDashboard/*"
             element={
@@ -107,7 +110,11 @@ function AppContent() {
 }
 
 function App() {
-  return <AppContent />;
+  return (
+    <NotificationProvider>
+      <AppContent />
+    </NotificationProvider>
+  );
 }
 
 export default App;

@@ -1,7 +1,6 @@
-// frontend/src/components/AdminProtocol.tsx
 import React, { useState, useEffect } from "react";
-import { getProtocols, createProtocol, updateProtocol,deleteProtocol,} from "../services/protocolservice";
-import type{Protocol ,CreateProtocolData} from "../services/protocolservice";
+import { getProtocols, createProtocol, updateProtocol, deleteProtocol, getMyProtocols } from "../services/protocolservice";
+import type { Protocol, CreateProtocolData } from "../services/protocolservice";
 import "../style/Protocol.css";
 
 const AdminProtocols: React.FC = () => {
@@ -9,31 +8,52 @@ const AdminProtocols: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingProtocol, setEditingProtocol] = useState<Protocol | null>(null);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
 
   useEffect(() => {
-    fetchProtocols();
-  }, []);
+    const fetchProtocols = async () => {
+      try {
+        let data;
+        if (viewMode === 'my') {
+          data = await getMyProtocols();
+        } else {
+          data = await getProtocols();
+        }
+        setProtocols(data);
+      } catch (err) {
+        console.error("Failed to load protocols:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchProtocols = async () => {
-    try {
-      const data = await getProtocols();
-      setProtocols(data);
-    } catch (err) {
-      console.error("Failed to load protocols:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchProtocols();
+  }, [viewMode]);
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this protocol?")) {
       try {
         await deleteProtocol(id);
-        fetchProtocols();
+        // Re-fetch protocols after deletion
+        const data = viewMode === 'my' ? await getMyProtocols() : await getProtocols();
+        setProtocols(data);
       } catch (err) {
         console.error("Failed to delete protocol:", err);
         alert("Failed to delete protocol");
       }
+    }
+  };
+
+  // Function to refresh protocols (used after form save)
+  const refreshProtocols = async () => {
+    setLoading(true);
+    try {
+      const data = viewMode === 'my' ? await getMyProtocols() : await getProtocols();
+      setProtocols(data);
+    } catch (err) {
+      console.error("Failed to load protocols:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,15 +63,31 @@ const AdminProtocols: React.FC = () => {
     <div className="admin-protocols">
       <div className="admin-header">
         <h2>Manage Protocols</h2>
-        <button 
-          className="btn-primary"
-          onClick={() => {
-            setEditingProtocol(null);
-            setShowForm(true);
-          }}
-        >
-          + Add New Protocol
-        </button>
+        <div className="admin-controls">
+          <div className="view-toggle">
+            <button 
+              className={`toggle-btn ${viewMode === 'all' ? 'active' : ''}`}
+              onClick={() => setViewMode('all')}
+            >
+              All Protocols
+            </button>
+            <button 
+              className={`toggle-btn ${viewMode === 'my' ? 'active' : ''}`}
+              onClick={() => setViewMode('my')}
+            >
+              My Protocols
+            </button>
+          </div>
+          <button 
+            className="btn-primary"
+            onClick={() => {
+              setEditingProtocol(null);
+              setShowForm(true);
+            }}
+          >
+            + Add New Protocol
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -60,7 +96,7 @@ const AdminProtocols: React.FC = () => {
           onSave={() => {
             setShowForm(false);
             setEditingProtocol(null);
-            fetchProtocols();
+            refreshProtocols();
           }}
           onCancel={() => {
             setShowForm(false);
@@ -76,7 +112,13 @@ const AdminProtocols: React.FC = () => {
               <h3>{protocol.title}</h3>
               <p className="category">{protocol.category}</p>
               <p>{protocol.description}</p>
-              <span className="steps">{protocol.steps.length} steps</span>
+              <div className="protocol-meta">
+                <span className="steps">{protocol.steps.length} steps</span>
+                <span className="author">By {protocol.created_by_name}</span>
+                <span className="created-date">
+                  Created: {new Date(protocol.created_at).toLocaleDateString()}
+                </span>
+              </div>
             </div>
             <div className="protocol-actions">
               <button 
@@ -98,10 +140,17 @@ const AdminProtocols: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {protocols.length === 0 && (
+        <div className="no-protocols">
+          <p>No protocols found.</p>
+        </div>
+      )}
     </div>
   );
 };
 
+// ... ProtocolForm component remains the same ...
 const ProtocolForm: React.FC<{
   protocol: Protocol | null;
   onSave: () => void;
@@ -152,8 +201,7 @@ const ProtocolForm: React.FC<{
 
     try {
       const protocolData: CreateProtocolData = {
-        ...formData,
-        created_by: 1 // This should come from auth context
+        ...formData
       };
 
       if (protocol) {

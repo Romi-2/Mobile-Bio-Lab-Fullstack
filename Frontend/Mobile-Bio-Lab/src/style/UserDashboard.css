@@ -99,7 +99,6 @@
 
 .sidebar {
   width: 250px;
-  background: #2c5530;
   color: white;
   padding: 2rem 1rem;
   position: fixed;
@@ -144,12 +143,10 @@
   background: #c82333;
 }
 
-.share-link {
-  background: #28a745;
-}
 
 .share-link:hover {
-  background: #218838;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .sidebar-item {

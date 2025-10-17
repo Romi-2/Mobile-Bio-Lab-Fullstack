@@ -1,4 +1,3 @@
-// frontend/src/components/ShareSample.tsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams, useLocation } from "react-router-dom";
@@ -63,6 +62,7 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
   const [message, setMessage] = useState("");
   const [link, setLink] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [linkGenerated, setLinkGenerated] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -108,40 +108,80 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
       setEmail("");
       setMessage("");
       setSubject("Shared Sample Data");
-    } catch (err) {
-      console.error(err);
+    } catch {
       showToast("Failed to send email", "error");
     } finally {
       setIsSending(false);
     }
   };
 
-  const handleLinkShare = () => {
-    const generatedLink = getShareableLink();
-    setLink(generatedLink);
-    setLinkGenerated(true);
-    setShowModal(true);
+  const handleLinkShare = async () => {
+    setIsGenerating(true);
+    try {
+      const generatedLink = getShareableLink();
+      setLink(generatedLink);
+      setLinkGenerated(true);
+      
+      // Auto-copy to clipboard when generating
+      await navigator.clipboard.writeText(generatedLink);
+      showToast("Link generated and copied to clipboard!", "success");
+      setShowModal(true);
+    } catch {
+      // If auto-copy fails, still show the modal but with info message
+      const generatedLink = getShareableLink();
+      setLink(generatedLink);
+      setLinkGenerated(true);
+      showToast("Link generated! You can copy it from the dialog.", "info");
+      setShowModal(true);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(link)
-      .then(() => {
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast("Link copied to clipboard!", "success");
+      setShowModal(false);
+    } catch {
+      // Fallback method for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
         showToast("Link copied to clipboard!", "success");
         setShowModal(false);
-      })
-      .catch(() => showToast("Failed to copy link to clipboard", "error"));
+      } catch {
+        showToast("Failed to copy link to clipboard", "error");
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   const closeModal = () => {
     setShowModal(false);
   };
 
-  const copyInlineLink = () => {
-    navigator.clipboard.writeText(link)
-      .then(() => {
+  const copyInlineLink = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast("Link copied to clipboard!", "success");
+    } catch {
+      // Fallback method for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
         showToast("Link copied to clipboard!", "success");
-      })
-      .catch(() => showToast("Failed to copy link to clipboard", "error"));
+      } catch {
+        showToast("Failed to copy link to clipboard", "error");
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   return (
@@ -203,10 +243,15 @@ const ShareSample: React.FC<ShareSampleProps> = ({ sampleId }) => {
         <hr />
       </div>
 
-      <div className="share-link">
+      <div className="sharecopy-link">
         <h5 className="share-heading">Generate Direct Link</h5>
-        <button onClick={handleLinkShare} className="share-button">
-          Generate & Copy Link
+ 
+        <button 
+          onClick={handleLinkShare} 
+          disabled={isGenerating}
+          className="share-button"
+        >
+          {isGenerating ? "Generating..." : "Generate & Copy Link"}
         </button>
         
         {/* Inline link display (appears on the page after generation) */}

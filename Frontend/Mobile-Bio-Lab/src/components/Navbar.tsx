@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import logo from "../assets/biology-graphic-clipart-design-free-png.webp";
 import "../style/Navbar.css";
+import NotificationBell from "./NotificationBell"; // 👈 import this
+
 
 type User = {
   id: number;
@@ -85,44 +87,51 @@ const Navbar: React.FC = () => {
           <span></span>
         </div>
 
+        <NotificationBell />
         {/* Navbar Links */}
-        <ul className={`navbar-links ${menuOpen ? "active" : ""}`}>
-          {!loggedInUser ? (
-            <>
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-              <li>
-                <Link to="/register">Register</Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link to="/home">Home</Link>
-              </li>
+        {/* Navbar Links */}
+<ul className={`navbar-links ${menuOpen ? "active" : ""}`}>
+  {!loggedInUser ? (
+    <>
+      <li>
+        <Link to="/login">Login</Link>
+      </li>
+      <li>
+        <Link to="/register">Register</Link>
+      </li>
+    </>
+  ) : (
+    <>
+      <li>
+        <Link to="/home">Home</Link>
+      </li>
 
-              {/* Dashboard link */}
-              {loggedInUser.role && (
-                <li>
-                  <Link
-                    to={
-                      loggedInUser.role === "admin"
-                        ? "/adminDashboard"
-                        : "/userdashboard"
-                    }
-                  >
-                    Dashboard
-                  </Link>
-                </li>
-              )}
+      {loggedInUser.role && (
+        <li>
+          <Link
+            to={
+              loggedInUser.role === "admin"
+                ? "/adminDashboard"
+                : "/userdashboard"
+            }
+          >
+            Dashboard
+          </Link>
+        </li>
+      )}
 
-              <li>
-                <button onClick={handleLogout}>Logout</button>
-              </li>
-            </>
-          )}
-        </ul>
+      {/* 🛎 Notification Bell - for logged-in users only */}
+      <li>
+        <NotificationBell />
+      </li>
+
+      <li>
+        <button onClick={handleLogout}>Logout</button>
+      </li>
+    </>
+  )}
+</ul>
+
       </div>
     </nav>
   );

@@ -22,8 +22,7 @@
   margin-bottom: 2rem;
 }
 
-.share-link {
-  background-color:white;
+.sharecopy-link {
   margin-bottom: 2rem;
 }
 
@@ -83,12 +82,19 @@
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   width: 100%;
 }
 
 .share-button:hover:not(:disabled) {
   background: #1e3a24;
+  transform: translateY(-1px);
+}
+
+.share-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .share-divider {
@@ -214,10 +220,15 @@
   font-size: 0.9rem;
   cursor: pointer;
   color: #2c5530;
+  transition: border-color 0.3s ease;
 }
 
 .link-input:focus {
   outline: none;
+  border-color: #2c5530;
+}
+
+.link-input:hover {
   border-color: #2c5530;
 }
 
@@ -228,7 +239,7 @@
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   white-space: nowrap;
   font-weight: bold;
 }
@@ -260,6 +271,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
@@ -270,11 +282,13 @@
   max-width: 500px;
   width: 100%;
   text-align: center;
+  animation: scaleIn 0.3s ease-out;
 }
 
 .modal-content h3 {
   color: #2c5530;
   margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 .link-display-modal {
@@ -286,6 +300,8 @@
   word-break: break-all;
   font-family: monospace;
   color: #2c5530;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .modal-buttons {
@@ -302,11 +318,13 @@
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  flex: 1;
 }
 
 .copy-button:hover {
   background: #1e3a24;
+  transform: translateY(-1px);
 }
 
 .close-button {
@@ -317,22 +335,33 @@
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  flex: 1;
 }
 
 .close-button:hover {
   background: #545b62;
+  transform: translateY(-1px);
 }
 
-/* Animation */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -364,5 +393,27 @@
     right: 20px;
     min-width: auto;
     max-width: none;
+  }
+  
+  .share-button {
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-sample h4 {
+    font-size: 1.3rem;
+  }
+  
+  .share-heading {
+    font-size: 1.1rem !important;
+  }
+  
+  .modal-content {
+    padding: 1.25rem;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.3rem;
   }
 }
