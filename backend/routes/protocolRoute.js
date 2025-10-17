@@ -1,11 +1,11 @@
-// backend/routes/protocolRoute.js
 import express from "express";
 import { db } from "../models/Database.js";
+import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // --------------------
-// GET /api/protocols - Get all protocols
+// GET /api/protocols - Get all protocols (PUBLIC - no auth required)
 // --------------------
 router.get("/", async (req, res) => {
   try {
@@ -18,10 +18,12 @@ router.get("/", async (req, res) => {
       ORDER BY p.created_at DESC
     `);
 
-    // Parse JSON steps
     const parsedProtocols = protocols.map(protocol => ({
       ...protocol,
-      steps: JSON.parse(protocol.steps || "[]"),
+      steps:
+        typeof protocol.steps === "string"
+          ? JSON.parse(protocol.steps || "[]")
+          : protocol.steps || [],
     }));
 
     res.json(parsedProtocols);
@@ -32,45 +34,54 @@ router.get("/", async (req, res) => {
 });
 
 // --------------------
-// GET /api/protocols/:id - Get single protocol
+// GET /api/protocols/my-protocols - Get current user's protocols (PROTECTED)
 // --------------------
-router.get("/:id", async (req, res) => {
+router.get("/my-protocols", protect, async (req, res) => {
   try {
-    const { id } = req.params;
+    console.log("User making request:", req.user);
 
-    const [protocols] = await db.query(`
+    const userId = req.user.id;
+
+    const [protocols] = await db.query(
+      `
       SELECT 
         p.*, 
         CONCAT(u.first_name, ' ', u.last_name) AS created_by_name
       FROM protocols p
       LEFT JOIN users u ON p.created_by = u.id
-      WHERE p.id = ?
-    `, [id]);
+      WHERE p.created_by = ?
+      ORDER BY p.created_at DESC
+    `,
+      [userId]
+    );
 
-    if (protocols.length === 0) {
-      return res.status(404).json({ message: "Protocol not found" });
-    }
+    const parsedProtocols = protocols.map(protocol => ({
+      ...protocol,
+      steps:
+        typeof protocol.steps === "string"
+          ? JSON.parse(protocol.steps || "[]")
+          : protocol.steps || [],
+    }));
 
-    const protocol = {
-      ...protocols[0],
-      steps: JSON.parse(protocols[0].steps || "[]"),
-    };
-
-    res.json(protocol);
+    res.json(parsedProtocols);
   } catch (error) {
-    console.error("Error fetching protocol:", error);
-    res.status(500).json({ message: "Error fetching protocol", error });
+    console.error("Error fetching user protocols:", error);
+    res.status(500).json({ message: "Error fetching user protocols", error });
   }
 });
 
 // --------------------
-// POST /api/protocols - Create new protocol
+// POST /api/protocols - Create new protocol (PROTECTED)
 // --------------------
-router.post("/", async (req, res) => {
+// --------------------
+// POST /api/protocols - Create new protocol (ADMIN ONLY)
+// --------------------
+router.post("/", protect, adminOnly, async (req, res) => {
   try {
-    const { title, description, category, steps, created_by } = req.body;
+    const { title, description, category, steps } = req.body;
+    const created_by = req.user.id;
 
-    if (!title || !category || !steps || !created_by) {
+    if (!title || !category || !steps) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -90,21 +101,22 @@ router.post("/", async (req, res) => {
 });
 
 // --------------------
-// PUT /api/protocols/:id - Update protocol
+// PUT /api/protocols/:id - Update protocol (ADMIN ONLY)
 // --------------------
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, adminOnly, async (req, res) => {
   try {
-    const { id } = req.params;
+    const protocolId = req.params.id;
     const { title, description, category, steps } = req.body;
 
-    const [result] = await db.query(
-      "UPDATE protocols SET title = ?, description = ?, category = ?, steps = ? WHERE id = ?",
-      [title, description, category, JSON.stringify(steps), id]
-    );
-
-    if (result.affectedRows === 0) {
+    const [existing] = await db.query("SELECT * FROM protocols WHERE id = ?", [protocolId]);
+    if (existing.length === 0) {
       return res.status(404).json({ message: "Protocol not found" });
     }
+
+    await db.query(
+      "UPDATE protocols SET title = ?, description = ?, category = ?, steps = ?, updated_at = NOW() WHERE id = ?",
+      [title, description, category, JSON.stringify(steps), protocolId]
+    );
 
     res.json({ message: "Protocol updated successfully" });
   } catch (error) {
@@ -114,18 +126,18 @@ router.put("/:id", async (req, res) => {
 });
 
 // --------------------
-// DELETE /api/protocols/:id - Delete protocol
+// DELETE /api/protocols/:id - Delete protocol (ADMIN ONLY)
 // --------------------
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, adminOnly, async (req, res) => {
   try {
-    const { id } = req.params;
+    const protocolId = req.params.id;
 
-    const [result] = await db.query("DELETE FROM protocols WHERE id = ?", [id]);
-
-    if (result.affectedRows === 0) {
+    const [existing] = await db.query("SELECT * FROM protocols WHERE id = ?", [protocolId]);
+    if (existing.length === 0) {
       return res.status(404).json({ message: "Protocol not found" });
     }
 
+    await db.query("DELETE FROM protocols WHERE id = ?", [protocolId]);
     res.json({ message: "Protocol deleted successfully" });
   } catch (error) {
     console.error("Error deleting protocol:", error);
