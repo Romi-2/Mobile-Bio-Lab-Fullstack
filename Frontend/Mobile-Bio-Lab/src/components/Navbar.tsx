@@ -86,8 +86,6 @@ const Navbar: React.FC = () => {
           <span></span>
           <span></span>
         </div>
-
-        <NotificationBell />
         {/* Navbar Links */}
         {/* Navbar Links */}
 <ul className={`navbar-links ${menuOpen ? "active" : ""}`}>

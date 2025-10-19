@@ -78,15 +78,16 @@ const AdminDashboard: React.FC = () => {
             </li>
             <li>
               <NavLink
-                to="sample-approve"
+                to="admin/reservations"
                 className={({ isActive }) =>
                   `menu-link ${isActive ? "active" : ""}`
                 }
                 onClick={closeSidebar}
               >
-                Sample Approvals
+                Reservation
               </NavLink>
             </li>
+
             <li>
               <NavLink
                 to="sample/1"  // Changed from /dashboard/sample/1

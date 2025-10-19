@@ -9,9 +9,13 @@ function Home() {
   };
 
   const handleDeviceIntegrationClick = () => {
-  navigate("/ble-devices");
-};
+    navigate("/ble-devices");
+  };
 
+  // ✅ new handler for notifications
+  const handleNotificationsClick = () => {
+    navigate("/notifications");
+  };
 
   return (
     <div className="home-container">
@@ -39,12 +43,15 @@ function Home() {
           </button>
         </div>
 
-        {/* Notification Card */}
+        {/* ✅ Notification Card */}
         <div className="home-card">
           <h2>🔔 Reliable Notifications</h2>
           <p>
             Stay updated with instant notifications for activations, approvals, and updates.
           </p>
+          <button className="select-button" onClick={handleNotificationsClick}>
+            View Notifications
+          </button>
         </div>
       </section>
     </div>

@@ -30,6 +30,7 @@ import ProtocolsList from "./components/ProtocolList";
 import AdminProtocols from "./components/AdminProtocol";
 import { NotificationProvider } from "./context/notificationContext";
 import NotificationPage from "./pages/NotificationPage";
+import AdminReservations from "./components/AdminReservation";
 
 
 function AppContent() {
@@ -58,7 +59,9 @@ function AppContent() {
           {/* Sample related */}
           <Route path="/dashboard/share/:id" element={<ShareSample />} />
           <Route path="/dashboard/sample/:id" element={<SamplePage />} />
-
+            
+          <Route path="admin/reservations" element={<AdminReservations />} /> 
+          
           {/* Reservation */}
           <Route path="/reservation" element={<ReservationPage />} />
           <Route path="/slot-reservation" element={<SlotReservationPage />} />
@@ -102,6 +105,7 @@ function AppContent() {
             <Route path="share/:id" element={<ShareSample />} />
             <Route path="protocols" element={<AdminProtocols />} />
             <Route path="sample/:id" element={<SamplePage />} />
+            <Route path="admin/reservations" element={<AdminReservations />} /> 
           </Route>
         </Routes>
       </main>

@@ -22,6 +22,14 @@ export interface ReservationData {
 
 // ✅ Create a reservation
 export const createReservation = async (data: ReservationData) => {
-  const response = await axios.post(`${API_URL}/reserve`, data);
+  const token = localStorage.getItem("token"); // or sessionStorage, depending on where you stored it
+
+  const response = await axios.post(`${API_URL}/reserve`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   return response.data;
 };
+
