@@ -1,11 +1,9 @@
-
+// frontend/Mobile-Bio-Lab/src/pages/NotificationPage.tsx
+import NotificationList from "../components/NotificationList";
+import "../style/notification.css"
 
 const NotificationPage = () => {
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-      <p className="text-gray-500 text-lg">No new notifications 📭</p>
-    </div>
-  );
+  return <NotificationList />;
 };
 
 export default NotificationPage;
