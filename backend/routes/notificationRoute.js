@@ -1,3 +1,4 @@
+// backend/routes/notificationRoute.js
 import express from "express";
 import {
   getUserNotifications,
