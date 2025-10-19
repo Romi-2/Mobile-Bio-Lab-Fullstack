@@ -110,15 +110,12 @@ const UserDashboard: React.FC = () => {
         <h2>User Dashboard</h2>
         <ul>
           <li>
-            <div className="sidebar-item">
-              <span
-                className={`status ${accountStatus?.toLowerCase()}`}
-                aria-label={`Account status: ${accountStatus}`}
-              >
-                {accountStatus}
-              </span>
-            </div>
-          </li>
+          <div> {/* Changed to status-container */}
+            <span className={`status-full ${accountStatus?.toLowerCase()}`}> {/* Changed to status-full */}
+              {accountStatus}
+            </span>
+          </div>
+        </li>
 
           {/* FIXED: Use relative paths */}
           <li>
