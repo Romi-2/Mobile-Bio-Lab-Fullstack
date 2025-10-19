@@ -1,52 +1,16 @@
-// backend/routes/reservationRoute.js
 import express from "express";
 import { db } from "../models/Database.js";
+import { protect } from "../middleware/authMiddleware.js"; // ✅ import protect
 
 const router = express.Router();
 
-/* ==========================================================
-   ✅ 1. Fetch Available Slots (Optional city filter)
-   ========================================================== */
-router.get("/available", async (req, res) => {
-  const { city } = req.query;
-
-  let query = `
-    SELECT 
-      id,
-      city,
-      DATE_FORMAT(date, '%Y-%m-%d') AS date,
-      TIME_FORMAT(start_time, '%H:%i') AS start_time,
-      TIME_FORMAT(end_time, '%H:%i') AS end_time,
-      available_seats
-    FROM available_slots
-    WHERE available_seats > 0
-  `;
-  const params = [];
-
-  if (city) {
-    query += " AND city = ?";
-    params.push(city);
-  }
-
-  query += " ORDER BY date, start_time";
-
+// ✅ Create a Reservation (use logged-in user's ID)
+router.post("/reserve", protect, async (req, res) => {
   try {
-    const [results] = await db.query(query, params);
-    console.log(`✅ Reservation slots fetched for ${city || "all cities"}:`, results.length);
-    res.json(results);
-  } catch (err) {
-    console.error("❌ Error fetching available slots:", err.message);
-    res.status(500).json({ error: "Error fetching available slots" });
-  }
-});
+    // ✅ Get user ID from token (not from body)
+    const user_id = req.user.id;
 
-/* ==========================================================
-   ✅ 2. Create a Reservation
-   ========================================================== */
-router.post("/reserve", async (req, res) => {
-  try {
     const {
-      user_id,
       slot_id,
       reservation_date,
       reservation_time,
@@ -70,7 +34,7 @@ router.post("/reserve", async (req, res) => {
     if (slot[0].available_seats <= 0)
       return res.status(400).json({ error: "No available seats for this slot" });
 
-    // ✅ Insert reservation
+    // ✅ Insert reservation (using actual user ID)
     const query = `
       INSERT INTO reservations (
         user_id,
@@ -93,7 +57,7 @@ router.post("/reserve", async (req, res) => {
     `;
 
     const values = [
-      user_id,
+      user_id, // ✅ always correct user
       slot_id,
       reservation_date,
       reservation_time,
@@ -111,7 +75,7 @@ router.post("/reserve", async (req, res) => {
 
     const [result] = await db.query(query, values);
 
-    // ✅ Reduce available seats by 1
+    // ✅ Reduce available seats
     await db.query(
       "UPDATE available_slots SET available_seats = available_seats - 1 WHERE id = ? AND available_seats > 0",
       [slot_id]
@@ -121,6 +85,7 @@ router.post("/reserve", async (req, res) => {
       message: "Reservation created successfully ✅",
       reservationId: result.insertId,
       slot_id,
+      user_id, // optional for confirmation
     });
   } catch (error) {
     console.error("❌ Reservation failed:", error);
