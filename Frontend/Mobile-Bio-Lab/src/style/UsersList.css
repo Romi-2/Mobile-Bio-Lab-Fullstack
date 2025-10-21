@@ -1,3 +1,8 @@
+.users-list{
+  margin-left: 50px; /* Sidebar width (250px) + 20px gap */
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
 .users-list li {
   display: flex;
   justify-content: space-between;

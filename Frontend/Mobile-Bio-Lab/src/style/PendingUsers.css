@@ -1,3 +1,9 @@
+.pending-users {
+  margin-left: 50px; /* Sidebar width (250px) + 20px gap */
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
 .pending-users ul {
   list-style: none;
   padding: 0;
