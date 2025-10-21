@@ -1,3 +1,4 @@
+// Frontend//src/components/shareSample.tsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams, useLocation } from "react-router-dom";
