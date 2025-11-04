@@ -15,12 +15,12 @@ interface SensorData {
  */
 export const sendSensorData = async (data: SensorData) => {
   try {
-    const res = await axios.post(`${API_BASE}/sensors`, data);
+    console.log("📡 Sending to:", `${API_BASE}/sensor`, data); // Debug log
+    const res = await axios.post(`${API_BASE}/sensor`, data); // ✅ Fixed route
     return res.data;
   } catch (error) {
     const err = error as AxiosError<{ message?: string }>;
     console.error("❌ Error sending sensor data:", err);
-
     throw new Error(
       err.response?.data?.message || "Failed to send sensor data"
     );

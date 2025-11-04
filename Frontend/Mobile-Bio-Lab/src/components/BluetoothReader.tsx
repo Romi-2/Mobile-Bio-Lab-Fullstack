@@ -38,7 +38,7 @@ const BluetoothReader: React.FC = () => {
         throw error;
       }
 
-      setMessage(`🔗 Connected to ${device.name || "Unnamed Device"}`);
+      setMessage(`🔗 Connected to ${device.name || "Sensor Device"}`);
       if (!device.gatt) {
         setMessage("❌ GATT server not available on this device.");
         return;
@@ -49,10 +49,10 @@ const BluetoothReader: React.FC = () => {
       // ---- Sensor Service ----
       try {
         const sensorService = await server.getPrimaryService(
-          "your_sensor_service_uuid_here" // Replace with your sensor's service UUID
+          "12345678-1234-5678-1234-56789abcdef0" // Replace with your sensor's service UUID
         );
         const sensorCharacteristic = await sensorService.getCharacteristic(
-          "your_sensor_characteristic_uuid_here" // Replace with your sensor's characteristic UUID
+          "00002a6e-0000-1000-8000-00805f9b34fb" // Replace with your sensor's characteristic UUID
         );
 
         const value = await sensorCharacteristic.readValue();
