@@ -37,6 +37,7 @@ const BluetoothReader: React.FC = () => {
         }
         throw error;
       }
+      
 
       setMessage(`🔗 Connected to ${device.name || "Sensor Device"}`);
       if (!device.gatt) {
