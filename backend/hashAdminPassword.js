@@ -1,7 +1,7 @@
 // hashAdminPassword.js
 import bcrypt from "bcrypt";
 
-const plainPassword = "dmin@123"; // your current admin password
+const plainPassword = "Admin@123"; // your current admin password
 
 bcrypt.hash(plainPassword, 10).then((hash) => {
   console.log("✅ Hashed password to insert in DB:");
