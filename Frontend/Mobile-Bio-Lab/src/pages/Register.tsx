@@ -97,24 +97,36 @@ const Register: React.FC = () => {
     return true;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    try {
-      const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null) data.append(key, value as Blob | string);
-      });
+  try {
+    const data = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== null) data.append(key, value as Blob | string);
+    });
 
-      await registerUser(data);
-      navigate("/registration-success");
-    } catch (error: unknown) {
-      if (error instanceof Error) alert(error.message);
-      else alert("Failed to register. Please try again.");
-    }
-  };
+    // Call register route
+    const response = await registerUser(data);
+
+    // Optional: Save JWT token
+    const token = response.data.token;
+    if (token) localStorage.setItem("token", token);
+
+    // Optional: Save user info
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
+    // ✅ Navigate to Registration Success page
+    navigate("/registration-success");
+  } catch (error: unknown) {
+    if (error instanceof Error) alert(error.message);
+    else alert("Failed to register. Please try again.");
+  }
+};
+
+
 
   return (
     <div className="register-container">

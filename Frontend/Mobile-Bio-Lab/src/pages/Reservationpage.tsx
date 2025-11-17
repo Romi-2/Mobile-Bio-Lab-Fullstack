@@ -193,7 +193,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 };
 
   return (
-    <div className="reservation-page">
+    <div className="reservation-container">
+      <div className="reservation-page">
       {/* ✅ Show selected city in heading */}
       
       <h2>Sample Reservation Form {selectedCity && `- ${selectedCity}`}</h2>
@@ -388,6 +389,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

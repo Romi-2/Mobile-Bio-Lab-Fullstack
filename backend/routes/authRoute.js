@@ -1,3 +1,4 @@
+// backend/routes/authRoute.js
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -88,62 +89,6 @@ router.post("/activate", async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Database error", error: err });
-  }
-});
-
-// ✅ REGISTER ROUTE
-router.post("/register", async (req, res) => {
-  const { firstName, lastName, email, password, role, city } = req.body;
-
-  if (!firstName || !lastName || !email || !password)
-    return res.status(400).json({ message: "All fields are required" });
-
-  try {
-    const [existing] = await db.query(
-      "SELECT id FROM users WHERE email = ?",
-      [email]
-    );
-
-    if (existing.length > 0)
-      return res.status(400).json({ message: "Email already registered" });
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const [result] = await db.query(
-      `INSERT INTO users 
-       (first_name, last_name, email, password, role, city, status, isActivated) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        firstName,
-        lastName,
-        email,
-        hashedPassword,
-        role || "user",
-        city || null,
-        "pending",
-        "Inactive",
-      ]
-    );
-
-    const token = generateToken(result.insertId, role || "user");
-
-    res.status(201).json({
-      token,
-      user: {
-        id: result.insertId,
-        firstName,
-        lastName,
-        email,
-        role: role || "user",
-        status: "pending",
-        city: city || null,
-        isActivated: "Inactive",
-      },
-    });
-  } catch (err) {
-    console.error("Register error:", err);
-    res.status(500).json({ message: "Server error" });
   }
 });
 

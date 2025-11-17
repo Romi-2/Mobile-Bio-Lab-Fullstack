@@ -1,35 +1,382 @@
+/* frontend/src/style/BluetoothReader.css */
+
 .ble-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: rgba(240, 248, 255, 0.8);
-  backdrop-filter: blur(6px);
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 20px;
-}
-
-.ble-container button {
-  padding: 12px 20px;
-  background-color: #007bff;
-  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
 }
 
-.ble-container button:hover {
-  background-color: #0056b3;
+.ble-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.ble-container p {
-  margin-top: 15px;
+.ble-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.ble-controls button {
+  padding: 1rem 2rem;
   font-size: 1rem;
-  color: #333;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.ble-container h3 {
-  margin-top: 10px;
-  color: #007bff;
+.btn-connect {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-connect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-disconnect {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-disconnect:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+.btn-monitor {
+  background: #10b981;
+  color: white;
+}
+
+.btn-monitor:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-stop {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-stop:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+}
+
+.btn-read {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-read:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+.subtitle {
+  text-align: center;
+  margin: -1rem 0 1.5rem 0;
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.services-info {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(10px);
+}
+
+.services-info h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.services-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.services-info li {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+.services-info code {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.message {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+.message.success {
+  background: rgba(16, 185, 129, 0.3);
+  border: 2px solid #10b981;
+}
+
+.message.info {
+  background: rgba(59, 130, 246, 0.3);
+  border: 2px solid #3b82f6;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.device-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.device-info > div {
+  flex: 1;
+}
+
+.device-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.device-id {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  font-family: 'Courier New', monospace;
+}
+
+.status-indicator {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.status-indicator.connected {
+  background: #10b981;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.sensor-data {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.data-card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.data-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.data-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.data-card .value {
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.live-indicator {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.3rem 0.8rem;
+  background: #ef4444;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.data-history {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-top: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.data-history h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.3rem;
+}
+
+.history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.history-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.history-time {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.info-section {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.info-section h4 {
+  margin: 1.5rem 0 0.8rem 0;
+  font-size: 1.1rem;
+}
+
+.info-section h4:first-child {
+  margin-top: 0;
+}
+
+.info-section ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.info-section li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.info-section p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* Scrollbar styling */
+.history-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ble-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .ble-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .ble-controls button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .data-card .value {
+    font-size: 2.5rem;
+  }
+
+  .sensor-data {
+    grid-template-columns: 1fr;
+  }
 }

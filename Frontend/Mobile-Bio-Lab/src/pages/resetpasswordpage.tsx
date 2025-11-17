@@ -1,76 +1,59 @@
-// resetpasswordpage.tsx
+// frontend/src/pages/resetpasswordpage.tsx
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../style/reserpasswordpage.css";
 
-interface ResetPasswordResponse {
-  message: string;
-}
-
-function isAxiosError(error: unknown): error is {
-  isAxiosError: boolean;
-  response?: { data?: { error?: string } };
-} {
-  if (typeof error === "object" && error !== null) {
-    return (error as { isAxiosError?: boolean }).isAxiosError === true;
-  }
-  return false;
-}
-
 export default function ResetPasswordPage() {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [isValid, setIsValid] = useState(false); // button state
+  const [success, setSuccess] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
-  // Password validation function
-  const validatePassword = (pwd: string) => {
-    const minLength = 8;
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (pwd.length < minLength) return "Password must be at least 8 characters long";
-    if (!regex.test(pwd))
-      return "Password must contain uppercase, lowercase, number, and special character";
-    return "";
-  };
-
-  // Enable/disable button dynamically
+  // Validate password
   useEffect(() => {
-    const pwdError = validatePassword(password);
-    if (!pwdError && password === confirmPassword && password !== "") {
-      setIsValid(true);
-      setError(""); // clear previous error
-    } else {
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
       setIsValid(false);
-      if (password !== confirmPassword && confirmPassword !== "") {
-        setError("Passwords do not match");
-      } else {
-        setError(pwdError);
-      }
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(password)) {
+      setError("Password must contain uppercase, lowercase, number, and special character");
+      setIsValid(false);
+    } else if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setIsValid(false);
+    } else {
+      setError("");
+      setIsValid(true);
     }
   }, [password, confirmPassword]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!isValid) return;
+    if (!isValid || !token) return;
 
     try {
-      const res = await axios.post<ResetPasswordResponse>(
-        `http://localhost:5000/api/auth/reset-password/${token}`,
-        { password }
-      );
-      setMessage(res.data.message);
+      const res = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
+        password,
+      });
+      setSuccess(res.data.message);
       setPassword("");
       setConfirmPassword("");
+
+      // Redirect to login after 3 seconds
+      setTimeout(() => navigate("/login"), 3000);
     } catch (err: unknown) {
-      if (isAxiosError(err)) {
-        setMessage(err.response?.data?.error || "Something went wrong");
+      console.error("Reset password error:", err);
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Something went wrong");
+      } else if (err instanceof Error) {
+        setError(err.message);
       } else {
-        setMessage("Something went wrong");
+        setError(String(err));
       }
     }
   };
@@ -114,13 +97,12 @@ export default function ResetPasswordPage() {
         </div>
 
         {error && <p style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
+        {success && <p style={{ color: "green", marginBottom: "10px" }}>{success}</p>}
 
         <button type="submit" disabled={!isValid} style={{ opacity: isValid ? 1 : 0.5 }}>
           Reset Password
         </button>
       </form>
-
-      {message && <p style={{ color: "green", marginTop: "10px" }}>{message}</p>}
     </div>
   );
 }

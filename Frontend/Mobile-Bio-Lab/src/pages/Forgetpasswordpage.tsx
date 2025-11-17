@@ -1,3 +1,4 @@
+// frontend/src/pages/Forgetpasswordpage.tsx
 import { useState, useEffect } from "react";
 import { sendForgotPasswordEmail } from "../services/forgetpassword";
 import "../style/Forgetpasswordpage.css";

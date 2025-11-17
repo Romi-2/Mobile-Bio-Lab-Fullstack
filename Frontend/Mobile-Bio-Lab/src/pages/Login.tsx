@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../services/userService"; // 👈 Ensure correct path
+import { loginUser } from "../services/userService";
 import axios from "axios";
 import "../style/Login.css";
 
-// ✅ Define User type (used in API response)
+// ✅ Define User type
 type User = {
   id: number;
   firstName: string;
@@ -22,13 +22,8 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Email validation
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // ✅ Fetch user profile after login
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -39,19 +34,12 @@ const Login: React.FC = () => {
       });
 
       const profileData = await response.json();
-
-      if (response.ok) {
-        console.log("✅ User Profile:", profileData);
-        localStorage.setItem("profile", JSON.stringify(profileData));
-      } else {
-        console.error("❌ Failed to fetch profile:", profileData.message);
-      }
+      if (response.ok) localStorage.setItem("profile", JSON.stringify(profileData));
     } catch (err) {
       console.error("Profile fetch error:", err);
     }
   };
 
-  // ✅ Handle Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -59,7 +47,6 @@ const Login: React.FC = () => {
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
-    // Frontend validations
     if (!validateEmail(trimmedEmail)) {
       setError("❌ Please enter a valid email address.");
       return;
@@ -71,16 +58,14 @@ const Login: React.FC = () => {
     }
 
     try {
-      // ✅ Use Axios service instead of fetch
       const response = await loginUser({
         email: trimmedEmail,
         password: trimmedPassword,
       });
 
-      // ✅ Type response properly
-      const data: { token?: string; user?: User; message?: string } = response.data;
+      const data: { token?: string; refreshToken?: string; user?: User; message?: string } = response.data;
 
-      if (data?.token && data?.user) {
+      if (data?.token && data?.refreshToken && data?.user) {
         const status = data.user.status?.trim().toLowerCase();
 
         if (status === "pending") {
@@ -93,26 +78,18 @@ const Login: React.FC = () => {
           return;
         }
 
-        // ✅ Store user & token
-        // Store user & token
-localStorage.setItem("token", data.token);
-localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-localStorage.setItem("role", data.user.role);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+        localStorage.setItem("role", data.user.role);
 
-console.log("✅ Logged in user:", data.user);
-
-// ✅ Navigate first
-navigate("/home");
-
-// ✅ Then fetch profile
-fetchProfile();
-
+        navigate("/home");
+        fetchProfile();
       } else {
         setError(data.message || "❌ Invalid email or password.");
       }
     } catch (err: unknown) {
       console.error("Login error:", err);
-
       if (axios.isAxiosError(err)) {
         const message =
           err.response?.data?.message || "⚠️ Unable to login. Please try again later.";
@@ -123,7 +100,6 @@ fetchProfile();
     }
   };
 
-  // ✅ UI Section
   return (
     <div className="login-container">
       <div className="login-card">

@@ -1,3 +1,4 @@
+// backend/models/User.js
 import { db } from "../models/Database.js"; // adjust path if needed
 
 const User = {
