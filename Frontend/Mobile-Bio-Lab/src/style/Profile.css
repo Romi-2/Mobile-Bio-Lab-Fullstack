@@ -1,23 +1,27 @@
-
 /* profile page start */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: auto;         /* let it expand */
-  min-height: 100%;     /* just ensures not collapsed */
-  overflow-y: auto;     /* allow page scrolling */
-}
-
 .profile-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  height: 100vh;
+  width: 100vw;          /* Full viewport width */
+  overflow-y: auto;      /* scroll on container */
   padding: 24px;
+  display: flex;
+  justify-content: center;  /* Center the card horizontally */
+  align-items: flex-start;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100%;     /* grow with body */
+  box-sizing: border-box;
 }
 
-
+.profile-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 700px;      /* Card remains at 700px */
+  height: auto;          /* grow naturally with content */
+  overflow-y: visible;   /* no scroll on card */
+  margin: 100px;
+}
+/* Rest of your existing styles remain the same */
 .profile-loading,
 .profile-error {
   flex-direction: column;
@@ -66,15 +70,6 @@ html, body {
   background-color: #2980b9;
 }
 
-.profile-card {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 700px;
-  overflow: hidden;
-}
-
 .profile-header {
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
@@ -96,6 +91,7 @@ html, body {
   object-fit: cover;
   border: 4px solid rgba(255, 255, 255, 0.3);
 }
+
 .online-indicator {
   position: absolute;
   bottom: 10px;
@@ -122,6 +118,7 @@ html, body {
 .profile-details{
   padding: 30px;
 }
+
 .profile-details h2{
   font-size:xx-large;
   font-weight:bolder;
@@ -137,6 +134,7 @@ html, body {
   padding-bottom: 8px;
   border-bottom: 1px solid #eaeaea;
 }
+
 .detail-row {
   display: flex;
   gap: 20px;
@@ -170,7 +168,6 @@ html, body {
   font-weight: 500;
 }
 
-
 .role-badge {
   background-color: #e1f0ff;
   color: #3498db;
@@ -180,6 +177,7 @@ html, body {
   width: fit-content;
   font-size: 14px;
 }
+
 .profile-actions {
   padding: 20px 30px;
   border-top: 1px solid #eaeaea;
@@ -195,6 +193,7 @@ html, body {
   font-weight: 600;
   cursor: pointer;
 }
+
 .pdf-button {
   background-color: #f4f4f4;
   border-radius: 10px;
@@ -210,6 +209,7 @@ html, body {
 @media (max-width: 768px) {
   .profile-container {
     padding: 16px;
+    max-width: 100%; /* Full width on mobile */
   }
   
   .detail-row {
