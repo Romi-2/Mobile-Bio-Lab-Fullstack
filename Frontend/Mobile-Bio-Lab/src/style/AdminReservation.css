@@ -1,14 +1,13 @@
 /* Admin Reservations Layout */
 .admin-reservations {
-  max-width: 1200px;           /* controls the page width */
+  max-width: 1400px;           /* Increased page width */
   margin: 0 auto;
-  margin-left: 50px;              /* centers content horizontally */
+  margin-left: 50px;
   padding: 20px;
   min-height: 100vh;
   background-color: #f8f9fa;
   box-sizing: border-box;
 }
-
 
 .admin-reservations h2 {
   color: #2c3e50;
@@ -33,21 +32,22 @@
   border-bottom: 2px solid #ecf0f1;
 }
 
-/* Reservations Grid */
+/* Reservations Grid - Increased card width */
 .reservations-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* Increased from 350px to 450px */
+  gap: 25px; /* Slightly increased gap */
 }
 
-/* Reservation Card */
+/* Reservation Card - Increased width */
 .reservation-card {
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 25px; /* Increased padding */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border-left: 5px solid #f39c12; /* Default pending color */
   transition: all 0.3s ease;
+  min-height: 280px; /* Minimum height for better proportions */
 }
 
 .reservation-card:hover {
@@ -75,34 +75,34 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 15px;
+  margin-bottom: 20px; /* Increased margin */
   flex-wrap: wrap;
   gap: 10px;
 }
 
 .user-name {
-  font-size: 18px;
+  font-size: 20px; /* Slightly larger font */
   font-weight: 700;
-  color:white;
+  color: #2c3e50; /* Changed from white to dark for better readability */
   margin: 0;
 }
 
 .user-location {
   font-size: 14px;
-  color:white;
+  color: #7f8c8d; /* Changed from white to gray for better readability */
   font-weight: 500;
 }
 
 /* Card Details */
 .card-details {
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Increased margin */
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 10px 0; /* Increased padding */
   border-bottom: 1px solid #f8f9fa;
 }
 
@@ -111,32 +111,35 @@
 }
 
 .detail-label {
-  font-size: 14px;
+  font-size: 15px; /* Slightly larger */
   color: #7f8c8d;
   font-weight: 500;
+  min-width: 100px; /* Ensure labels have consistent width */
 }
 
 .detail-value {
-  font-size: 14px;
+  font-size: 15px; /* Slightly larger */
   color: #2c3e50;
   font-weight: 600;
   text-align: right;
+  flex: 1; /* Allow value to take remaining space */
+  margin-left: 15px; /* Space between label and value */
 }
 
 /* Card Actions */
 .card-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 15px; /* Increased gap */
+  margin-top: 20px; /* Increased margin */
 }
 
 .approve-btn, .reject-btn {
   flex: 1;
   border: none;
-  padding: 12px 20px;
+  padding: 14px 24px; /* Increased padding */
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px; /* Slightly larger */
   font-weight: 600;
   transition: all 0.3s ease;
   text-transform: uppercase;
@@ -174,16 +177,16 @@
 /* Card Status */
 .card-status {
   text-align: center;
-  margin-top: 15px;
-  padding-top: 15px;
+  margin-top: 20px; /* Increased margin */
+  padding-top: 20px; /* Increased padding */
   border-top: 2px dashed #ecf0f1;
 }
 
 /* Status Badges */
 .status-badge {
-  padding: 8px 16px;
+  padding: 10px 20px; /* Increased padding */
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px; /* Slightly larger */
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -268,10 +271,16 @@
   .admin-reservations {
     margin-left: 0;
     padding: 15px;
+    max-width: 100%; /* Full width on mobile */
   }
   
   .reservations-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+  
+  .reservation-card {
+    padding: 20px; /* Slightly reduced padding on mobile */
+    min-height: auto; /* Remove fixed height on mobile */
   }
   
   .card-header {
@@ -286,5 +295,16 @@
   
   .approve-btn, .reject-btn {
     width: 100%;
+  }
+}
+
+/* For larger screens - even wider cards */
+@media (min-width: 1200px) {
+  .reservations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); /* Even wider on large screens */
+  }
+  
+  .admin-reservations {
+    max-width: 1600px; /* Wider container on large screens */
   }
 }
