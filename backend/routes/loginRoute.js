@@ -1,3 +1,4 @@
+// backend/routes/loginRoute.js
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -10,7 +11,7 @@ const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "15m" }
+    { expiresIn: "1d" }
   );
 };
 
@@ -22,30 +23,92 @@ const generateRefreshToken = (user) => {
   );
 };
 
-// ✅ LOGIN ROUTE
+// ✅ LOGIN ROUTE WITH AUTO-ACTIVATION
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
+
+  console.log("🔐 Login attempt for:", email);
 
   if (!email || !password)
     return res.status(400).json({ message: "Email and password are required" });
 
   try {
     const [results] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-    if (results.length === 0)
+    
+    if (results.length === 0) {
+      console.log("❌ User not found for email:", email);
       return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     const user = results[0];
+    
+    // 🔍 DEBUGGING INFORMATION
+    console.log("=== DEBUG USER STATUS ===");
+    console.log("User ID:", user.id);
+    console.log("Email:", user.email);
+    console.log("Status:", user.status);
+    console.log("isActivated:", user.isActivated);
+    console.log("Has activationToken:", !!user.activationToken);
 
-    if (user.status === "pending")
+    // Check account status
+    if (user.status === "pending") {
+      console.log("⏳ Account pending approval - BLOCKING");
       return res.status(403).json({ message: "Your account is still pending approval." });
+    }
 
-    if (user.isActivated === "Inactive")
-      return res.status(403).json({ message: "Please activate your account via email link." });
+    // ✅ AUTO-ACTIVATION: If user has activation token, activate automatically
+    if (user.isActivated === "Inactive" && user.activationToken) {
+      console.log("🔄 AUTO-ACTIVATION: User has activation token - activating automatically");
+      
+      try {
+        // Verify the activation token is still valid
+        jwt.verify(user.activationToken, process.env.JWT_SECRET || "secretkey");
+        
+        // Activate the user and clear the token
+        const [updateResult] = await db.query(
+          `UPDATE users SET isActivated = 'Active', activationToken = NULL WHERE id = ?`,
+          [user.id]
+        );
+        
+        if (updateResult.affectedRows > 0) {
+          console.log("✅ AUTO-ACTIVATION SUCCESS: User activated:", user.email);
+          // Update user object for response
+          user.isActivated = 'Active';
+        } else {
+          console.log("❌ AUTO-ACTIVATION FAILED: No rows affected");
+        }
+      } catch (tokenError) {
+        console.log("❌ AUTO-ACTIVATION: Token invalid or expired:", tokenError.message);
+        // Continue with normal login flow - user will see activation error below
+      }
+    }
+
+    // Check if still inactive after auto-activation attempt
+    if (user.isActivated === "Inactive") {
+      console.log("🚫 Account still Inactive after auto-activation attempt");
+      
+      // Check if user has an activation token (but it might be expired)
+      if (user.activationToken) {
+        return res.status(403).json({ 
+          message: "Activation link expired. Please contact administrator for a new activation link." 
+        });
+      } else {
+        return res.status(403).json({ 
+          message: "Please activate your account first. Check your email for activation link." 
+        });
+      }
+    }
+
+    console.log("✅ Activation check PASSED - user is Active");
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
+      console.log("❌ Password mismatch - BLOCKING");
       return res.status(401).json({ message: "Invalid email or password" });
+    }
 
+    console.log("✅✅✅ LOGIN SUCCESSFUL");
+    
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 

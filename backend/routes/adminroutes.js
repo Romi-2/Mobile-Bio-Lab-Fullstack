@@ -11,7 +11,7 @@ const router = express.Router();
 router.get("/pending-users", protect, adminOnly, async (req, res) => {
   try {
     const query = `
-      SELECT id, first_name AS firstName, last_name AS lastName, email, city, role, status
+      SELECT id, first_name AS firstName, last_name AS lastName, email, city, role, status, vu_id
       FROM users
       WHERE status = 'pending'
     `;
@@ -23,17 +23,21 @@ router.get("/pending-users", protect, adminOnly, async (req, res) => {
   }
 });
 
-// ✅ Approve user + send activation email
+// ✅ Approve user + send login email
 router.post("/approve/:id", protect, adminOnly, async (req, res) => {
   const userId = req.params.id;
 
+  console.log("🎯 ADMIN APPROVAL STARTED FOR USER:", userId);
+
   try {
-    // Generate activation token
+    // Generate activation token (for auto-activation during login)
     const activationToken = jwt.sign(
       { id: userId },
       process.env.JWT_SECRET || "secretkey",
-      { expiresIn: "1d" }
+      { expiresIn: "30d" } // 30 days expiry
     );
+
+    console.log("🔑 Activation token generated");
 
     // Fetch user details
     const [rows] = await db.query(
@@ -47,32 +51,37 @@ router.post("/approve/:id", protect, adminOnly, async (req, res) => {
 
     const { email: userEmail, first_name: firstName, vu_id } = rows[0];
 
-    // Create activation link
-    const activationLink = `http://localhost:5173/login?token=${activationToken}`;
+    // Create login link (redirects to login page)
+    const loginLink = `http://localhost:5173/login`;
 
-    // Email setup
+    // Email setup - now tells user to login instead of activate
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: userEmail,
-      subject: "Activate Your Account",
+      subject: "Your Account Has Been Approved",
       html: `
         <p>Hello ${firstName},</p>
-        <p>Your account has been approved! Click below to activate your account:</p>
-        <a href="${activationLink}">Activate Now (${vu_id})</a>
-        <p>This link will expire in 24 hours.</p>
+        <p>Your account has been approved! You can now login to activate your account.</p>
+        <p><strong>VU ID: ${vu_id}</strong></p>
+        <a href="${loginLink}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Login to Activate Account</a>
+        <p>Your account will be automatically activated when you login for the first time.</p>
+        <p><em>If the button doesn't work, copy and paste this link in your browser:</em><br/>
+        http://localhost:5173/login</p>
       `,
     };
 
-    // Send activation email
+    // Send email
     await transporter.sendMail(mailOptions);
 
-    // Update user status + token in DB
+    // Update user status + store activation token for auto-activation
     await db.query(
-      "UPDATE users SET status = 'approved', activationToken = ? WHERE id = ?",
+      "UPDATE users SET status = 'approved', activationToken = ?, isActivated = 'Inactive' WHERE id = ?",
       [activationToken, userId]
     );
 
-    res.json({ message: "✅ User approved and activation email sent!" });
+    console.log("✅ User approved - activation token stored, login email sent");
+
+    res.json({ message: "✅ User approved and login email sent!" });
   } catch (err) {
     console.error("❌ Error approving user:", err.message);
     res.status(500).json({ message: "Internal server error", error: err.message });
@@ -83,7 +92,7 @@ router.post("/approve/:id", protect, adminOnly, async (req, res) => {
 router.post("/reject/:id", protect, adminOnly, async (req, res) => {
   try {
     const [result] = await db.query(
-      "UPDATE users SET status = 'rejected' WHERE id = ?",
+      "UPDATE users SET status = 'rejected', activationToken = NULL WHERE id = ?",
       [req.params.id]
     );
 

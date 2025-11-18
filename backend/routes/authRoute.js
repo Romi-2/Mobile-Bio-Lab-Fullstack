@@ -1,94 +1,64 @@
 // backend/routes/authRoute.js
 import express from "express";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { db } from "../models/Database.js";
 
 const router = express.Router();
 
-// --- Helper: Generate JWT ---
-const generateToken = (id, role) => {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET not defined in .env file");
+// ✅ Activation + auto-login endpoint
+router.get("/activate/:activationToken", async (req, res) => {
+  const { activationToken } = req.params;
+
+  if (!activationToken) {
+    return res.status(400).json({ message: "Activation token is required" });
   }
 
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-};
-
-
-// ✅ LOGIN ROUTE
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password)
-    return res.status(400).json({ message: "Email and password are required" });
-
   try {
-    const [results] = await db.query(
-      `SELECT id, first_name AS firstName, last_name AS lastName, email, password, role, status, city 
-       FROM users WHERE email = ?`,
-      [email]
+    // Verify token
+    const decoded = jwt.verify(
+      activationToken,
+      process.env.JWT_SECRET || "secretkey"
     );
 
-    if (results.length === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    const user = results[0];
-
-    // ✅ Compare hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(401).json({ message: "Incorrect password" });
-
-    // ✅ Generate JWT token
-    const token = generateToken(user.id, user.role);
-
-    // ✅ Send proper success response
-    return res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
-        status: user.status,
-        city: user.city,
-      },
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-// ✅ ACTIVATE ACCOUNT
-router.post("/activate", async (req, res) => {
-  const { userId } = req.body;
-  if (!userId)
-    return res
-      .status(400)
-      .json({ success: false, message: "User ID is required" });
-
-  try {
-    const [result] = await db.query(
-      `UPDATE users SET isActivated='Active', activationToken=NULL WHERE id=?`,
-      [userId]
+    // Activate user
+    const [updateResult] = await db.query(
+      "UPDATE users SET isActivated = 'Active', activationToken = NULL WHERE id = ?",
+      [decoded.id]
     );
 
-    if (result.affectedRows === 0)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+    if (updateResult.affectedRows === 0) {
+      return res.status(401).json({ message: "Invalid or expired activation token" });
+    }
 
-    res.json({ success: true, message: "Account activated successfully!" });
+    // Fetch updated user
+    const [users] = await db.query("SELECT * FROM users WHERE id = ?", [decoded.id]);
+    const user = users[0];
+
+    // Generate JWT tokens for auto-login
+    const accessToken = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET || "secretkey",
+      { expiresIn: "1d" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET || "secretkey",
+      { expiresIn: "7d" }
+    );
+
+    // Optionally store refreshToken in DB
+    await db.query(
+      `INSERT INTO refresh_tokens (userId, token, expiry)
+       VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))`,
+      [user.id, refreshToken]
+    );
+
+    // Redirect to frontend with tokens as query params
+    const frontendUrl = `http://localhost:5173/login?token=${accessToken}&refreshToken=${refreshToken}`;
+    res.redirect(frontendUrl);
   } catch (err) {
-    console.error("Activation error:", err);
-    res
-      .status(500)
-      .json({ success: false, message: "Database error", error: err });
+    console.error("❌ Activation error:", err.message);
+    return res.status(401).json({ message: "Invalid or expired activation token" });
   }
 });
 
