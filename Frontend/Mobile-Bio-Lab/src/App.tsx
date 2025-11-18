@@ -31,6 +31,8 @@ import AdminProtocols from "./components/AdminProtocol";
 import { NotificationProvider } from "./context/notificationContext";
 import NotificationPage from "./pages/NotificationPage";
 import AdminReservations from "./components/AdminReservation";
+import Usershome from "./components/Usershome";
+import DeleteAccount from "./components/DeleteAccount";
 
 
 function AppContent() {
@@ -50,7 +52,7 @@ function AppContent() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-          <Route path="/activate/:studentId" element={<ActivatePage />} />
+<Route path="/activate/:token" element={<ActivatePage />} />
           <Route path="/registration-success" element={<RegistrationSuccess />} />
 
           {/* Public Protocols Route */}
@@ -75,17 +77,22 @@ function AppContent() {
 
           {/* User Dashboard */}
           <Route
-            path="/userdashboard/*"
-            element={
-              <ProtectedRoute allowedRoles={["student", "researcher", "technician"]}>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<div>User Dashboard Home</div>} />
-            <Route path="protocols" element={<ProtocolsList />} />
-            <Route path="sample/:id" element={<SamplePage />} />
-          </Route>
+  path="/userdashboard/*"
+  element={
+    <ProtectedRoute allowedRoles={["student", "researcher", "technician"]}>
+      <UserDashboard />   {/* Sidebar + Outlet */}
+    </ProtectedRoute>
+  }
+>
+  {/* Default dashboard home content */}
+  <Route index element={<Usershome />} />
+
+  {/* Other pages */}
+  <Route path="protocols" element={<ProtocolsList />} />
+  <Route path="sample/:id" element={<SamplePage />} />
+  <Route path="delete-account" element={<DeleteAccount />} />
+</Route>
+
 
           {/* Admin Dashboard */}
           <Route

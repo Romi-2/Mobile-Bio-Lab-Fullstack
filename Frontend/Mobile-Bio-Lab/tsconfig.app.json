@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../../backend/Utils/testauth.ts"]
+  "include": ["src", "../../backend/Utils/testauth.ts", "src/components/DeleteAccount.tsx"]
 }

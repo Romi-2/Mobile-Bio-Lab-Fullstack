@@ -90,14 +90,14 @@ const AdminDashboard: React.FC = () => {
 
             <li>
               <NavLink
-  to="/adminDashboard/sample/1"  // Use absolute path
-  className={({ isActive }) =>
-    `menu-link share-link ${isActive ? "active" : ""}`
-  }
-  onClick={closeSidebar}
->
-  Share Sample
-</NavLink>
+                to="/adminDashboard/sample/1"  // Use absolute path
+                className={({ isActive }) =>
+                  `menu-link share-link ${isActive ? "active" : ""}`
+                }
+                onClick={closeSidebar}
+              >
+                Share Sample
+              </NavLink>
 
             </li>
             <li>

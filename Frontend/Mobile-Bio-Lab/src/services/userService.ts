@@ -1,3 +1,5 @@
+
+// frontend/src/services/userService.ts
 import axios from "axios";
 
 // ------------------------
@@ -61,5 +63,6 @@ export const getUserById = (id: number) =>
 export const updateUser = (id: number, data: Partial<User>) =>
   axios.put<User>(`${USER_API_URL}/${id}`, data, { headers: getAuthHeaders() });
 
-export const deleteUser = (id: number) =>
-  axios.delete(`${USER_API_URL}/${id}`, { headers: getAuthHeaders() });
+export const deleteUser = (id: number) => {
+  return axios.delete(`${USER_API_URL}/${id}`, { headers: getAuthHeaders() });
+};
