@@ -123,4 +123,35 @@ router.delete("/delete/:id", protect, adminOnly, async (req, res) => {
   }
 });
 
+router.get("/dashboard-stats", protect, adminOnly, async (req, res) => {
+  try {
+    const [total] = await db.query(`
+      SELECT COUNT(*) AS totalUsers FROM users
+    `);
+
+    const [pending] = await db.query(`
+      SELECT COUNT(*) AS pendingUsers
+      FROM users
+      WHERE LOWER(status) = 'pending'
+    `);
+
+    const [admins] = await db.query(`
+      SELECT COUNT(*) AS adminCount
+      FROM users
+      WHERE LOWER(role) = 'admin'
+    `);
+
+    res.json({
+      totalUsers: total[0].totalUsers,
+      pendingUsers: pending[0].pendingUsers,
+      admins: admins[0].adminCount,
+    });
+  } catch (err) {
+    console.error("❌ Dashboard stats error:", err.message);
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
+});
+
+
+
 export default router;
