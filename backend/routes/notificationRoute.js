@@ -1,4 +1,4 @@
-// backend/routes/notificationRoute.js
+// backend/routes/notificationRoute.ts  (if using TypeScript)
 import express from "express";
 import {
   getUserNotifications,
@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.get("/user/:id", getUserNotifications);
 router.put("/:id/read", markAsRead);
-router.post("/", createNotification); // ✅ this defines POST /api/notifications
+router.post("/", createNotification);
 
 export default router;
