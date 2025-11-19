@@ -76,22 +76,22 @@ function AppContent() {
            <Route path="/notifications" element={<NotificationPage />} />
 
           {/* User Dashboard */}
-          <Route
-  path="/userdashboard/*"
-  element={
-    <ProtectedRoute allowedRoles={["student", "researcher", "technician"]}>
-      <UserDashboard />   {/* Sidebar + Outlet */}
-    </ProtectedRoute>
-  }
->
+                    <Route
+            path="/userdashboard/*"
+            element={
+              <ProtectedRoute allowedRoles={["student", "researcher", "technician"]}>
+                <UserDashboard />   {/* Sidebar + Outlet */}
+              </ProtectedRoute>
+            }
+          >
   {/* Default dashboard home content */}
-  <Route index element={<Usershome />} />
+              <Route index element={<Usershome />} />
 
-  {/* Other pages */}
-  <Route path="protocols" element={<ProtocolsList />} />
-  <Route path="sample/:id" element={<SamplePage />} />
-  <Route path="delete-account" element={<DeleteAccount />} />
-</Route>
+              {/* Other pages */}
+              <Route path="protocols" element={<ProtocolsList />} />
+              <Route path="sample/:id" element={<SamplePage />} />
+              <Route path="delete-account" element={<DeleteAccount />} />
+            </Route>
 
 
           {/* Admin Dashboard */}

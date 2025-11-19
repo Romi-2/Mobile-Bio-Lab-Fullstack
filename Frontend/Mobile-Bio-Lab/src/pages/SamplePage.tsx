@@ -30,7 +30,8 @@ const SamplePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const isAdminDashboard = location.pathname.includes("/dashboard/");
+  const isAdminDashboard = location.pathname.includes("/adminDashboard/");
+  const isUserDashboard = location.pathname.includes("/userdashboard/");
 
   const fetchSample = async (sampleId: string) => {
     setLoading(true);
@@ -60,24 +61,26 @@ const SamplePage: React.FC = () => {
   }, [id]);
 
   const handleSearch = () => {
-  if (!searchId.trim()) {
-    setError("Please enter a valid sample ID");
-    return;
-  }
+    if (!searchId.trim()) {
+      setError("Please enter a valid sample ID");
+      return;
+    }
 
-  // Detect if currently inside admin dashboard
-  if (location.pathname.includes("/adminDashboard/")) {
-    navigate(`/adminDashboard/sample/${searchId}`);
-  } else {
-    navigate(`/dashboard/sample/${searchId}`);
-  }
+    // Detect which dashboard we're in and navigate accordingly
+    if (location.pathname.includes("/adminDashboard/")) {
+      navigate(`/adminDashboard/sample/${searchId}`);
+    } else if (location.pathname.includes("/dashboard/")) {
+      navigate(`/userdashboard/sample/${searchId}`);
+    } else {
+      // Fallback to user dashboard
+      navigate(`/userdashboard/sample/${searchId}`);
+    }
 
-  fetchSample(searchId);
-};
-
+    fetchSample(searchId);
+  };
 
   return (
-    <div className={`sample-content ${isAdminDashboard ? "with-sidebar" : ""}`}>
+    <div className={`sample-content ${(isAdminDashboard || isUserDashboard) ? "with-sidebar" : ""}`}>
       {/* 🔍 Search Bar */}
       <div className="sample-search-container">
         <input
@@ -108,15 +111,18 @@ const SamplePage: React.FC = () => {
                 {sample.sample_id || `Sample-${sample.id}`}
               </h2>
               {isAdminDashboard && <span className="admin-badge">Admin View</span>}
+              {isUserDashboard && <span className="user-badge">User View</span>}
             </div>
 
-            <p><strong>Sample ID:</strong> {sample.sample_id}</p>
-            <p><strong>Sample Type:</strong> {sample.sample_type}</p>
-            <p><strong>Collection Date:</strong> {new Date(sample.collection_date).toLocaleDateString()}</p>
-            <p><strong>Temperature:</strong> {sample.temperature}°C</p>
-            <p><strong>pH:</strong> {sample.pH}</p>
-            <p><strong>Salinity:</strong> {sample.salinity}</p>
-            <p><strong>Status:</strong> {sample.status}</p>
+            <div className="sample-details">
+              <p><strong>Sample ID:</strong> {sample.sample_id}</p>
+              <p><strong>Sample Type:</strong> {sample.sample_type}</p>
+              <p><strong>Collection Date:</strong> {new Date(sample.collection_date).toLocaleDateString()}</p>
+              <p><strong>Temperature:</strong> {sample.temperature}°C</p>
+              <p><strong>pH:</strong> {sample.pH}</p>
+              <p><strong>Salinity:</strong> {sample.salinity}</p>
+              <p><strong>Status:</strong> {sample.status}</p>
+            </div>
           </div>
 
           <div className="share-section">

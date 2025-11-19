@@ -12,13 +12,20 @@ export interface User {
 
 const API_URL = "http://localhost:5000/api/admin";
 
-// Get JWT token from localStorage
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// Fetch pending users
+// Dashboard stats
+export const getDashboardStats = async () => {
+  const response = await axios.get(`${API_URL}/dashboard-stats`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+// Pending users
 export const getPendingUsers = async (): Promise<User[]> => {
   const response = await axios.get<{ users: User[] }>(
     `${API_URL}/pending-users`,
@@ -37,7 +44,7 @@ export const rejectUser = async (id: number) => {
   await axios.post(`${API_URL}/reject/${id}`, {}, { headers: getAuthHeaders() });
 };
 
-// Delete user ✅
+// Delete user
 export const deleteUser = async (id: number) => {
   await axios.delete(`${API_URL}/delete/${id}`, { headers: getAuthHeaders() });
 };
