@@ -2,14 +2,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../context/usenotification";
+ // Fixed import path
 import "../style/notification.css";
 
 const NotificationBell: React.FC = () => {
   const { unreadCount } = useNotification();
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate("/notifications"); // ✅ go to notifications page
+  const handleClick = (): void => {
+    navigate("/notifications");
   };
 
   return (

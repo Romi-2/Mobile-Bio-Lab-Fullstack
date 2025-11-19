@@ -8,6 +8,8 @@
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   color: white;
+  max-height: 90vh; /* Limit container height */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .ble-container h2 {
@@ -102,11 +104,20 @@
   border-radius: 15px;
   margin: 1.5rem 0;
   backdrop-filter: blur(10px);
+  max-height: 300px; /* Limit height */
+  overflow-y: auto; /* Enable scrolling */
 }
 
 .services-info h4 {
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
+  position: sticky; /* Keep header visible while scrolling */
+  top: 0;
+  background: rgba(102, 126, 234, 0.8);
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem 1rem -0.5rem;
+  border-radius: 8px 8px 0 0;
+  backdrop-filter: blur(10px);
 }
 
 .services-info ul {
@@ -310,11 +321,20 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   backdrop-filter: blur(10px);
+  max-height: 400px; /* Limit height */
+  overflow-y: auto; /* Enable scrolling */
 }
 
 .info-section h4 {
   margin: 1.5rem 0 0.8rem 0;
   font-size: 1.1rem;
+  position: sticky; /* Keep headers visible while scrolling */
+  top: 0;
+  background: rgba(102, 126, 234, 0.8);
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem 1rem -0.5rem;
+  border-radius: 8px 8px 0 0;
+  backdrop-filter: blur(10px);
 }
 
 .info-section h4:first-child {
@@ -337,23 +357,44 @@
   opacity: 0.9;
 }
 
-/* Scrollbar styling */
-.history-list::-webkit-scrollbar {
+/* Scrollbar styling for all scrollable elements */
+.ble-container::-webkit-scrollbar,
+.services-info::-webkit-scrollbar,
+.history-list::-webkit-scrollbar,
+.info-section::-webkit-scrollbar {
   width: 8px;
 }
 
-.history-list::-webkit-scrollbar-track {
+.ble-container::-webkit-scrollbar-track,
+.services-info::-webkit-scrollbar-track,
+.history-list::-webkit-scrollbar-track,
+.info-section::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
-.history-list::-webkit-scrollbar-thumb {
+.ble-container::-webkit-scrollbar-thumb,
+.services-info::-webkit-scrollbar-thumb,
+.history-list::-webkit-scrollbar-thumb,
+.info-section::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
 }
 
-.history-list::-webkit-scrollbar-thumb:hover {
+.ble-container::-webkit-scrollbar-thumb:hover,
+.services-info::-webkit-scrollbar-thumb:hover,
+.history-list::-webkit-scrollbar-thumb:hover,
+.info-section::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
+}
+
+/* Firefox scrollbar styling */
+.ble-container,
+.services-info,
+.history-list,
+.info-section {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
 }
 
 /* Responsive design */
@@ -361,6 +402,7 @@
   .ble-container {
     padding: 1.5rem;
     margin: 1rem;
+    max-height: 85vh; /* Adjust for mobile */
   }
 
   .ble-container h2 {
@@ -379,4 +421,22 @@
   .sensor-data {
     grid-template-columns: 1fr;
   }
+
+  .services-info,
+  .info-section {
+    max-height: 250px; /* Smaller max-height on mobile */
+  }
+}
+
+/* Smooth scrolling for better UX */
+.ble-container {
+  scroll-behavior: smooth;
+}
+
+/* Sticky headers for better navigation while scrolling */
+.services-info h4,
+.info-section h4 {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }

@@ -14,7 +14,7 @@
   overflow: hidden;
 }
 
-/* 🔹 Transparent overlay effect */
+/* 🔹 Reduced overlay to show background image */
 .home-container::before {
   content: "";
   position: absolute;
@@ -22,7 +22,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(250, 251, 253, 0.242); /* adjust opacity: 0.3–0.6 for desired effect */
+   /* Reduced opacity to show background */
   z-index: 1;
 }
 
@@ -35,86 +35,290 @@
 /* Header */
 .home-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  max-width: 800px;
 }
 
 .home-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #0c0c0c;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1565c0; /* Blue color as requested */
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .home-header p {
-  font-size: 1.2rem;
-  color: #333;
+  font-size: 1.3rem;
+  color: #4a5568;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 /* Card section */
 .home-content.container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1200px;
 }
 
-/* Card style (same as slotReservationPage) */
+/* Enhanced Card style with consistent colors */
 .home-card {
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 16px;
-  padding: 30px;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(248, 250, 252, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 40px 30px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
+/* Card background overlay - consistent blue theme */
+.home-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(21, 101, 192, 0.08) 0%, 
+    rgba(25, 118, 210, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.home-card:hover::before {
+  opacity: 1;
+}
+
+/* Card hover effects */
 .home-card:hover {
-  transform: translateY(-6px);
-  border-color: #007bff;
-  box-shadow: 0 6px 18px rgba(0, 123, 255, 0.2);
-  background-color: #f8fbff;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(21, 101, 192, 0.2),
+    0 8px 25px rgba(21, 101, 192, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(21, 101, 192, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(248, 250, 252, 0.95) 100%);
 }
 
-/* Typography */
+/* Card icon styling */
 .home-card h2 {
-  color: #007bff;
-  font-size: 1.6rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1565c0; /* Blue color to match heading */
+  position: relative;
+  z-index: 2;
 }
 
+.home-card h2::before {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+  border-radius: 2px;
+  margin: 0 auto 1rem auto;
+  transition: all 0.3s ease;
+}
+
+.home-card:hover h2::before {
+  width: 80px;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+/* Card description */
 .home-card p {
-  color: #555;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  color: #5a6c7d;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+  font-weight: 400;
 }
 
-/* Button (reused style) */
+/* Enhanced Button with consistent blue theme */
 .select-button {
   width: 100%;
-  padding: 12px;
+  padding: 16px 24px;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
   color: white;
   font-weight: 600;
+  font-size: 1rem;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.3);
+}
+
+.select-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.select-button:hover::before {
+  left: 100%;
 }
 
 .select-button:hover {
-  background: linear-gradient(135deg, #0056b3, #003d80);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 10px 25px rgba(21, 101, 192, 0.4),
+    0 6px 15px rgba(21, 101, 192, 0.3);
 }
 
-/* Responsive */
+.select-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(21, 101, 192, 0.4);
+}
+
+/* Consistent blue accent for all cards */
+.home-card {
+  border-top: 4px solid #1565c0;
+}
+
+.home-card:hover {
+  border-color: #1976d2;
+}
+
+/* All cards use the same blue theme - removed individual colors */
+.home-card:nth-child(1),
+.home-card:nth-child(2),
+.home-card:nth-child(3) {
+  border-top: 4px solid #1565c0;
+}
+
+.home-card:nth-child(1):hover,
+.home-card:nth-child(2):hover,
+.home-card:nth-child(3):hover {
+  border-color: #1976d2;
+}
+
+.home-card:nth-child(1) .select-button,
+.home-card:nth-child(2) .select-button,
+.home-card:nth-child(3) .select-button {
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+}
+
+.home-card:nth-child(1) .select-button:hover,
+.home-card:nth-child(2) .select-button:hover,
+.home-card:nth-child(3) .select-button:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+/* Floating animation for cards */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.home-card {
+  animation: float 6s ease-in-out infinite;
+}
+
+.home-card:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.home-card:nth-child(2) {
+  animation-delay: 2s;
+}
+
+.home-card:nth-child(3) {
+  animation-delay: 4s;
+}
+
+.home-card:hover {
+  animation-play-state: paused;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .home-header h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+
+  .home-header p {
+    font-size: 1.1rem;
+  }
+
+  .home-content.container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    max-width: 400px;
+  }
+
+  .home-card {
+    padding: 30px 20px;
+    animation: none; /* Disable floating on mobile for better performance */
+  }
+
+  .home-card:hover {
+    transform: translateY(-5px) scale(1.01);
+  }
+
+  .home-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .home-card p {
+    font-size: 1rem;
+  }
+
+  .select-button {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .home-header {
+    margin-bottom: 2rem;
+  }
+
+  .home-header h1 {
+    font-size: 1.8rem;
   }
 
   .home-header p {
@@ -122,11 +326,38 @@
   }
 
   .home-content.container {
-    grid-template-columns: 1fr;
     gap: 20px;
   }
 
   .home-card {
-    padding: 24px;
+    padding: 25px 15px;
   }
+}
+
+/* Loading animation for cards */
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.home-card {
+  animation: cardEntrance 0.6s ease-out;
+}
+
+.home-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.home-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.home-card:nth-child(3) {
+  animation-delay: 0.3s;
 }
