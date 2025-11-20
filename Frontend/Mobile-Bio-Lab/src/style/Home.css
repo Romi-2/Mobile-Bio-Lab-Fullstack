@@ -1,4 +1,19 @@
-/* Container and layout */
+/* ---------------- Home.css ---------------- */
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Container and layout - NO SCROLL ON DESKTOP */
 .home-container {
   min-height: 100vh;
   width: 100%;
@@ -11,7 +26,7 @@
   flex-direction: column;
   align-items: center;
   padding: 2rem 1rem;
-  overflow: hidden;
+  /* No overflow-y on desktop - let content fit naturally */
 }
 
 /* 🔹 Reduced overlay to show background image */
@@ -22,7 +37,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-   /* Reduced opacity to show background */
+  /* Reduced opacity to show background */
   z-index: 1;
 }
 
@@ -42,7 +57,7 @@
 .home-header h1 {
   font-size: 3rem;
   font-weight: 800;
-  color: #1565c0; /* Blue color as requested */
+  color: #1565c0;
   margin-bottom: 1rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -122,7 +137,7 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #1565c0; /* Blue color to match heading */
+  color: #1565c0;
   position: relative;
   z-index: 2;
 }
@@ -214,7 +229,7 @@
   border-color: #1976d2;
 }
 
-/* All cards use the same blue theme - removed individual colors */
+/* All cards use the same blue theme */
 .home-card:nth-child(1),
 .home-card:nth-child(2),
 .home-card:nth-child(3) {
@@ -269,71 +284,6 @@
   animation-play-state: paused;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .home-header h1 {
-    font-size: 2.2rem;
-  }
-
-  .home-header p {
-    font-size: 1.1rem;
-  }
-
-  .home-content.container {
-    grid-template-columns: 1fr;
-    gap: 25px;
-    max-width: 400px;
-  }
-
-  .home-card {
-    padding: 30px 20px;
-    animation: none; /* Disable floating on mobile for better performance */
-  }
-
-  .home-card:hover {
-    transform: translateY(-5px) scale(1.01);
-  }
-
-  .home-card h2 {
-    font-size: 1.6rem;
-  }
-
-  .home-card p {
-    font-size: 1rem;
-  }
-
-  .select-button {
-    padding: 14px 20px;
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .home-container {
-    padding: 1.5rem 1rem;
-  }
-
-  .home-header {
-    margin-bottom: 2rem;
-  }
-
-  .home-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .home-header p {
-    font-size: 1rem;
-  }
-
-  .home-content.container {
-    gap: 20px;
-  }
-
-  .home-card {
-    padding: 25px 15px;
-  }
-}
-
 /* Loading animation for cards */
 @keyframes cardEntrance {
   from {
@@ -360,4 +310,275 @@
 
 .home-card:nth-child(3) {
   animation-delay: 0.3s;
+}
+
+/* ========== DESKTOP STYLES (1025px and above) ========== */
+@media (min-width: 1025px) {
+  .home-container {
+    padding: 3rem 2rem;
+    min-height: 100vh;
+    /* NO SCROLLING ON DESKTOP - content should fit naturally */
+    overflow-y: visible;
+  }
+
+  .home-header h1 {
+    font-size: 3.5rem;
+  }
+
+  .home-header p {
+    font-size: 1.4rem;
+  }
+
+  .home-content.container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1400px;
+  }
+
+  .home-card {
+    padding: 50px 35px;
+  }
+
+  .home-card h2 {
+    font-size: 2rem;
+  }
+
+  .home-card p {
+    font-size: 1.2rem;
+  }
+
+  .select-button {
+    padding: 18px 28px;
+    font-size: 1.1rem;
+  }
+}
+
+/* ========== TABLET STYLES (769px - 1024px) ========== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .home-container {
+    padding: 2.5rem 1.5rem;
+    min-height: 100vh;
+    /* ENABLE SCROLLING ON TABLET */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-header h1 {
+    font-size: 2.8rem;
+  }
+
+  .home-header p {
+    font-size: 1.2rem;
+  }
+
+  .home-content.container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    max-width: 900px;
+    margin-bottom: 3rem; /* Extra space for scrolling */
+  }
+
+  .home-card {
+    padding: 35px 25px;
+  }
+
+  .home-card h2 {
+    font-size: 1.7rem;
+  }
+
+  .home-card p {
+    font-size: 1.1rem;
+  }
+
+  .select-button {
+    padding: 16px 24px;
+    font-size: 1rem;
+  }
+
+  /* Reduce floating animation on tablet for better performance */
+  .home-card {
+    animation: float 8s ease-in-out infinite;
+  }
+}
+
+/* ========== MOBILE STYLES (768px and below) ========== */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 2rem 1rem;
+    min-height: 100vh;
+    /* ENABLE SCROLLING ON MOBILE */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-header {
+    margin-bottom: 2rem;
+  }
+
+  .home-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .home-header p {
+    font-size: 1.1rem;
+  }
+
+  .home-content.container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    max-width: 400px;
+    margin-bottom: 3rem; /* Extra space for scrolling */
+  }
+
+  .home-card {
+    padding: 30px 20px;
+    animation: none; /* Disable floating on mobile for better performance */
+  }
+
+  .home-card:hover {
+    transform: translateY(-5px) scale(1.01);
+  }
+
+  .home-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .home-card p {
+    font-size: 1rem;
+  }
+
+  .select-button {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+/* ========== SMALL MOBILE STYLES (480px and below) ========== */
+@media (max-width: 480px) {
+  .home-container {
+    padding: 1.5rem 0.8rem;
+    min-height: 100vh;
+    /* SCROLLING ENABLED ON SMALL MOBILE */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-header {
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .home-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .home-header p {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .home-content.container {
+    gap: 20px;
+    max-width: 100%;
+    margin-bottom: 2rem; /* Extra space for scrolling */
+  }
+
+  .home-card {
+    padding: 25px 15px;
+    margin: 0 0.5rem;
+  }
+
+  .home-card h2 {
+    font-size: 1.4rem;
+  }
+
+  .home-card p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .select-button {
+    padding: 12px 18px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ========== EXTRA SMALL MOBILE STYLES (360px and below) ========== */
+@media (max-width: 360px) {
+  .home-container {
+    padding: 1rem 0.5rem;
+    /* SCROLLING ENABLED ON EXTRA SMALL MOBILE */
+    overflow-y: auto;
+  }
+
+  .home-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .home-header p {
+    font-size: 0.9rem;
+  }
+
+  .home-card {
+    padding: 20px 12px;
+  }
+
+  .home-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .home-card p {
+    font-size: 0.85rem;
+  }
+
+  .select-button {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ========== SCROLLING FIXES ========== */
+/* Ensure body allows scrolling on mobile/tablet */
+@media (max-width: 1024px) {
+  body {
+    overflow-y: auto;
+    height: auto;
+  }
+  
+  html {
+    overflow-y: auto;
+  }
+}
+
+/* Desktop - no scrolling */
+@media (min-width: 1025px) {
+  body {
+    overflow-y: visible;
+  }
+  
+  html {
+    overflow-y: visible;
+  }
+}
+
+/* iOS Safari specific scrolling improvements for mobile/tablet */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1024px) {
+    .home-container {
+      height: 100vh;
+      height: -webkit-fill-available;
+    }
+  }
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .home-card:hover {
+    transform: none;
+    animation-play-state: running;
+  }
+  
+  .select-button:hover {
+    transform: none;
+  }
 }
