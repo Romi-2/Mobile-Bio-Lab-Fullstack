@@ -26,6 +26,9 @@ import shareRoute from "./routes/shareRoute.js";
 import sampleRoute from "./routes/sampleRoute.js";
 import protocolRoute from "./routes/protocolRoute.js";
 import notificationRoute from "./routes/notificationRoute.js";
+import userReservationRoute from './routes/userreservationRoute.js';
+
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -68,6 +71,9 @@ app.use("/api/share", shareRoute);
 app.use("/api/sample", sampleRoute);
 app.use("/api/protocols", protocolRoute);
 app.use("/api/notifications", notificationRoute);
+app.use('/api/reservations', userReservationRoute);
+
+
 // Test route
 app.get("/", (req, res) => res.send("🚀 API is running..."));
 
