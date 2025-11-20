@@ -54,7 +54,17 @@ const UserDashboard: React.FC = () => {
                 Delete Account
               </NavLink>
             </li>
-
+            <li>
+              <NavLink
+                to="my-reservations"
+                className={({ isActive }) =>
+                  `menu-link ${isActive ? "active" : ""}`
+                }
+                onClick={closeSidebar}
+              >
+                Reservation Status
+              </NavLink>
+            </li>
             <li>
               <NavLink
                 to="/userdashboard/sample/1"

@@ -33,7 +33,8 @@ import NotificationPage from "./pages/NotificationPage";
 import AdminReservations from "./components/AdminReservation";
 import Usershome from "./components/Usershome";
 import DeleteAccount from "./components/DeleteAccount";
-
+// In your App.tsx or routing file
+import ReservationStatus from './components/ReservationStatus';
 
 function AppContent() {
   const location = useLocation();
@@ -91,6 +92,7 @@ function AppContent() {
               <Route path="protocols" element={<ProtocolsList />} />
               <Route path="sample/:id" element={<SamplePage />} />
               <Route path="delete-account" element={<DeleteAccount />} />
+              <Route path="my-reservations" element={<ReservationStatus />} />
             </Route>
 
 
