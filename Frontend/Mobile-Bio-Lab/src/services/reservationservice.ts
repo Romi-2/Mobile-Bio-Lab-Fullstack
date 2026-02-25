@@ -1,3 +1,4 @@
+// services/reservationservice.ts
 import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/reservations";
@@ -59,7 +60,7 @@ export const cancelReservation = async (reservationId: number): Promise<void> =>
 };
 
 // Create a new reservation
-export const createReservation = async (data: Partial<Reservation>) => {
+export const createReservation = async (data: Partial<Reservation>): Promise<{ message?: string; success?: boolean }> => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
 

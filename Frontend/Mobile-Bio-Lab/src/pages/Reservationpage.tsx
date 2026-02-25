@@ -1,30 +1,34 @@
-// frontend/src/pages/ReservationPage.tsx
+// ReservationPage.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createReservation } from "../services/reservationservice";
-import { getAvailableSlots } from "../services/slotservice"; // ✅ use slotservice version
-import type { Slot } from "../services/slotservice";
-import QRReader from "../components/QRReader";
 import "../style/Reservation.css";
+import QRReader from "../components/QRReader";
+
+interface Slot {
+  id: number;
+  city: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  available_seats: number;
+}
 
 const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // ✅ Get selectedCity and slots passed from previous page
   const { selectedCity, citySlots } = location.state || {};
 
-  // States
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [allAvailableSlots, setAllAvailableSlots] = useState<Slot[]>([]);
+  const [allAvailableSlots, setAllAvailableSlots] = useState<Slot[]>(citySlots || []);
   const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [scanMethod, setScanMethod] = useState<"camera" | "upload" | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
-  // Form Data
   const [formData, setFormData] = useState({
     user_id: 1,
     slot_id: 0,
@@ -42,74 +46,29 @@ const ReservationPage: React.FC = () => {
     salinity: "",
   });
 
-  // Add this state near the top
-  const [message, setMessage] = useState<string | null>(null);
-
-  // Fetch available slots (based on selected city)
   useEffect(() => {
-    const fetchAvailable = async () => {
-      try {
-        setLoading(true);
-        let data: Slot[] = [];
+    if (allAvailableSlots.length > 0) {
+      const uniqueDates = [...new Set(allAvailableSlots.map((slot) => slot.date))];
+      setAvailableDates(uniqueDates);
+    }
+  }, [allAvailableSlots]);
 
-        if (citySlots && citySlots.length > 0) {
-          console.log("✅ Using slots from navigation:", citySlots);
-          data = citySlots;
-        } else {
-          console.log("🌐 Fetching slots from API...");
-          data = await getAvailableSlots();
-        }
-
-        // ✅ Filter by selected city (case-insensitive)
-        if (selectedCity) {
-          data = data.filter(
-            (slot) => slot.city.toLowerCase() === selectedCity.toLowerCase()
-          );
-          console.log(`Filtered slots for city: ${selectedCity}`, data);
-        }
-
-        setAllAvailableSlots(data);
-
-        // ✅ Extract unique available dates
-        if (data.length > 0) {
-          const uniqueDates = [...new Set(data.map((slot) => slot.date))];
-          console.log("🗓️ availableDates:", uniqueDates);
-          setAvailableDates(uniqueDates);
-        } else {
-          console.warn("⚠️ No available slots found");
-          setAvailableDates([]);
-        }
-      } catch (err) {
-        console.error("Error fetching available slots:", err);
-        setAvailableDates([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAvailable();
-  }, [selectedCity, citySlots]);
-
-  // Handle date change
   const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const date = e.target.value;
     setSelectedDate(date);
     setSelectedTime("");
-
     setFormData((prev) => ({ ...prev, reservation_date: date }));
 
     if (date) {
       const timesForDate = allAvailableSlots
-        .filter((slot) => slot.date === date)
+        .filter((slot) => slot.date === date && slot.available_seats > 0)
         .map((slot) => `${slot.start_time} TO ${slot.end_time}`);
-
       setAvailableTimes(timesForDate);
     } else {
       setAvailableTimes([]);
     }
   };
 
-  // Handle time change
   const handleTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const time = e.target.value;
     setSelectedTime(time);
@@ -119,20 +78,15 @@ const ReservationPage: React.FC = () => {
       const selectedSlot = allAvailableSlots.find(
         (slot) => slot.date === selectedDate && `${slot.start_time} TO ${slot.end_time}` === time
       );
-
-      if (selectedSlot) {
-        setFormData((prev) => ({ ...prev, slot_id: selectedSlot.id }));
-      }
+      if (selectedSlot) setFormData((prev) => ({ ...prev, slot_id: selectedSlot.id }));
     }
   };
 
-  // Handle form input changes
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle QR Result
   const handleQRResult = (data: string) => {
     try {
       const qrData = JSON.parse(data);
@@ -153,7 +107,6 @@ const ReservationPage: React.FC = () => {
     setShowQRModal(false);
   };
 
-  // Update handleSubmit()
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -175,10 +128,18 @@ const ReservationPage: React.FC = () => {
 
     try {
       const res = await createReservation(formData);
-      console.log("✅ Reservation response:", res);
-
       if (res?.message || res?.success) {
         setMessage("✅ Reservation created successfully!");
+
+        // ✅ Update local slot availability
+        setAllAvailableSlots((prevSlots) =>
+          prevSlots.map((slot) =>
+            slot.id === formData.slot_id
+              ? { ...slot, available_seats: slot.available_seats - 1 }
+              : slot
+          )
+        );
+
         setTimeout(() => navigate("/reservation-success"), 1500);
       } else {
         setMessage("❌ Failed to create reservation. Please try again.");
@@ -195,7 +156,6 @@ const ReservationPage: React.FC = () => {
   return (
     <div className="reservation-container">
       <div className="reservation-page">
-        {/* ✅ Show selected city in heading */}
         <h2>Sample Reservation Form {selectedCity && `- ${selectedCity}`}</h2>
 
         <form onSubmit={handleSubmit} className="reservation-form">
@@ -228,21 +188,19 @@ const ReservationPage: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <div className="input-with-icon">
-                  <select
-                    name="sample_type"
-                    className="form-dropdown"
-                    value={formData.sample_type}
-                    onChange={handleFormChange}
-                    required
-                  >
-                    <option value="">Select Sample Type</option>
-                    <option value="Water">Water</option>
-                    <option value="Soil">Soil</option>
-                    <option value="Plant">Plant</option>
-                    <option value="Biological Fluids">Biological Fluids</option>
-                  </select>
-                </div>
+                <select
+                  name="sample_type"
+                  className="form-dropdown"
+                  value={formData.sample_type}
+                  onChange={handleFormChange}
+                  required
+                >
+                  <option value="">Select Sample Type</option>
+                  <option value="Water">Water</option>
+                  <option value="Soil">Soil</option>
+                  <option value="Plant">Plant</option>
+                  <option value="Biological Fluids">Biological Fluids</option>
+                </select>
               </div>
             </div>
           </div>
@@ -253,33 +211,36 @@ const ReservationPage: React.FC = () => {
               <h3>📅 Reservation Schedule</h3>
             </div>
             <div className="card-body">
-              <div className="form-group">
-                <select className="form-dropdown" value={selectedDate} onChange={handleDateChange} required>
-                  <option value="">Select Date</option>
-                  {availableDates.map((date) => (
-                    <option key={date} value={date}>
-                      {date}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="form-dropdown"
+                value={selectedDate}
+                onChange={handleDateChange}
+                required
+              >
+                <option value="">Select Date</option>
+                {availableDates.map((date) => (
+                  <option key={date} value={date}>
+                    {date}
+                  </option>
+                ))}
+              </select>
 
-              <div className="form-group">
-                <select
-                  className="form-dropdown"
-                  value={selectedTime}
-                  onChange={handleTimeChange}
-                  required
-                  disabled={!selectedDate}
-                >
-                  <option value="">{selectedDate ? "Select Time" : "Select Date First"}</option>
-                  {availableTimes.map((time, i) => (
-                    <option key={i} value={time}>
-                      {time}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="form-dropdown"
+                value={selectedTime}
+                onChange={handleTimeChange}
+                required
+                disabled={!selectedDate}
+              >
+                <option value="">
+                  {selectedDate ? "Select Time" : "Select Date First"}
+                </option>
+                {availableTimes.map((time, i) => (
+                  <option key={i} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -289,16 +250,14 @@ const ReservationPage: React.FC = () => {
               <h3>📝 Collection Details</h3>
             </div>
             <div className="card-body">
-              <div className="form-group">
-                <input
-                  type="text"
-                  name="geo_location"
-                  value={formData.geo_location}
-                  onChange={handleFormChange}
-                  placeholder="Geographic Location"
-                  className="form-input"
-                />
-              </div>
+              <input
+                type="text"
+                name="geo_location"
+                value={formData.geo_location}
+                onChange={handleFormChange}
+                placeholder="Geographic Location"
+                className="form-input"
+              />
             </div>
           </div>
 
@@ -308,40 +267,34 @@ const ReservationPage: React.FC = () => {
               <h3>🔬 Field Conditions</h3>
             </div>
             <div className="card-body">
-              <div className="form-group">
-                <input
-                  type="number"
-                  name="temperature"
-                  value={formData.temperature}
-                  onChange={handleFormChange}
-                  placeholder="Temperature (°C)"
-                  className="form-input"
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="number"
-                  name="pH"
-                  value={formData.pH}
-                  onChange={handleFormChange}
-                  placeholder="pH Level"
-                  min="0"
-                  max="14"
-                  step="0.1"
-                  className="form-input"
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="number"
-                  name="salinity"
-                  value={formData.salinity}
-                  onChange={handleFormChange}
-                  placeholder="Salinity"
-                  step="0.1"
-                  className="form-input"
-                />
-              </div>
+              <input
+                type="number"
+                name="temperature"
+                value={formData.temperature}
+                onChange={handleFormChange}
+                placeholder="Temperature (°C)"
+                className="form-input"
+              />
+              <input
+                type="number"
+                name="pH"
+                value={formData.pH}
+                onChange={handleFormChange}
+                placeholder="pH Level"
+                min="0"
+                max="14"
+                step="0.1"
+                className="form-input"
+              />
+              <input
+                type="number"
+                name="salinity"
+                value={formData.salinity}
+                onChange={handleFormChange}
+                placeholder="Salinity"
+                step="0.1"
+                className="form-input"
+              />
             </div>
           </div>
 
@@ -349,19 +302,13 @@ const ReservationPage: React.FC = () => {
             {loading ? "⏳ Processing..." : "✅ Submit Reservation"}
           </button>
         </form>
-        
-        {/* ✅ Dropdown message (success/error notice) */}
+
         {message && (
-          <div
-            className={`dropdown-message ${
-              message.startsWith("✅") ? "success" : "error"
-            }`}
-          >
+          <div className={`dropdown-message ${message.startsWith("✅") ? "success" : "error"}`}>
             {message}
           </div>
         )}
 
-        {/* QR Modal */}
         {showQRModal && (
           <div className="qr-modal">
             <div className="qr-modal-content">

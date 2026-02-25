@@ -1,3 +1,4 @@
+// SlotReservationPage.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAvailableSlots } from "../services/slotservice";
@@ -24,7 +25,6 @@ const SlotReservationPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
-  // ✅ Fetch slots
   useEffect(() => {
     const fetchSlots = async () => {
       try {
@@ -39,34 +39,35 @@ const SlotReservationPage: React.FC = () => {
         setLoading(false);
       }
     };
+
     fetchSlots();
   }, []);
 
-  // ✅ Group by city
+  // Group slots by city, only include slots with seats > 0
   const groupSlotsByCity = (slots: Slot[]): CitySlot[] => {
     const cityMap = new Map<string, CitySlot>();
     slots.forEach((slot) => {
+      if (slot.available_seats <= 0) return; // skip fully booked
+
       if (!cityMap.has(slot.city)) {
-        cityMap.set(slot.city, {
-          city: slot.city,
-          totalSeats: 0,
-          slots: [],
-        });
+        cityMap.set(slot.city, { city: slot.city, totalSeats: 0, slots: [] });
       }
+
       const citySlot = cityMap.get(slot.city)!;
       citySlot.slots.push(slot);
       citySlot.totalSeats += slot.available_seats;
     });
-    return Array.from(cityMap.values()).filter((c) => c.totalSeats > 0);
+
+    return Array.from(cityMap.values());
   };
 
-  // ✅ Handle city select
   const handleCitySelect = (city: string) => {
     setSelectedCity(city);
     const citySlotData = citySlots.find((cs) => cs.city === city);
     if (citySlotData && citySlotData.slots.length > 0) {
+      const availableSlots = citySlotData.slots.filter(s => s.available_seats > 0);
       navigate("/reservation", {
-        state: { selectedCity: city, citySlots: citySlotData.slots },
+        state: { selectedCity: city, citySlots: availableSlots },
       });
     } else {
       alert("No available slots for this city");
@@ -87,17 +88,13 @@ const SlotReservationPage: React.FC = () => {
 
         <div className="cities-container">
           {citySlots.length === 0 && !loading && (
-            <p className="no-cities-message">
-              No cities available for reservation!
-            </p>
+            <p className="no-cities-message">No cities available for reservation!</p>
           )}
 
           {citySlots.map((citySlot) => (
             <div
               key={citySlot.city}
-              className={`city-card ${
-                selectedCity === citySlot.city ? "selected" : ""
-              }`}
+              className={`city-card ${selectedCity === citySlot.city ? "selected" : ""}`}
               onClick={() => handleCitySelect(citySlot.city)}
             >
               <div className="city-header">

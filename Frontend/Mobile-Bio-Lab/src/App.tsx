@@ -62,7 +62,7 @@ function AppContent() {
           {/* Sample related */}
           <Route path="/dashboard/share/:id" element={<ShareSample />} />
           <Route path="/dashboard/sample/:id" element={<SamplePage />} />
-            
+            <Route path="/sample/:id" element={<SamplePage />} />
           <Route path="admin/reservations" element={<AdminReservations />} /> 
           
           {/* Reservation */}
