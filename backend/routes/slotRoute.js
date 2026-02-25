@@ -53,6 +53,30 @@ router.get("/available", async (req, res) => {
    ✅ GET /api/slots/:id
    Fetch a single slot by ID
    ========================================================== */
+
+   // PATCH /api/slots/:id/book
+router.patch("/:id/book", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query(
+      `UPDATE available_slots
+       SET isBooked = 1, available_seats = GREATEST(available_seats - 1, 0)
+       WHERE id = ? AND available_seats > 0`,
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Slot not found or fully booked" });
+    }
+
+    res.status(200).json({ success: true, message: "Slot successfully booked" });
+  } catch (err) {
+    console.error("Error booking slot:", err.message);
+    res.status(500).json({ error: "Database error while booking slot" });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
