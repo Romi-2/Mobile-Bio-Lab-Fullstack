@@ -211,6 +211,7 @@ const ReservationPage: React.FC = () => {
               <h3>📅 Reservation Schedule</h3>
             </div>
             <div className="card-body">
+                <div className="form-row">
               <select
                 className="form-dropdown"
                 value={selectedDate}
@@ -241,6 +242,7 @@ const ReservationPage: React.FC = () => {
                   </option>
                 ))}
               </select>
+            </div>
             </div>
           </div>
 
