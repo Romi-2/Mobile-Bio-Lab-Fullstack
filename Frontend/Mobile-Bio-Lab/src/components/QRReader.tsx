@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import QrScanner from "qr-scanner";
+import "../style/QRReader.css"; // Ensure you have this CSS file for styling
 
 interface QRReaderProps {
   onResult: (data: string) => void;
@@ -12,11 +13,22 @@ const QRReader: React.FC<QRReaderProps> = ({ onResult }) => {
 
   const startCamera = () => {
     if (videoRef.current) {
-      const scanner = new QrScanner(videoRef.current, (result) => {
-        onResult(result);
-      });
-      scanner.start().catch(() => {
-        setError("❌ Cannot access camera. Use upload instead.");
+      const scanner = new QrScanner(
+        videoRef.current,
+        (result) => {
+          onResult(result.data); // ✅ pass only the string
+        },
+        {
+          onDecodeError: (err) => {
+            console.log("Decode error:", err);
+          },
+        }
+      );
+
+      scanner.start().catch((err) => {
+        console.error("Camera error:", err);
+        setError("❌ Cannot access camera. Using upload instead.");
+        setMode("upload"); // fallback automatically
       });
     }
   };
@@ -24,39 +36,50 @@ const QRReader: React.FC<QRReaderProps> = ({ onResult }) => {
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
     try {
-      const result = await QrScanner.scanImage(e.target.files[0]);
-      onResult(result);
+      const result = await QrScanner.scanImage(e.target.files[0], { returnDetailedScanResult: true });
+      onResult(result.data); // ✅ pass only the string
     } catch {
       setError("❌ Failed to decode QR image");
     }
   };
 
+  const resetMode = () => {
+    setMode(null);
+    setError("");
+  };
+
   return (
-    <div className="qr-reader">
+    <div className="qr-reader-container">
       {!mode && (
         <div className="qr-choice">
-          <button onClick={() => { setMode("camera"); startCamera(); }}>
+          <button className="qr-btn" onClick={() => { setMode("camera"); startCamera(); }}>
             📷 Use Camera
           </button>
-          <button onClick={() => setMode("upload")}>
+          <button className="qr-btn" onClick={() => setMode("upload")}>
             📂 Upload Image
           </button>
         </div>
       )}
 
       {mode === "camera" && (
-        <div>
-          <video ref={videoRef} style={{ width: "100%", border: "1px solid #ccc" }} />
+        <div className="qr-camera">
+          <video ref={videoRef} className="qr-video" />
+          <button className="qr-back-btn" onClick={resetMode}>
+            🔙 Back
+          </button>
         </div>
       )}
 
       {mode === "upload" && (
-        <div>
-          <input type="file" accept="image/*" onChange={handleUpload} />
+        <div className="qr-upload">
+          <input type="file" accept="image/*" onChange={handleUpload} className="qr-file-input" />
+          <button className="qr-back-btn" onClick={resetMode}>
+            🔙 Back
+          </button>
         </div>
       )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="qr-error">{error}</p>}
     </div>
   );
 };

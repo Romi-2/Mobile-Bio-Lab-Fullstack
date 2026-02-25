@@ -1,0 +1,70 @@
+.qr-reader-container {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 15px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  text-align: center;
+  background: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  font-family: sans-serif;
+}
+
+.qr-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qr-btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: #007bff;
+  color: #fff;
+  transition: background 0.3s;
+}
+
+.qr-btn:hover {
+  background: #0056b3;
+}
+
+.qr-camera,
+.qr-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.qr-video {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.qr-file-input {
+  padding: 5px;
+}
+
+.qr-back-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #6c757d;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.qr-back-btn:hover {
+  background: #495057;
+}
+
+.qr-error {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+}

@@ -320,15 +320,16 @@ const ReservationPage: React.FC = () => {
               <h3>Scan QR Code</h3>
               {!scanMethod ? (
                 <div className="scan-options">
-                  <button onClick={() => setScanMethod("camera")}>📷 Use Camera</button>
-                  <button onClick={() => setScanMethod("upload")}>📂 Upload File</button>
+                  <button className="scan-option-btn" onClick={() => setScanMethod("camera")}> 📷 Use Camera</button>
+                  <button className="scan-option-btn" onClick={() => setScanMethod("upload")}> 📂 Upload File</button>
                 </div>
               ) : scanMethod === "camera" ? (
                 <QRReader onResult={handleQRResult} />
               ) : (
                 <div>
                   <input type="file" accept="image/*" />
-                  <button onClick={() => setScanMethod(null)}>Back</button>
+                  <button className="scan-option-btn" onClick={() => setScanMethod(null)}>Upload</button>
+                  <button className="scan-option-btn" onClick={() => setScanMethod(null)}>Back</button>
                 </div>
               )}
             </div>
