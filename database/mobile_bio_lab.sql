@@ -36,46 +36,46 @@ CREATE TABLE IF NOT EXISTS `available_slots` (
 -- Dumping data for table mobile_bio_lab.available_slots: ~40 rows (approximately)
 DELETE FROM `available_slots`;
 INSERT INTO `available_slots` (`id`, `city`, `date`, `start_time`, `end_time`, `isBooked`, `created_at`, `updated_at`, `available_seats`) VALUES
-	(9, 'Lahore', '2025-10-06', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-05 10:15:22', 8),
-	(10, 'Lahore', '2025-10-06', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(11, 'Lahore', '2025-10-06', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-11-20 06:20:30', 6),
-	(12, 'Lahore', '2025-10-06', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(13, 'Lahore', '2025-10-06', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-11-18 06:46:55', 9),
-	(14, 'Lahore', '2025-10-07', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(15, 'Lahore', '2025-10-07', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-11-16 10:11:19', 9),
-	(16, 'Lahore', '2025-10-07', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(17, 'Lahore', '2025-10-07', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-05 09:35:17', 9),
-	(18, 'Lahore', '2025-10-07', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(19, 'Islamabad', '2025-10-08', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(20, 'Islamabad', '2025-10-08', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(21, 'Islamabad', '2025-10-08', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(22, 'Islamabad', '2025-10-08', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(23, 'Islamabad', '2025-10-08', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(24, 'Islamabad', '2025-10-09', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(25, 'Islamabad', '2025-10-09', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(26, 'Islamabad', '2025-10-09', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-11-19 11:05:00', 8),
-	(27, 'Islamabad', '2025-10-09', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(28, 'Islamabad', '2025-10-09', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(29, 'Peshawar', '2025-10-10', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(30, 'Peshawar', '2025-10-10', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(31, 'Peshawar', '2025-10-10', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(32, 'Peshawar', '2025-10-10', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(33, 'Peshawar', '2025-10-10', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(34, 'Peshawar', '2025-10-11', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(35, 'Peshawar', '2025-10-11', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(36, 'Peshawar', '2025-10-11', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(37, 'Peshawar', '2025-10-11', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-18 09:56:47', 9),
-	(38, 'Peshawar', '2025-10-11', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(39, 'Quetta', '2025-10-12', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(40, 'Quetta', '2025-10-12', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(41, 'Quetta', '2025-10-12', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-10-18 09:57:21', 9),
-	(42, 'Quetta', '2025-10-12', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(43, 'Quetta', '2025-10-12', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(44, 'Quetta', '2025-10-13', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(45, 'Quetta', '2025-10-13', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(46, 'Quetta', '2025-10-13', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2025-10-18 09:55:42', 9),
-	(47, 'Quetta', '2025-10-13', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10),
-	(48, 'Quetta', '2025-10-13', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2025-10-02 10:17:28', 10);
+	(9, 'Lahore', '2026-03-07', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:38', 10),
+	(10, 'Lahore', '2026-03-07', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 09:13:42', 9),
+	(11, 'Lahore', '2026-03-07', '12:00:00', '13:30:00', 1, '2025-10-02 10:17:28', '2026-02-25 07:31:51', 9),
+	(12, 'Lahore', '2026-03-07', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:05:00', 10),
+	(13, 'Lahore', '2026-03-07', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:46', 10),
+	(14, 'Lahore', '2026-03-08', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:10', 10),
+	(15, 'Lahore', '2026-03-08', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:49', 10),
+	(16, 'Lahore', '2026-03-08', '12:00:00', '13:30:00', 1, '2025-10-02 10:17:28', '2026-02-25 07:31:55', 9),
+	(17, 'Lahore', '2026-03-08', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:51', 10),
+	(18, 'Lahore', '2026-03-08', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:19', 10),
+	(19, 'Islamabad', '2026-03-09', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:32', 10),
+	(20, 'Islamabad', '2026-03-09', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:33', 10),
+	(21, 'Islamabad', '2026-03-09', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 09:19:35', 9),
+	(22, 'Islamabad', '2026-03-09', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:37', 10),
+	(23, 'Islamabad', '2026-03-09', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:43', 10),
+	(24, 'Islamabad', '2026-03-10', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:53', 10),
+	(25, 'Islamabad', '2026-03-10', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:55', 10),
+	(26, 'Islamabad', '2026-03-10', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:56', 10),
+	(27, 'Islamabad', '2026-03-10', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:06:58', 10),
+	(28, 'Islamabad', '2026-03-10', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:02', 10),
+	(29, 'Peshawar', '2026-03-11', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:11', 10),
+	(30, 'Peshawar', '2026-03-11', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:13', 10),
+	(31, 'Peshawar', '2026-03-11', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:14', 10),
+	(32, 'Peshawar', '2026-03-11', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:16', 10),
+	(33, 'Peshawar', '2026-03-11', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:20', 10),
+	(34, 'Peshawar', '2026-03-12', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:40', 10),
+	(35, 'Peshawar', '2026-03-12', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:42', 10),
+	(36, 'Peshawar', '2026-03-12', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:46', 10),
+	(37, 'Peshawar', '2026-03-12', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:10:41', 10),
+	(38, 'Peshawar', '2026-03-12', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:50', 10),
+	(39, 'Quetta', '2026-03-13', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:07:58', 10),
+	(40, 'Quetta', '2026-03-13', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:00', 10),
+	(41, 'Quetta', '2026-03-13', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:59', 10),
+	(42, 'Quetta', '2026-03-13', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:05', 10),
+	(43, 'Quetta', '2026-03-13', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:07', 10),
+	(44, 'Quetta', '2026-03-14', '08:00:00', '09:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:16', 10),
+	(45, 'Quetta', '2026-03-14', '10:00:00', '11:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:18', 10),
+	(46, 'Quetta', '2026-03-14', '12:00:00', '13:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:10:04', 10),
+	(47, 'Quetta', '2026-03-14', '14:00:00', '15:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:21', 10),
+	(48, 'Quetta', '2026-03-14', '16:00:00', '17:30:00', 0, '2025-10-02 10:17:28', '2026-02-25 07:08:26', 10);
 
 -- Dumping structure for table mobile_bio_lab.notifications
 CREATE TABLE IF NOT EXISTS `notifications` (
@@ -122,9 +122,9 @@ CREATE TABLE IF NOT EXISTS `refresh_tokens` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `refresh_tokens_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table mobile_bio_lab.refresh_tokens: ~118 rows (approximately)
+-- Dumping data for table mobile_bio_lab.refresh_tokens: ~123 rows (approximately)
 DELETE FROM `refresh_tokens`;
 INSERT INTO `refresh_tokens` (`id`, `userId`, `token`, `expiry`) VALUES
 	(1, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzI4MjMyNiwiZXhwIjoxNzYzODg3MTI2fQ.ngM-EknKbpIpJR3LRZVNY4dKUQve2gsGv32dvRaiCjE', '2025-11-23 13:38:46'),
@@ -203,17 +203,13 @@ INSERT INTO `refresh_tokens` (`id`, `userId`, `token`, `expiry`) VALUES
 	(89, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ1NzI0MiwiZXhwIjoxNzY0MDYyMDQyfQ.t2tGjY_cIdPmCGsCCDKpVe1Iy5KMCQ60RIutIIP9Kho', '2025-11-25 14:14:02'),
 	(90, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ1NzMxNywiZXhwIjoxNzY0MDYyMTE3fQ.PKUhfyeawtGX0gPpZ93334zL3TNl_6etq4L6AUj2B78', '2025-11-25 14:15:17'),
 	(91, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ1NzMzNywiZXhwIjoxNzY0MDYyMTM3fQ.7_J2N3FPqZi9K6wnAiSleYf8NGpV9vFILkbD37cCOOM', '2025-11-25 14:15:37'),
-	(92, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzQ1NzM4MSwiZXhwIjoxNzY0MDYyMTgxfQ.8Eca11JX1pz12zRNayYMGNl6v5LnbyLbildnSsouvIw', '2025-11-25 14:16:21'),
 	(93, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ1ODg2OSwiZXhwIjoxNzY0MDYzNjY5fQ.nrh7-49Az8T0vzW2_oSeaLM2MqaKErJ8JXab1BMA8NM', '2025-11-25 14:41:09'),
 	(94, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzQ1ODkwOCwiZXhwIjoxNzY0MDYzNzA4fQ.F77-5dGfY2mOdXrtDo7xkoJserIDZ2AkzCdI3T_B0i4', '2025-11-25 14:41:48'),
 	(95, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ1OTMyOCwiZXhwIjoxNzY0MDY0MTI4fQ.qDnBFUGENRBa8PQZd5tj21G3-Jjm6wHzgpz7bT5o_Rc', '2025-11-25 14:48:48'),
 	(96, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ2MTg3NCwiZXhwIjoxNzY0MDY2Njc0fQ.VoDgOMrsqJVAYSheLZ5SAIQFFJYQe8PzZgTjX7NQ6jY', '2025-11-25 15:31:14'),
-	(97, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzQ2MjA2MSwiZXhwIjoxNzY0MDY2ODYxfQ.yaFWwtJLjqcmXXlhwuz_9gBudzqR-t73Je79OYR6AYc', '2025-11-25 15:34:21'),
 	(98, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ2MzAwOCwiZXhwIjoxNzY0MDY3ODA4fQ.slAaaXU01Y29R8DBO5o4b75CTnb9qa-hQawCc6IX8tY', '2025-11-25 15:50:08'),
 	(99, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzQ2MzAyNCwiZXhwIjoxNzY0MDY3ODI0fQ.V9JLXKPHz7GZyKalB_6n0SoF_hccv9GRW_sCmVL8LNY', '2025-11-25 15:50:24'),
 	(100, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzQ2MzcwNiwiZXhwIjoxNzY0MDY4NTA2fQ.mpffLAw6w48qkrjbua_tG3PwX3ustbhP9gkywOlMJGc', '2025-11-25 16:01:46'),
-	(101, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzQ2NDQ1NywiZXhwIjoxNzY0MDY5MjU3fQ.vPTz5rKF2fc04g7ZyobKenyuTSNhTrv6tEU8rP5UHgg', '2025-11-25 16:14:17'),
-	(102, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzUzNzczOSwiZXhwIjoxNzY0MTQyNTM5fQ.EnUojfnjCE8FeGzzJZyG_feGmNPOrDuFS6BzxwHb-eA', '2025-11-26 12:35:39'),
 	(103, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzUzNzc2MCwiZXhwIjoxNzY0MTQyNTYwfQ.wmSk1AZ0-97-sfd9qVviZkx_GjtO2bU0ZpHaFHLf2S8', '2025-11-26 12:36:00'),
 	(104, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzU0MTQ3NywiZXhwIjoxNzY0MTQ2Mjc3fQ.LsQZLAQ-8UhrlHi408-mooBPqwI2GdcKffXStSBE2Hk', '2025-11-26 13:37:57'),
 	(105, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzU0MTYyOSwiZXhwIjoxNzY0MTQ2NDI5fQ.dy2rXbQ8Adp5MR9R1uq1bK7-fqwRvjqIhu9ce1Mp668', '2025-11-26 13:40:29'),
@@ -225,14 +221,9 @@ INSERT INTO `refresh_tokens` (`id`, `userId`, `token`, `expiry`) VALUES
 	(111, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzU0ODAyNywiZXhwIjoxNzY0MTUyODI3fQ.01kNaYEhVKx_FQ8HyMa1ufAKgi71CfE9fJ3C19Zh9Lo', '2025-11-26 15:27:07'),
 	(112, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzU0OTQ1MiwiZXhwIjoxNzY0MTU0MjUyfQ.HIc8HagB6GNT2hg8D8KeX5ur56OXsfEeU43YxWI1xHo', '2025-11-26 15:50:52'),
 	(113, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzU0OTQ2MCwiZXhwIjoxNzY0MTU0MjYwfQ.zopSn2g17o_Mp6YvVTy3KsiJFtyY_BASu1kCrn9HnaQ', '2025-11-26 15:51:00'),
-	(114, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzU1MDI2NSwiZXhwIjoxNzY0MTU1MDY1fQ.jN4Hho--yXFn-GBiJszYoFUPJIhcnoUYUIh5E0eBXu8', '2025-11-26 16:04:25'),
-	(115, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzU1MDMwNiwiZXhwIjoxNzY0MTU1MTA2fQ.BPurn823FT_z_a0ULWbWshH5hGf_eKGa6wWY9a3vbgk', '2025-11-26 16:05:06'),
 	(116, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzU1MDMxMSwiZXhwIjoxNzY0MTU1MTExfQ.wENrSrAlV25GX1opqncD-Sz1EhNzKy_RnT1px2S9YuU', '2025-11-26 16:05:11'),
 	(117, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzU1MDMyNSwiZXhwIjoxNzY0MTU1MTI1fQ.9b2wRa9Bizg2x_cg7IGzwwqAcYlRFM9EBkOgLpU_BhI', '2025-11-26 16:05:25'),
-	(118, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzU1MDMzMSwiZXhwIjoxNzY0MTU1MTMxfQ.Gf4sB0XgFfNSFtOtlO8LC899iQbRb-A9LbHpWkXGXBY', '2025-11-26 16:05:31'),
 	(119, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzU1MDYzNCwiZXhwIjoxNzY0MTU1NDM0fQ.zKuRl2BsRixCIlJqvdk7L0h5soKfHdjcmu1LM9e1yeM', '2025-11-26 16:10:34'),
-	(120, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzU1MjU0NSwiZXhwIjoxNzY0MTU3MzQ1fQ.jJxnLQi_L7E130tpTPlXwJD85KAEwTBTUQV4AgYGniw', '2025-11-26 16:42:25'),
-	(121, 51, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsImlhdCI6MTc2MzYxODQ0NCwiZXhwIjoxNzY0MjIzMjQ0fQ.rwP0_4tZpeL5ExR6JttXxnuKcVVEWI5gc6MQ47V3q4Q', '2025-11-27 11:00:44'),
 	(122, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzYxODU0NiwiZXhwIjoxNzY0MjIzMzQ2fQ.CMkrQifih_KVmgKDFXAZl6t8hsxVQRJJHyobRfJBevI', '2025-11-27 11:02:26'),
 	(123, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzYxODU2MiwiZXhwIjoxNzY0MjIzMzYyfQ.C7lqE7_xUZTQLB4lYT1qabRi9pu-5q1TKuvqHKAVG1w', '2025-11-27 11:02:42'),
 	(124, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzYxOTY0MiwiZXhwIjoxNzY0MjI0NDQyfQ.qTVdCkrNLdFXRbXEu6RjJS2W3-rZ_K3wto4JdCOfvCs', '2025-11-27 11:20:42'),
@@ -244,7 +235,21 @@ INSERT INTO `refresh_tokens` (`id`, `userId`, `token`, `expiry`) VALUES
 	(130, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzYyNzUzNCwiZXhwIjoxNzY0MjMyMzM0fQ.mCjkHAqe0MYyuxz9_jD0O4dhtng7-Xb14llV3PgN9y0', '2025-11-27 13:32:14'),
 	(131, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzYyNzY0NCwiZXhwIjoxNzY0MjMyNDQ0fQ.jtiJxX9EFNCmLeWl-4WOysm2JprXR-3mEpkqzX9ngEU', '2025-11-27 13:34:04'),
 	(132, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzYyNzcwNiwiZXhwIjoxNzY0MjMyNTA2fQ.w_Jh1GduDMwwV7vJHwJTtcT56oumRXXQ73wywKWo62g', '2025-11-27 13:35:06'),
-	(133, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzYyOTM4NiwiZXhwIjoxNzY0MjM0MTg2fQ.bz6vgA2y5NG8FhTTKos5cmATXX9xeaSZtczL6LFFlLQ', '2025-11-27 14:03:06');
+	(133, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzYyOTM4NiwiZXhwIjoxNzY0MjM0MTg2fQ.bz6vgA2y5NG8FhTTKos5cmATXX9xeaSZtczL6LFFlLQ', '2025-11-27 14:03:06'),
+	(134, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzgxMTI3MywiZXhwIjoxNzY0NDE2MDczfQ.kPuVgHMYOhSuAu3UBVwzKCjeS3VtOhksK7HCcz_iIUI', '2025-11-29 16:34:33'),
+	(135, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc2MzgxMTI4MiwiZXhwIjoxNzY0NDE2MDgyfQ.h5rgq0bCPjXMTu8Fl4cj3uV7aZlr0zjWTcCOl15x2xs', '2025-11-29 16:34:42'),
+	(136, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc2MzgxMTQwNywiZXhwIjoxNzY0NDE2MjA3fQ.e5hw-wH388WDZzboC1jeJOOOvfRru8vcS2uDdpdMUP4', '2025-11-29 16:36:47'),
+	(137, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc3MTkzMTAyMSwiZXhwIjoxNzcyNTM1ODIxfQ.9sw2sRUbI-GUPSmaU8sZjoZQ0s4Fli-rHbTyHSqDsn8', '2026-03-03 16:03:41'),
+	(138, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MTkzMTAzMCwiZXhwIjoxNzcyNTM1ODMwfQ.qu-r80he0eddJDsON_npGC0I40QoYqGRSoeDZBXh0Og', '2026-03-03 16:03:50'),
+	(139, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MTkzMTEzMywiZXhwIjoxNzcyNTM1OTMzfQ.rKK6bsmuoau0Cg8NLH8JaBS9gZOwujhlY_rMF3kkFwY', '2026-03-03 16:05:33'),
+	(140, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MjAwMzUzOSwiZXhwIjoxNzcyNjA4MzM5fQ.hNtwJh9PsLGdRIhDwzzG2JTXPYNaT3AdoU_0tap4xP8', '2026-03-04 12:12:19'),
+	(141, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc3MjAwMzU2NSwiZXhwIjoxNzcyNjA4MzY1fQ.qO5eami6eaD6NhCQV9e-x_VQsEEYdvukGDZWjmTy79Q', '2026-03-04 12:12:45'),
+	(142, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MjAwNDA4MSwiZXhwIjoxNzcyNjA4ODgxfQ.0-xht5GWWM2Kc5OuVjLs3Zc0mdVYmEv3RLi4ue68jIg', '2026-03-04 12:21:21'),
+	(143, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MjAxMDYzOCwiZXhwIjoxNzcyNjE1NDM4fQ.a4rfDLOCLbAbCPsHY8HoKzewx8YW-m4a6M2FWw42yUo', '2026-03-04 14:10:38'),
+	(144, 36, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYsImlhdCI6MTc3MjAxMTEzNiwiZXhwIjoxNzcyNjE1OTM2fQ.x_QET8OdrM0_hQGCrX30OsEMR66RropdNqHje_rCxWU', '2026-03-04 14:18:56'),
+	(145, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MjAxMTE4OSwiZXhwIjoxNzcyNjE1OTg5fQ.1g5Zf4cIv68rXRCHuklQOnGD5SHGXnfpEAKfOz0CYQU', '2026-03-04 14:19:49'),
+	(146, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MjAxMTQxMCwiZXhwIjoxNzcyNjE2MjEwfQ.r8Tsnqh_jqFEBGSeNnf57wtQaK7yAeLVg4PL2ChaF4A', '2026-03-04 14:23:30'),
+	(147, 23, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTc3MjAxMjMxMCwiZXhwIjoxNzcyNjE3MTEwfQ.QgVYDWVrCsxhRUOtL-MTd7smQDhiA1ZuWoirfnmDGRA', '2026-03-04 14:38:30');
 
 -- Dumping structure for table mobile_bio_lab.reservations
 CREATE TABLE IF NOT EXISTS `reservations` (
@@ -266,9 +271,9 @@ CREATE TABLE IF NOT EXISTS `reservations` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table mobile_bio_lab.reservations: ~11 rows (approximately)
+-- Dumping data for table mobile_bio_lab.reservations: ~15 rows (approximately)
 DELETE FROM `reservations`;
 INSERT INTO `reservations` (`id`, `user_id`, `slot_id`, `reservation_date`, `reservation_time`, `duration`, `status`, `sample_id`, `sample_type`, `collection_date`, `collection_time`, `geo_location`, `temperature`, `pH`, `salinity`, `created_at`, `updated_at`) VALUES
 	(1, 1, 10, '2025-10-06', '10:00 TO 11:30', '1h 30m', 'pending', '12', 'Water', NULL, NULL, 'Lahore', '12', '7', '4.2', '2025-10-05 10:17:55', '2025-10-05 10:17:55'),
@@ -281,7 +286,11 @@ INSERT INTO `reservations` (`id`, `user_id`, `slot_id`, `reservation_date`, `res
 	(8, 24, 15, '2025-10-07', '10:00 TO 11:30', '1h 30m', 'pending', '77', 'Soil', NULL, NULL, 'lahore', '-4', '5', '5.4', '2025-11-16 10:11:19', '2025-11-16 10:11:19'),
 	(9, 36, 13, '2025-10-06', '16:00 TO 17:30', '1h 30m', 'approved', '77', 'Plant', NULL, NULL, 'lahore', '12', '5', '5', '2025-11-18 06:46:55', '2025-11-18 07:00:09'),
 	(10, 51, 26, '2025-10-09', '12:00 TO 13:30', '1h 30m', 'approved', '55', 'Soil', NULL, NULL, 'Islamabad', '33', '4', '22', '2025-11-19 11:05:00', '2025-11-19 11:05:20'),
-	(11, 36, 11, '2025-10-06', '12:00 TO 13:30', '1h 30m', 'approved', '45', 'Soil', NULL, NULL, 'lahore', '45', '7', '2', '2025-11-20 06:20:30', '2025-11-20 06:21:04');
+	(11, 36, 11, '2025-10-06', '12:00 TO 13:30', '1h 30m', 'approved', '45', 'Soil', NULL, NULL, 'lahore', '45', '7', '2', '2025-11-20 06:20:30', '2025-11-20 06:21:04'),
+	(12, 23, 11, '2026-03-07', '12:00 TO 13:30', '1h 30m', 'pending', '48', 'Water', NULL, NULL, 'lahore', '25', '7', '0.9', '2026-02-25 07:11:51', '2026-02-25 07:11:51'),
+	(13, 36, 16, '2026-03-08', '12:00 TO 13:30', '1h 30m', 'approved', '88', 'Water', NULL, NULL, 'lahore', '33', '5', '3', '2026-02-25 07:21:09', '2026-02-25 07:21:34'),
+	(14, 23, 10, '2026-03-07', '10:00 TO 11:30', '1h 30m', 'pending', '66', 'Water', NULL, NULL, 'lahore', '34', '4', '4', '2026-02-25 09:13:42', '2026-02-25 09:13:42'),
+	(15, 36, 21, '2026-03-09', '12:00 TO 13:30', '1h 30m', 'approved', '55', 'Soil', NULL, NULL, 'Islamabad', '44', '3', '23', '2026-02-25 09:19:35', '2026-02-25 09:20:19');
 
 -- Dumping structure for table mobile_bio_lab.sensor_data
 CREATE TABLE IF NOT EXISTS `sensor_data` (
@@ -323,12 +332,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table mobile_bio_lab.users: ~3 rows (approximately)
+-- Dumping data for table mobile_bio_lab.users: ~2 rows (approximately)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `vu_id`, `email`, `password`, `mobile`, `role`, `city`, `profilePicture`, `isActivated`, `activationToken`, `status`, `resetToken`, `resetTokenExpiry`) VALUES
 	(23, 'Romesa', 'Khan', NULL, 'mobile.bio.lab.adm@gmail.com', '$2b$10$4ya5QIAAqOcQczONvzukiu4ftqOn05QAXLWq4huv2YrioCnk.5gE2', '03207828649', 'admin', 'Lahore, Punjab', '/uploads/profilePics/1759827690920-passport_photo_300x400_1jpg.jpg', 'Active', NULL, 'approved', NULL, NULL),
-	(36, 'Romesa', 'Arshad', 'bc210428773', 'bc210428773rar@vu.edu.pk', '$2b$10$Q8TsvWdEeXciQ8BonXP2W.jo6AoSLfcVrVzL4c9RjOo5R781LRXrC', '03207828690', 'student', 'Lahore, Punjab, Pakistan', '/uploads/profilePics/1763369893369-passport_photo_300x400_1jpg.jpg', 'Active', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM2IiwiaWF0IjoxNzYzMzY5OTI4LCJleHAiOjE3NjM0NTYzMjh9.zPya03AK2P77OLKOJ13X5byau0pk5nr98WS9WyiG87s', 'approved', NULL, NULL),
-	(51, 'Laurel', 'Olsen', 'Ducimus at temporib', 'romesa.arshad.baloch@gmail.com', '$2b$10$PET6eNN5UBgn79VUp823xeYI7SaeCWSIfmVsWz4QxQQIbBr2A9TsW', '03207828456', 'student', 'Dolore modi enim sit', '/uploads/profilePics/1763457255581-passport_photo_300x400_1jpg.jpg', 'Active', NULL, 'approved', NULL, NULL);
+	(36, 'Romesa', 'Arshad', 'bc210428773', 'bc210428773rar@vu.edu.pk', '$2b$10$Q8TsvWdEeXciQ8BonXP2W.jo6AoSLfcVrVzL4c9RjOo5R781LRXrC', '03207828690', 'student', 'Lahore, Punjab, Pakistan', '/uploads/profilePics/1763369893369-passport_photo_300x400_1jpg.jpg', 'Active', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM2IiwiaWF0IjoxNzYzMzY5OTI4LCJleHAiOjE3NjM0NTYzMjh9.zPya03AK2P77OLKOJ13X5byau0pk5nr98WS9WyiG87s', 'approved', NULL, NULL);
 
 -- Dumping structure for table mobile_bio_lab.users_backup
 CREATE TABLE IF NOT EXISTS `users_backup` (
